@@ -3,19 +3,53 @@
 {% block title %}Register{% endblock %}
 
 {% block body %}
-    <h1>Register</h1>
 
-    {{ form_errors(registrationForm) }}
+{# <style>
+           .example-wrapper { margin: 1em auto; max-width: 1100px; width: 95%; font: 18px/1.5 sans-serif; display:flex; gap: 3rem; flex-wrap:wrap; justify-content: space-evenly}
+           body { background-color: #c2d4b8ff;}
+            #a { position:absolute; top:84px; left:1305px}
+</style> #}
 
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.firstName) }}
-        {{ form_row(registrationForm.lastName) }}
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Password'
-        }) }}
-        {{ form_row(registrationForm.agreeTerms) }}
+ <div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6"> 
+            <h1 class="h1 mb-5 font-weight-normal"> Page d'inscription </h1>
 
-        <button type="submit" class="btn">Register</button>
-    {{ form_end(registrationForm) }}
+            {{ form_errors(registrationForm) }}
+
+            {{ form_start(registrationForm, {'attr': {'class': 'needs-validation'}}) }}     
+
+                {{ form_row(registrationForm.firstName, {
+                    'attr': {'class': 'form-control'},
+                    'label_attr': {'class': 'form-label'}
+                }) }}
+
+                {{ form_row(registrationForm.lastName, {
+                    'attr': {'class': 'form-control'},
+                    'label_attr': {'class': 'form-label'}
+                }) }}
+
+                {{ form_row(registrationForm.email, {
+                    'attr': {'class': 'form-control'},
+                    'label_attr': {'class': 'form-label'}
+                }) }}
+
+                 {{ form_row(registrationForm.plainPassword, {
+                    'label': 'Mot de passe',
+                    'attr': {'class': 'form-control'},
+                    'label_attr': {'class': 'form-label'}
+                }) }}
+
+                {{ form_row(registrationForm.agreeTerms, {
+                    'label_attr': {'class': 'form-check-label'},
+                    'row_attr': {'class': 'form-check'},
+                    'attr': {'class': 'form-check-input'}
+                }) }}
+                
+                <button type="submit" class="btn btn-primary mt-3">Register</button>
+            {{ form_end(registrationForm) }}
+        </div>
+    </div>
+</div>
+
 {% endblock %}
