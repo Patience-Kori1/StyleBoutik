@@ -1,55 +1,65 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}Inscription | StyleBoutik{% endblock %}
 
 {% block body %}
-
-{# <style>
-           .example-wrapper { margin: 1em auto; max-width: 1100px; width: 95%; font: 18px/1.5 sans-serif; display:flex; gap: 3rem; flex-wrap:wrap; justify-content: space-evenly}
-           body { background-color: #c2d4b8ff;}
-            #a { position:absolute; top:84px; left:1305px}
-</style> #}
-
- <div class="container mt-5">
+<div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-6"> 
-            <h1 class="h1 mb-5 font-weight-normal"> Page d'inscription </h1>
-
-            {{ form_errors(registrationForm) }}
-
-            {{ form_start(registrationForm, {'attr': {'class': 'needs-validation'}}) }}     
-
-                {{ form_row(registrationForm.firstName, {
-                    'attr': {'class': 'form-control'},
-                    'label_attr': {'class': 'form-label'}
-                }) }}
-
-                {{ form_row(registrationForm.lastName, {
-                    'attr': {'class': 'form-control'},
-                    'label_attr': {'class': 'form-label'}
-                }) }}
-
-                {{ form_row(registrationForm.email, {
-                    'attr': {'class': 'form-control'},
-                    'label_attr': {'class': 'form-label'}
-                }) }}
-
-                 {{ form_row(registrationForm.plainPassword, {
-                    'label': 'Mot de passe',
-                    'attr': {'class': 'form-control'},
-                    'label_attr': {'class': 'form-label'}
-                }) }}
-
-                {{ form_row(registrationForm.agreeTerms, {
-                    'label_attr': {'class': 'form-check-label'},
-                    'row_attr': {'class': 'form-check'},
-                    'attr': {'class': 'form-check-input'}
-                }) }}
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h4 mb-0">Créer un compte</h2>
+                </div>
                 
-                <button type="submit" class="btn btn-primary mt-3">Register</button>
-            {{ form_end(registrationForm) }}
+                <div class="card-body">
+                    {{ form_start(registrationForm) }}
+                        <div class="mb-3">
+                            {{ form_row(registrationForm.firstName, {
+                                'attr': {'class': 'form-control'},
+                                'label_attr': {'class': 'form-label fw-bold'}
+                            }) }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form_row(registrationForm.lastName, {
+                                'attr': {'class': 'form-control'},
+                                'label_attr': {'class': 'form-label fw-bold'}
+                            }) }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form_row(registrationForm.email, {
+                                'attr': {'class': 'form-control', 'placeholder': 'exemple@email.com'},
+                                'label_attr': {'class': 'form-label fw-bold'}
+                            }) }}
+                        </div>
+                        
+                        <div class="mb-4">
+                            {{ form_row(registrationForm.plainPassword, {
+                                'attr': {'class': 'form-control'},
+                                'label_attr': {'class': 'form-label fw-bold'}
+                            }) }}
+                        </div>
+                
+                <div class="mb-4">
+                {{ form_row(registrationForm.agreeTerms, {
+                            'label_attr': {'class': 'form-check-label'},
+                            'row_attr': {'class': 'form-check'},
+                            'attr': {'class': 'form-check-input'}
+                        }) }}
+                </div>
+
+                        
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        S'inscrire
+                    </button>
+                </div>
+                    {{ form_end(registrationForm) }}
+                </div>
+            </div>
         </div>
     </div>
 </div>
-
 {% endblock %}
+
