@@ -13,9 +13,24 @@
     <div class="col-md-10">
         <div class="card shadow-sm">
             <div class="card-header bg-primary text-white">
-                <h2 class="h4 mb-0 "> Toutes mes categories </h2>
+                <h2 class="h4 mb-0 "> Nos différentes catégories </h2>
             </div>
         </div>
+
+        {% for categorie in categories %}
+
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">{{categorie.name}}</h5>
+                    {# <p class="card-text">{{user.firstName}}</p> #}
+                    {# <a href="{{path('app_register')}}" class="btn btn-success">Ajouter</a>
+                    <a href="{{ path('app_delete_form', {'id' : user.id})}}" class="btn btn-info">Supprimer</a>
+                    <a href="{{ path('app_update_form', {'id' : user.id})}}" class="btn btn-danger">Modifier</a> #}
+                </div>   
+            </div>
+
+        {% endfor %}
+
     </div>
 </div>
 {% endblock %}
