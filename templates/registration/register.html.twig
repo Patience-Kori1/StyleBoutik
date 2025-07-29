@@ -15,6 +15,7 @@
                     {{ form_start(registrationForm) }}
                         <div class="mb-3">
                             {{ form_row(registrationForm.firstName, {
+                                'label': 'Prénom',
                                 'attr': {'class': 'form-control'},
                                 'label_attr': {'class': 'form-label fw-bold'}
                             }) }}
@@ -22,6 +23,7 @@
                         
                         <div class="mb-3">
                             {{ form_row(registrationForm.lastName, {
+                                'label': 'Nom',
                                 'attr': {'class': 'form-control'},
                                 'label_attr': {'class': 'form-label fw-bold'}
                             }) }}
@@ -29,6 +31,7 @@
                         
                         <div class="mb-3">
                             {{ form_row(registrationForm.email, {
+                                'label': 'Email',
                                 'attr': {'class': 'form-control', 'placeholder': 'exemple@email.com'},
                                 'label_attr': {'class': 'form-label fw-bold'}
                             }) }}
@@ -36,25 +39,26 @@
                         
                         <div class="mb-4">
                             {{ form_row(registrationForm.plainPassword, {
+                                'label': 'Mot de passe',
                                 'attr': {'class': 'form-control'},
                                 'label_attr': {'class': 'form-label fw-bold'}
                             }) }}
                         </div>
                 
-                <div class="mb-4">
-                {{ form_row(registrationForm.agreeTerms, {
-                            'label_attr': {'class': 'form-check-label'},
-                            'row_attr': {'class': 'form-check'},
-                            'attr': {'class': 'form-check-input'}
-                        }) }}
-                </div>
+                        <div class="mb-4">
+                            {{ form_row(registrationForm.agreeTerms, {
+                                'label_attr': {'class': 'form-check-label'},
+                                'row_attr': {'class': 'form-check'},
+                                'attr': {'class': 'form-check-input'}
+                            }) }}
+                        </div>
 
                         
-                <div class="d-grid">
-                    <button type="submit" class="btn btn-primary btn-lg">
-                        S'inscrire
-                    </button>
-                </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                S'inscrire
+                            </button>
+                        </div>
                     {{ form_end(registrationForm) }}
                 </div>
             </div>
