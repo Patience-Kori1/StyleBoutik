@@ -4,11 +4,12 @@
 
 {% block body %}
     <div class="container">
+    
         <h1 class="mt-4 mb-5">Liste des utilisateurs</h1>
 
         {% include 'layouts/flash_message.html.twig' %}
 
-        <table class='table'>
+        <table class='table'> {# table-bordered border-primary#}
 
             <thead>    
                 <tr class="table-primary">
@@ -38,8 +39,14 @@
 
                         </td>
                         <td>
-                            <a {#href="{{ path('app_update_form', {'id' : data.id})}}"#} class="btn btn-sm btn-warning" >Modifier</a> 
-                            <a  {#href="{{ path('delete', {'id' : data.id})}}"#} class="btn btn-sm btn-danger">Supprimer</a>
+                             {% if ('ROLE_ADMIN' in user.roles) == false %}
+                                <a {#href="{{ path('app_update_form', {'id' : data.id})}}"#} class="btn btn-primary" >Modifier</a> 
+                                <a onclick= "return confirm('Voulez vous vraiment affecter ce rôle à ce user ?')" class="btn btn-outline-primary" href="{{ path('app_user_to_editor', {'id': user.id}) }}"> Ajouter le rôle éditeur </a>
+                                <a  {#href="{{ path('delete', {'id' : data.id})}}"#} class="btn btn-info">Supprimer</a>
+                            {% else %}
+                                <a  {#href="{{ path('delete', {'id' : data.id})}}"#} class="btn btn-success col-md-8">Je suis admin</a>
+                            {% endif %}
+
                         </td>
                     </tr>
                 {% endfor %}
