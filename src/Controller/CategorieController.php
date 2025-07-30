@@ -48,12 +48,12 @@ final class CategorieController extends AbstractController
         #[Route('/category/update/{id}', name : 'app_update_category')]
         public function updateCategory (CategorieRepository $repo, EntityManagerInterface $em, $id, Request $request) : Response 
         {
-            $id = $repo->find($id);
-            $form = $this->createForm(UpdateFormType::class, $id);
+            $category = $repo->find($id);
+            $form = $this->createForm(UpdateFormType::class, $category);
             $form->handleRequest($request);
 
             if($form->isSubmitted() && $form->isValid()) {
-                $em->persist($id);
+                $em->persist($category);
                 $em-> flush();
 
                 $this->addFlash('notice', 'Le produit a été modifié avec succès');
@@ -62,8 +62,19 @@ final class CategorieController extends AbstractController
 
             return $this->render('categorie/updateCategorie.html.twig', [
                 'form' => $form->createView(),
-                'categorie'=> $id
+                // 'categorie'=> $id
             ]);
+        }
+
+        #[Route('/category/delete/{id}', name: 'app_delete_category')]
+        public function deleteForm (EntityManagerInterface $em, $id, CategorieRepository $repo)
+        {
+            $category = $repo->find($id);
+            $em->remove($category);
+            $em->flush();
+
+            return $this->redirectToRoute('app_allCategories');
+
         }
 }
 
