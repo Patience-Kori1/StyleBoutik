@@ -17,7 +17,7 @@
             </div>
         </div>
                 {% include 'layouts/flash_message.html.twig' %}
-                
+
         {% for categorie in categories %}
 
             <div class="card text-center">
@@ -25,7 +25,7 @@
                     <h5 class="card-title">{{categorie.name}}</h5>
                     {# <p class="card-text">{{user.firstName}}</p> #}
                     {# <a href="{{path('app_register')}}" class="btn btn-success">Ajouter</a>#}
-                    <a href="{{ path('app_delete_category', {'id' : categorie.id})}}" class="btn btn-info">Supprimer</a>
+                    <a href="{{ path('app_delete_category', {'id' : categorie.id})}}" class="btn btn-info" onclick="return confirm('Voulez-vous vraiment supprimer cette categorie')">Supprimer</a>
                     <a href="{{ path('app_update_category', {'id' : categorie.id})}}" class="btn btn-danger">Modifier</a> 
                 </div>   
             </div>

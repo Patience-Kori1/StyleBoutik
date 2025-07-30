@@ -1,0 +1,99 @@
+<nav class="navbar navbar-expand-lg btn btn-primary" data-bs-theme="dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{path('app_home_page')}}">StyleBoutik</a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarColor01">
+            <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll">
+
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page"  href="{{path('app_home_page')}}"> Accueil </a>
+                </li> 
+            
+                {% if categories is defined %}
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link active dropdown-toggle" href="{{path('app_allCategories')}}" data-bs-toggle="dropdown"  role="button" aria-haspopup="true" aria-expanded="false">Catégories</a>
+
+                        <ul class="dropdown-menu">
+
+                            {% for category in categories %}
+                                <li><a class="dropdown-item" href="{{path('app_allCategories')}}"> {{ category.name }}</a></li>
+                                <li><hr class="dropdown-divider"></li>{# Juste pour mettre les petites lignes de séparation #}
+                            {% endfor %}
+
+                        </ul>
+                    </li>
+                {% endif %}
+
+                {% if is_granted('ROLE_ADMIN') %}
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link active dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Admin</a>
+
+                    <ul class="dropdown-menu">
+    
+                        <li><a class="dropdown-item" href="{{path('app_allCategories')}}">Les catégories </a></li>
+                        <li><a class="dropdown-item" href="{{path('app_category_new')}}">Ajouter une catégorie</a></li>
+                        <li><hr class="dropdown-divider"></li>
+
+                        <li><a class="dropdown-item" href="#">Sous-catégories</a></li>
+                        <li><a class="dropdown-item" href="#">Ajouter une sous-catégorie</a></li>
+                        <li><hr class="dropdown-divider"></li>
+
+                        <li><a class="dropdown-item" href="#">Les produits</a></li>
+                        <li><a class="dropdown-item" href="#">Ajouter un produit</a></li>
+                        <li><hr class="dropdown-divider"></li>
+
+                        <li><a class="dropdown-item" href="#">Utilisateurs</a></li>               
+
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ path('app_logout') }} " class='nav-link'>Se déconnecter</a>
+                </li>  
+
+                {% endif %}
+
+                {% if app.user == false %}
+                    <li class="nav-item">
+                        <a href="{{ path('app_register') }} " class='nav-link active'>S'inscrire</a>
+                    </li> 
+                    <li class="nav-item">
+                        <a href="{{ path('app_login') }} " class='nav-link active'>Se connecter</a>
+                    </li> 
+                {% endif %}
+
+
+
+
+
+
+                {# <li class="nav-item">
+                    <a class="nav-link active" href="{{path('app_login')}}">Se connecter
+                        <span class="visually-hidden">(current)</span>
+                    </a>
+                </li> 
+                <li class="nav-item">
+                    <a class="nav-link active" href="{{path('app_logout')}}"> Déconnexion
+                        <span class="visually-hidden">(current)</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{{path('app_register')}}">S'inscrire
+                        <span class="visually-hidden">(current)</span>
+                    </a>
+                </li> #}
+                
+                
+            </ul>
+            <form class="d-flex">
+                <input class="form-control me-sm-2" type="search" placeholder="Search">
+                <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+</nav>
