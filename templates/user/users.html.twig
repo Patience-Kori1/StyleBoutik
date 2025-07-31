@@ -42,9 +42,10 @@
                              {% if ('ROLE_ADMIN' in user.roles) == false %}
                                 <a {#href="{{ path('app_update_form', {'id' : data.id})}}"#} class="btn btn-primary" >Modifier</a> 
                                 <a onclick= "return confirm('Voulez vous vraiment affecter ce rôle à ce user ?')" class="btn btn-outline-primary" href="{{ path('app_user_to_editor', {'id': user.id}) }}"> Ajouter le rôle éditeur </a>
-                                <a  {#href="{{ path('delete', {'id' : data.id})}}"#} class="btn btn-info">Supprimer</a>
+                                <a  href="{{ path('app_user_remove_editor_role', {'id' : user.id})}}" class="btn btn-info">Supprimer le role éditeur</a>
+                                <a  href="{{ path('app_user_remove', {'id' : user.id})}}" class="btn btn-primary">Supprimer le user</a>
                             {% else %}
-                                <a  {#href="{{ path('delete', {'id' : data.id})}}"#} class="btn btn-success col-md-8">Je suis admin</a>
+                                <a  {#href="{{ path('delete', {'id' : user.id})}}"#} class="btn btn-success col-md-11">Je suis admin</a>
                             {% endif %}
 
                         </td>
