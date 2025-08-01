@@ -28,7 +28,7 @@
                                 'label_attr': {'class': 'form-label fw-bold'}
                             }) }}
                         </div>
-
+#region 
                         <div class="mb-3">
                             {{ form_row(form.price, {
                                 'label': 'Prix',
@@ -43,7 +43,14 @@
                                 'attr': {'class': 'form-control'},
                                 'label_attr': {'class': 'form-label fw-bold'}
                             }) }}
-                        </div>  
+                        </div>
+                        <div class="mb-3">
+                            {{ form_row(form.image, {
+                                'label': 'Image',
+                                'attr': {'class': 'form-control'},
+                                'label_attr': {'class': 'form-label fw-bold'}
+                            }) }}
+                        </div>   
                 
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary btn-lg">
