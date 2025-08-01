@@ -12,6 +12,7 @@
                 <tr class="table-primary">
                     <th scope="col">id</th>
                     <th scope="col">Nom</th>
+                    <th scope="col">Catégorie associée</th>
                     <th scope="col">Action</th>
                 </tr>
             </thead> 
@@ -21,6 +22,7 @@
                 <th scope="row" >{{sub_category.id}}</th> 
 
                 <td>{{sub_category.name }}</td>
+                <td>{{sub_category.category.name}}</td>
                 <td>
                     <a class="btn btn-primary"  href="{{ path('app_sub_category_show', {'id': sub_category.id}) }}">show</a>
                     <a class="btn btn-primary"  href="{{ path('app_sub_category_edit', {'id': sub_category.id}) }}">edit</a>
