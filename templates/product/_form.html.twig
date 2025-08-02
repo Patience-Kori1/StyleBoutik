@@ -38,6 +38,14 @@
                         </div>
 
                         <div class="mb-3">
+                            {{ form_row(form.stock, {
+                                'label': 'Stock',
+                                'attr': {'class': 'form-control'},
+                                'label_attr': {'class': 'form-label fw-bold'}
+                            }) }}
+                        </div>
+
+                        <div class="mb-3">
                             {{ form_row(form.subcategory, {
                                 'label': 'Sous catégorie',
                                 'attr': {'class': 'form-control'},

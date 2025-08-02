@@ -12,6 +12,8 @@
                 <th>Name</th>
                 <th>Description</th>
                 <th>Price</th>
+                <th>Stock</th>
+                <th>Image</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -22,6 +24,12 @@
                 <td>{{ product.name }}</td>
                 <td>{{ product.description|slice(0,100) }}...</td>
                 <td>{{ product.price }}</td>
+                {% if product.stock == 0 %}
+                    <td>Stock épuisé</td>
+                {% else %}
+                    <td>{{ product.stock }}</td>
+                {% endif %}
+                <td>{{ product.image }}</td>
                 <td>
                     <a href="{{ path('app_product_show', {'id': product.id}) }}">show</a>
                     <a href="{{ path('app_product_edit', {'id': product.id}) }}">edit</a>

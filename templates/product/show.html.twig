@@ -15,6 +15,10 @@
                 <th>Name</th>
                 <td>{{ product.name }}</td>
             </tr>
+            {# <tr>
+                <th>Sous catégorie</th>
+                <td>{{ product.subcategory.name }}</td>
+            </tr> #}
             <tr>
                 <th>Description</th>
                 <td>{{ product.description }}</td>
@@ -24,8 +28,16 @@
                 <td>{{ product.price }}</td>
             </tr>
             <tr>
-                <th>Price</th>
-                <td>{{ product.image}}</td>
+                <th>Stock</th>
+                {% if product.stock == 0 %}
+                    <td>Stock épuisé</td>
+                {% else %}
+                <td>{{ product.stock}}</td>
+                {% endif %}
+            </tr>
+            <tr>
+                <th>image</th>
+                <td><img src="/uploads/images/{{ product.image}}" width="100 rem"alt=""></td>
             </tr>
         </tbody>
     </table>
