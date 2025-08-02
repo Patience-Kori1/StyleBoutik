@@ -15,10 +15,12 @@
                 <th>Name</th>
                 <td>{{ product.name }}</td>
             </tr>
-            {# <tr>
+            <tr>
                 <th>Sous catégorie</th>
-                <td>{{ product.subcategory.name }}</td>
-            </tr> #}
+                {% for subcat in product.subcategory %}
+                    <td>{{ subcat.name }}</td>
+                {% endfor %}
+            </tr>
             <tr>
                 <th>Description</th>
                 <td>{{ product.description }}</td>
