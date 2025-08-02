@@ -13,18 +13,18 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
-#region Route
+
     #[Route('/product')]
     final class ProductController extends AbstractController
     {
         #[Route(name: 'app_product_index', methods: ['GET'])]
         public function index(ProductRepository $productRepository): Response
         {
-            return $this->render('product/index.html.twig', [
+            return $this->render('product/allProducts.html.twig', [
                 'products' => $productRepository->findAll(),
             ]);
         }
-#end 
+ 
     #[Route('/new', name: 'app_product_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {

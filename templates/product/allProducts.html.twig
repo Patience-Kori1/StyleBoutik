@@ -1,0 +1,100 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Les produits{% endblock %}
+
+{% block body %}
+
+<style>
+    h1 {text-align:center}
+    .hey { margin: 1em auto;  width: 95%; font: 18px/1.5 sans-serif;display:flex; justify-content:space-evenly; gap:1rem; flex-wrap:wrap}
+    .hey > div {width: 30rem}
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    .link {display:flex; flex-direction: column; align-items:center; gap:0.5rem}
+    .link a {width: 7rem;}
+    .card-body {display:flex; flex-direction:column;}
+    .first {display:flex; justify-content: space-evenly; padding: 1rem}
+    .first-one { display:flex; flex-direction:column; justify-content:space-between; align-items: flex-start}
+    {# .second {background-color:yellow} #}
+</style>
+<h1>Affichage des produits</h1>
+<div class="hey">
+
+    {% for product in products %}
+
+        <div class="card text-center">
+            <div class="card-body">
+                <div class="first">
+                    <div class="first-one">
+                        <h5 class="card-title">{{product.name}}</h5>
+                        <p class="card-text">{{product.price}} euros</p>
+                        {% if product.stock == 0 %}
+                            <p>Stock épuisé</p>
+                        {% else %}
+                            <p>{{ product.stock }} en stock</p>
+                        {% endif %}
+                        <div class="link">
+                            <a href="{{ path('app_product_show', {'id': product.id}) }}" class="btn btn-success">Voir</a>
+                            <a {#href="{{ path('app_delete_form', {'id' : user.id})}}"#} class="btn btn-danger">Supprimer</a>
+                            <a href="{{ path('app_product_edit', {'id': product.id}) }}" class="btn btn-info">Modifier</a>
+                            
+                        </div>
+                         
+                    </div>
+                    <div>
+                        <p class="card-text"><img src="/uploads/images/{{ product.image}}" width="200 rem"alt=""></p>   
+                        <a href="{{ path('app_product_new') }}" class="btn btn-primary">Ajouter</a>
+                    </div>
+
+                    
+                </div>
+                <div class="second">
+                    <p class="card-text">{{ product.description|slice(0,100) }}...</p>
+                </div>
+            </div>   
+        </div> 
+
+    {% endfor %}
+</div>
+
+    {# <h1>Product index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Image</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for product in products %}
+            <tr>
+                <td>{{ product.id }}</td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.description|slice(0,100) }}...</td>
+                <td>{{ product.price }}</td>
+                {% if product.stock == 0 %}
+                    <td>Stock épuisé</td>
+                {% else %}
+                    <td>{{ product.stock }}</td>
+                {% endif %}
+                <td>{{ product.image }}</td>
+                <td>
+                    <a href="{{ path('app_product_show', {'id': product.id}) }}">show</a>
+                    <a href="{{ path('app_product_edit', {'id': product.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_product_new') }}">Create new</a> #}
+{% endblock %}
