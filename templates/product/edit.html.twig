@@ -3,11 +3,17 @@
 {% block title %}Edit Product{% endblock %}
 
 {% block body %}
-    <h1>Edit Product</h1>
+<style>
+    #a { position:absolute; top:287px; left:180px}
+    #a2 { position:absolute; top:287px; left:1178px}
+</style>
+
 
     {{ include('product/_form.html.twig', {'button_label': 'Update'}) }}
 
-    <a href="{{ path('app_product_index') }}">back to list</a>
+    <a href="{{ path('app_product_index') }}" class="btn btn-primary" id="a">Retour à la liste des produits</a>
 
-    {{ include('product/_delete_form.html.twig') }}
+<a href="{{ path('app_product_index') }}" id="a2">{{ include('product/_delete_form.html.twig') }}</a>
+
+    
 {% endblock %}

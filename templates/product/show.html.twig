@@ -3,7 +3,61 @@
 {% block title %}Product{% endblock %}
 
 {% block body %}
-    <h1>Product</h1>
+
+<style>
+    h1 {text-align:center}
+    .hey { margin: 1em auto;  width: 95%; font: 18px/1.5 sans-serif;display:flex; justify-content:space-evenly; gap:1rem; flex-wrap:wrap}
+    .hey > div {width: 60%}
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    .link {display:flex; flex-direction:column; gap:1rem}
+    .link a {width: 10rem}
+    .card-body {display:flex; flex-direction:column;}
+    .first {display:flex;}
+    .first-one { display:flex; flex-direction:column; align-items: flex-start; gap:1rem}
+    .price_stock {display:flex;flex-direction:column; align-items:flex-start}
+    .second {text-align: start; padding-right:1rem}
+    h1 { margin: 0.5rem 21.5%}
+
+</style>
+<h1>{{product.name}}</h1>
+<div class="hey">
+
+    <div class="card text-center">
+    
+        <div class="card-body">
+            <div class="first">
+                
+                <div class="first-one">
+                    <div class="price_stock">
+                        <p class="card-text">Prix : {{product.price}} euros</p>
+                        {% if product.stock == 0 %}
+                            <p>Stock : stock épuisé</p>
+                        {% else %}
+                            <p>{{ product.stock }} articles en stock</p>
+                        {% endif %}
+                    </div>
+                    <div class="link">
+                        <a href="{{ path('app_product_edit', {'id': product.id}) }}" class="btn btn-info">Modifier</a>
+                        <a href="{{ path('app_product_delete', {'id' : product.id})}}" >{{ include('product/_delete_form.html.twig') }}</a>  
+                        <a href="{{ path('app_product_new') }}" class="btn btn-primary">Ajouter</a>     
+                    </div>
+                    <div class="second">
+                        <p class="card-text">{{ product.description }}</p>
+                    </div>  
+                </div>
+                <div>
+                    <p class="card-text"><img src="/uploads/images/{{ product.image}}" width="500 rem"alt=""></p>   
+                </div>   
+            </div>
+            
+        </div> 
+        <a href="{{ path('app_product_index', {'id': product.id}) }}" class="btn btn-success">Retour à la liste des produits</a>  
+    </div> 
+
+</div>
+
+
+    {# <h1>Product</h1>
 
     <table class="table">
         <tbody>
@@ -48,5 +102,5 @@
 
     <a href="{{ path('app_product_edit', {'id': product.id}) }}">edit</a>
 
-    {{ include('product/_delete_form.html.twig') }}
-{% endblock %}
+    {{ include('product/_delete_form.html.twig') }}#}
+{% endblock %} 
