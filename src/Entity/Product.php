@@ -16,7 +16,7 @@ class Product
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255, unique:true)]
+    #[ORM\Column(length: 255, unique:true)] // On a ajouté unique:true pourqu'il n'y est pas deux produits avec le meme nom
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]

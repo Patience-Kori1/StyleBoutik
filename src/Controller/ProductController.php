@@ -14,7 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 
-    #[Route('/product')]
+    #[Route('editor/product')]
     final class ProductController extends AbstractController
     {
         #[Route(name: 'app_product_index', methods: ['GET'])]
@@ -53,6 +53,7 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
             $entityManager->persist($product);
             $entityManager->flush();
 
+            $this->addFlash('success', "L'article a été ajouté avec succès");
             return $this->redirectToRoute('app_product_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -79,6 +80,7 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
+            $this->addFlash('info', "L'article a été modifié avec succès");
             return $this->redirectToRoute('app_product_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -95,7 +97,7 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
             $entityManager->remove($product);
             $entityManager->flush();
         }
-
+        $this->addFlash('danger', "L'article a été supprimé avec succès");
         return $this->redirectToRoute('app_product_index', [], Response::HTTP_SEE_OTHER);
     }
 }

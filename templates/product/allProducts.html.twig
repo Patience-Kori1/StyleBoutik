@@ -15,9 +15,15 @@
     .first {display:flex; justify-content: space-evenly; padding: 1rem}
     .first-one { display:flex; flex-direction:column; justify-content:space-between; align-items: flex-start}
     {# .second {background-color:yellow} #}
+    .msg_flash {position:absolute; top:70px; left:90px; z-index: 1;}
+    #add_product {position:sticky; top:110px; left:1390px; z-index: 1;}
 </style>
+<a href="{{ path('app_product_new') }}" class="btn btn-warning" id="add_product">Ajouter un article</a>
 <h1>Affichage des produits</h1>
 <div class="hey">
+<div class="msg_flash">
+    {% include 'layouts/flash_message.html.twig' %}
+</div>
 
     {% for product in products %}
 
@@ -42,7 +48,7 @@
                     </div>
                     <div>
                         <p class="card-text"><img src="/uploads/images/{{ product.image}}" width="200 rem"alt=""></p>   
-                        <a href="{{ path('app_product_new') }}" class="btn btn-primary">Ajouter</a>
+                        <a {#href="{{ path('app_product_new') }}"#} class="btn btn-primary">Ajouter le stock</a>
                     </div>
 
                     
