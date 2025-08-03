@@ -2,8 +2,11 @@
 
 namespace App\Controller;
 
+use DateTimeImmutable;
 use App\Entity\Product;
 use App\Form\ProductType;
+use App\Entity\AddProductHistory;
+use App\Form\AddProductHistoryType;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -53,6 +56,24 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
             $entityManager->persist($product);
             $entityManager->flush();
 
+            // Création d'un nouvel enregistrement d'historique de stock
+            $stockHistory = new AddProductHistory();// 1️⃣ On crée un nouvel objet d’historique de stock
+
+            // On enregistre la quantité actuelle de stock du produit
+            $stockHistory->setQuantity($product->getStock());// 2️⃣ On définit la quantité ajoutée (actuel stock du produit)
+
+            // On associe le produit concerné à cet enregistrement
+            $stockHistory->setProduct($product);// 3️⃣ On relie ce mouvement de stock au produit concerné
+
+            // On fixe la date d'enregistrement à maintenant
+            $stockHistory->setCreatedAt(new DateTimeImmutable());// 4️⃣ On fixe la date du mouvement
+
+            // On prépare la sauvegarde de l'historique en base de données
+            $entityManager->persist($stockHistory);
+
+            // On effectue réellement la sauvegarde
+            $entityManager->flush();/*effectue la mise a jour en bdd*/
+
             $this->addFlash('success', "L'article a été ajouté avec succès");
             return $this->redirectToRoute('app_product_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -100,4 +121,40 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
         $this->addFlash('danger', "L'article a été supprimé avec succès");
         return $this->redirectToRoute('app_product_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    #[Route('/add/product/{id}/stock', name: 'app_product_stock_add', methods: ['POST','GET'])]
+    public function stockAdd ($id, EntityManagerInterface $entityManager, Request $request, ProductRepository $productRepository) : Response
+    {
+        $stockAdd = new AddProductHistory();
+        $form =$this->createForm(AddProductHistoryType::class, $stockAdd);
+        $form->handleRequest($request);
+
+        $product = $productRepository->find($id);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            if($stockAdd->getQuantity()>0){
+                $newQuantity = $product->getStock() + $stockAdd->getQuantity();
+                $product->setStock($newQuantity);
+
+                $stockAdd->setCreatedAt(new DateTimeImmutable());
+                $stockAdd->setProduct($product);
+                $entityManager->persist($stockAdd);
+                $entityManager->flush();
+
+                $this->addFlash('success', "Le stock du produit à été modifié");
+                return $this->redirectToRoute('app_product_index');
+            }else {
+                $this->addFlash('danger', "Le stock du produit ne doit pas être inférieur à zéro");
+                return $this->redirectToRoute('app_product_stock_add', ['id'=>$product->getId()]);
+            }
+        }
+
+        return $this->render('product/addStock.html.twig', [
+            'form' => $form->createView(),
+            'product' => $product,
+        ]);
+
+    }
+
 }

@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Product{% endblock %}
+
+{% block body %}
+<style>
+    #a { position:absolute; top:287px; left:180px}
+</style>
+
+<div class="container">
+
+    <div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h4 mb-0"> Ajouter du stock pour {{product.name}}</h2>
+                </div>
+                  {{ include ('layouts/flash_message.html.twig') }}    
+                <div class="card-body">
+                    {{ form_start(form) }}
+
+                        <div class="mb-3">
+                            {{ form_row(form.quantity, {
+                                'label': 'Description',
+                                'attr': {'class': 'form-control'},
+                                'label_attr': {'class': 'form-label fw-bold'}
+                            }) }}
+                        </div>
+                
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                Enregistrer
+                            </button>
+                        </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <a href="{{ path('app_product_index')}}" class="btn btn-primary" id="a">Retour à la liste des produits</a> 
+
+</div>
+{% endblock %}

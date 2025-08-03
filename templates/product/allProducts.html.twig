@@ -48,7 +48,7 @@
                     </div>
                     <div>
                         <p class="card-text"><img src="/uploads/images/{{ product.image}}" width="200 rem"alt=""></p>   
-                        <a {#href="{{ path('app_product_new') }}"#} class="btn btn-primary">Ajouter le stock</a>
+                        <a href="{{ path('app_product_stock_add', {'id': product.id})}}" class="btn btn-primary">Ajouter le stock</a>
                     </div>
 
                     
