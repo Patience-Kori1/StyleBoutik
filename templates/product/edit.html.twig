@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Product{% endblock %}
+{% block title %}Modifier le Produit{% endblock %}
 
 {% block body %}
 <style>
@@ -8,11 +8,12 @@
     #a2 { position:absolute; top:287px; left:75%}
 </style>
 
+<div class="container">
     {{ include('product/_form.html.twig', {'button_label': 'Update'}) }}
 
     <a href="{{ path('app_product_index') }}" class="btn btn-primary" id="a">Retour à la liste des produits</a>
 
     <a href="{{ path('app_product_index') }}" id="a2">{{ include('product/_delete_form.html.twig') }}</a>
 
-    
+</div>    
 {% endblock %}

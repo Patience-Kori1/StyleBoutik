@@ -9,7 +9,7 @@
 
 <div class="container">
 
-    {{ include('product/_form.html.twig') }}
+    {{ include('product/_form.html.twig', {'button_label': 'Ajouter'}) }}
 
     <a href="{{ path('app_product_index')}}" class="btn btn-primary" id="a">Retour à la liste des produits</a> 
 

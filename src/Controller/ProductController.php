@@ -5,6 +5,7 @@ namespace App\Controller;
 use DateTimeImmutable;
 use App\Entity\Product;
 use App\Form\ProductType;
+use App\Form\ProductUpdateType;
 use App\Entity\AddProductHistory;
 use App\Form\AddProductHistoryType;
 use App\Repository\ProductRepository;
@@ -67,7 +68,7 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
             $stockHistory->setProduct($product);// 3️⃣ On relie ce mouvement de stock au produit concerné
 
             // On fixe la date d'enregistrement à maintenant
-            $stockHistory->setCreatedAt(new DateTimeImmutable());// 4️⃣ On fixe la date du mouvement
+            $stockHistory->setCreatedAt(new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris')));// 4️⃣ On fixe la date du mouvement
 
             // On prépare la sauvegarde de l'historique en base de données
             $entityManager->persist($stockHistory);
@@ -94,13 +95,32 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
     }
 
     #[Route('/{id}/edit', name: 'app_product_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Product $product, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Product $product, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
-        $form = $this->createForm(ProductType::class, $product);
+        $form = $this->createForm(ProductUpdateType::class, $product);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
+
+             $image = $form->get('image')->getData();/* on recup l'image et son contenu*/
+   
+            if ($image) {/*si l'image existe*/
+                $originalName = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeImageName = $slugger->slug($originalName);/* permet de recup des image avec espace dans le nom et l'enlever*/
+                $newFileImageName = $safeImageName.'-'.uniqid().'.'.$image->guessExtension();/*cree un id unique a toute les images meme si elles ont un nom similaire*/
+
+                try {
+                    $image->move
+                        ($this->getParameter('image_directory'),
+                        $newFileImageName);/* on recup l'image et on la renomme et on la stocke dans le repoertoire */
+                }catch (FileException $exception) {}/*en cas d'erreur*/
+                    $product->setImage($newFileImageName);
+
+                $entityManager->flush();
+                
+            }
+    
 
             $this->addFlash('info', "L'article a été modifié avec succès");
             return $this->redirectToRoute('app_product_index', [], Response::HTTP_SEE_OTHER);
