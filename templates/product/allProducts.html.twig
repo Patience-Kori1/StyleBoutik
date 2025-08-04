@@ -21,9 +21,9 @@
 <a href="{{ path('app_product_new') }}" class="btn btn-warning" id="add_product">Ajouter un article</a>
 <h1>Affichage des produits</h1>
 <div class="hey">
-<div class="msg_flash">
-    {% include 'layouts/flash_message.html.twig' %}
-</div>
+    <div class="msg_flash">
+        {% include 'layouts/flash_message.html.twig' %}
+    </div>
 
     {% for product in products %}
 

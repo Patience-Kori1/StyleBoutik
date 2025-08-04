@@ -4,16 +4,15 @@
 
 {% block body %}
 <style>
-    #a { position:absolute; top:287px; left:180px}
-    #a2 { position:absolute; top:287px; left:1178px}
+    #a { position:absolute; top:287px; left:11%}
+    #a2 { position:absolute; top:287px; left:75%}
 </style>
-
 
     {{ include('product/_form.html.twig', {'button_label': 'Update'}) }}
 
     <a href="{{ path('app_product_index') }}" class="btn btn-primary" id="a">Retour à la liste des produits</a>
 
-<a href="{{ path('app_product_index') }}" id="a2">{{ include('product/_delete_form.html.twig') }}</a>
+    <a href="{{ path('app_product_index') }}" id="a2">{{ include('product/_delete_form.html.twig') }}</a>
 
     
 {% endblock %}

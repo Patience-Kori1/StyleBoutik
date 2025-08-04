@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Repository\AddProductHistoryRepository;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -154,7 +155,18 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
             'form' => $form->createView(),
             'product' => $product,
         ]);
+    }
+     #[Route('/add/product/{id}/stock/history', name: 'app_product_stock_add_history', methods: ['GET'])]
+     public function showHistoryProductStock($id, ProductRepository $productRepository, AddProductHistoryRepository $addProductHistory ): Response
+    {
 
+            $product= $productRepository->find($id);
+            $productAddHistory = $addProductHistory->findBy(['product'=> $product],['id'=> 'DESC']);  
+            
+            return $this->render('product/addedHistoryStockShow.html.twig', [
+                "productsAdded" => $productAddHistory,
+                "product" => $product
+            ]);
     }
 
 }

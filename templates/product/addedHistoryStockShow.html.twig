@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello UserController!{% endblock %}
+
+{% block body %}
+
+<style>
+    .table {width:50%}
+    .container {margin: 0 30%}
+    .link {display:flex; justify-content:space-between; width:50%}
+</style>
+    <div class="container">
+    
+        <h1 class="mt-4 mb-5"> Historique de stock de {{product.name}}</h1>
+
+        {% include 'layouts/flash_message.html.twig' %}
+
+        <table class='table'> {# table-bordered border-primary#}
+
+            <thead>    
+                <tr class="table-primary">
+                    <th scope="col">id</th>
+                    <th scope="col">Quantité</th>
+                    <th scope="col">Date d'approvisonnement</th>
+                </tr>
+            </thead> 
+
+            <tbody>
+                {% for productAdded in productsAdded %}
+                    <tr>
+                        <th scope="row" >{{productAdded.id}}</th> 
+                        <td>{{productAdded.quantity}}</td>
+                        <td>{{ productAdded.createdAt|date('d-m-Y à H:i:s') }}</td>
+                        
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="link">
+            <a href="{{ path('app_product_index', {'id': product.id}) }}" class="btn btn-primary">Retour à la liste des produits</a> 
+            <a href="{{ path('app_product_show', {'id': product.id}) }}" class="btn btn-info">Détail du produit</a>
+            <a href="{{ path('app_product_stock_add', {'id': product.id})}}" class="btn btn-success">Renflouer le stock</a> 
+        </div>
+    </div>
+{% endblock %}

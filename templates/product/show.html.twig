@@ -17,8 +17,9 @@
     .price_stock {display:flex;flex-direction:column; align-items:flex-start}
     .second {text-align: start; padding-right:1rem}
     h1 { margin: 0.5rem 21.5%}
-
+    #add_product {position:sticky; top:13%; left:85%; z-index: 1;}
 </style>
+<a href="{{ path('app_product_new') }}" class="btn btn-warning" id="add_product">Ajouter un article</a>
 <h1>{{product.name}}</h1>
 <div class="hey">
 
@@ -39,7 +40,8 @@
                     <div class="link">
                         <a href="{{ path('app_product_edit', {'id': product.id}) }}" class="btn btn-info">Modifier</a>
                         <a href="{{ path('app_product_delete', {'id' : product.id})}}" >{{ include('product/_delete_form.html.twig') }}</a>  
-                        <a href="{{ path('app_product_new') }}" class="btn btn-primary">Ajouter</a>     
+                        <a href="{{ path('app_product_stock_add', {'id': product.id})}}" class="btn btn-secondary">Renflouer le stock</a> 
+                        <a href="{{ path('app_product_stock_add_history', {'id': product.id}) }}" class="btn btn-primary">Historique stock</a>    
                     </div>
                     <div class="second">
                         <p class="card-text">{{ product.description }}</p>
