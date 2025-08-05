@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Page produit{% endblock %}
+
+{% block body %}
+    <div class="container">
+          <div class="card mb-12 mt-5">
+            <div class="row g-0">
+                
+                <div class="col-md-4">
+                    <img src="/uploads/images/{{product.image}}" class="img-fluid rounded-start" alt="...">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h1 class="card-title text-primary">{{ product.name }}</h1>
+                        <p class="card-text">{{ product.description }} </p>
+                        <h3>{{ product.price }} €</h3>
+                        <a {#href="{{ path('',{'id':product.id}) }}"#} class="btn btn-outline-primary">Ajouter au panier</a>
+                        <a href="{{ path('app_home_page') }}" class="btn btn-outline-success">Retour à la page d'accueil</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

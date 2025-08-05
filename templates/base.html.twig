@@ -17,8 +17,10 @@
     <body>
         <style>
             .example-wrapper { margin: 1em auto; max-width: 1100px; width: 95%; font: 18px/1.5 sans-serif; display:flex; gap: 3rem; flex-wrap:wrap; justify-content: space-evenly}
-            body { background-color: #d7dde2ff}
-                #a { position:absolute; top:84px; left:1305px}
+            body { background-color: #d7dde2ff; background-image: }
+            {#url('{{ asset('uploads/images/Basket-Puma-688fc290d48f1.webp') }}')#}
+            #a { position:absolute; top:84px; left:1305px}
+            
         </style>
 
         {% block nav %}

@@ -6,70 +6,26 @@
 
 <style>
     h1 {text-align:center}
-    .hey { margin: 1em auto;  width: 95%; font: 18px/1.5 sans-serif;display:flex; justify-content:space-evenly; gap:1rem; flex-wrap:wrap}
-    .hey > div {width: 30rem}
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-    .link {display:flex; flex-direction: column; align-items:center; gap:0.5rem}
-    .link a {width: 7rem;}
-    .card-body {display:flex; flex-direction:column;}
-    .first {display:flex; justify-content: space-evenly; padding: 1rem}
-    .first-one { display:flex; flex-direction:column; justify-content:space-between; align-items: flex-start}
-    {# .second {background-color:yellow} #}
-    .msg_flash {position:absolute; top:70px; left:90px; z-index: 1;}
-    #add_product {position:sticky; top:110px; left:1390px; z-index: 1;}
+   
 </style>
-<a href="{{ path('app_product_new') }}" class="btn btn-warning" id="add_product">Ajouter un article</a>
-<h1>Affichage des produits</h1>
-<div class="hey">
-    <div class="msg_flash">
-        {% include 'layouts/flash_message.html.twig' %}
+<div class="container">
+    <h1 class="mb-5 mt-5">Produits</h1>
+    <div class="row">
+        {% for product in products %}
+            <div class="col-md-3 mt-4">
+                <div class="card" style="width: 18rem;">
+                    <img src="{{ asset('uploads/images/'~product.image)}}" class="imgproduct card-img-top" alt="image des produits">
+                    <div class="card-body">
+                        <a class="titleProductLink" {#href="{{ path('app_home_product_show',{'id':product.id}) }} "#}><h5 class="card-title titleProduct">{{ product.name }}</h5></a>
+                        
+                        <p class="card-text">{{ product.description|slice(0,60) }}...</p>
+                        <h3>{{ product.price }} €</h3> <!-- altgr + e pour le sigle euro-->
+                        <a href="{{ path('app_home_product_show',{'id':product.id}) }}" class="btn btn-outline-success">Ajouter au panier</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
     </div>
-
-    {% for product in products %}
-
-        <div class="card text-center">
-            <div class="card-body">
-                <div class="first">
-                    <div class="first-one">
-                        <h5 class="card-title">{{product.name}}</h5>
-                        <p class="card-text">{{product.price}} euros</p>
-                        {% if product.stock == 0 %}
-                            <p>Stock épuisé</p>
-                        {% else %}
-                            <p>{{ product.stock }} en stock</p>
-                        {% endif %}
-
-                        <div class="link">
-                            <a href="{{ path('app_product_show', {'id': product.id}) }}" class="btn btn-success">Voir</a>
-
-                            {% if is_granted("ROLE_ADMIN") %}
-                                <a {#href="{{ path('app_delete_form', {'id' : user.id})}}"#} class="btn btn-danger">Supprimer</a>
-
-                                <a href="{{ path('app_product_edit', {'id': product.id}) }}" class="btn btn-info">Modifier</a>
-                            {% endif %}
-                            
-                        </div>
-                         
-                    </div>
-                    <div>
-                        <a href="{{ path('app_product_show', {'id': product.id}) }}">
-                            <img src="/uploads/images/{{ product.image}}" width="200 rem"alt="">
-                        </a>  
-
-                        {% if is_granted("ROLE_ADMIN") %}
-                            <a href="{{ path('app_product_stock_add', {'id': product.id})}}" class="btn btn-primary">Ajouter le stock</a>
-                        {% endif %}
-                    </div>
-
-                    
-                </div>
-                <div class="second">
-                    <p class="card-text">{{ product.description|slice(0,100) }}...</p>
-                </div>
-            </div>   
-        </div> 
-
-    {% endfor %}
 </div>
 
 {% endblock %}
