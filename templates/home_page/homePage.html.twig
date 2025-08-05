@@ -23,7 +23,7 @@
                         
                         <p class="card-text">{{ product.description|slice(0,60) }}...</p>
                         <h3>{{ product.price }} €</h3> <!-- altgr + e pour le sigle euro-->
-                        <a href="{{ path('app_home_product_show',{'id':product.id}) }}" class="btn btn-outline-success">Ajouter au panier</a>
+                        <a href="{{ path('app_home_product_show',{'id':product.id}) }}" class="btn btn-outline-primary">Ajouter au panier</a>
                     </div>
                 </div>
             </div>

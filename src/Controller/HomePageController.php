@@ -15,9 +15,11 @@ final class HomePageController extends AbstractController
     public function homePage(ProductRepository $productRepo, CategorieRepository $categoryRepo): Response
     {
         $products= $productRepo->findAll();
+        $category = $categoryRepo->findAll();
        
         return $this->render('home_page/homePage.html.twig', [
             'products' => $products,
+            'category' => $category,
         ]);
     }
 
@@ -34,11 +36,13 @@ final class HomePageController extends AbstractController
     }
 
      #[Route('/product/subcategory/{id}/filter ', name: 'app_home_product_filter', methods: ['GET'])]
-    public function filter($id, SubCategoryRepository $subCategoryRepository): Response //ici on recupere l'id et la repo des sous catégories
+    public function filter($id, SubCategoryRepository $subCatRepo): Response //ici on recupere l'id et la repo des sous catégories
     
     {
-        
+        $subCategory= $subCatRepo->find($id);
+        // dd($productSubCat);
         return $this->render('home_page/filter.html.twig', [ //il faut bien sur créer ce fichier
+            'subCategory'=> $subCategory,
             
         ]);
     }
