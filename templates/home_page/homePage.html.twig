@@ -8,6 +8,7 @@
     h1 {text-align:center}
     .titleProductLink {text-decoration:none; font-weight: }
     .titleProductLink h5 {font-weight: 600}
+    .row {margin-bottom: 2rem}
 </style>
 <div class="container">
     <h1 class="mb-5 mt-5">Produits</h1>
@@ -29,6 +30,7 @@
             </div>
         {% endfor %}
     </div>
+    {{ knp_pagination_render(products, 'layouts/pagination_template.html.twig') }}
 </div>
 
 {% endblock %}
