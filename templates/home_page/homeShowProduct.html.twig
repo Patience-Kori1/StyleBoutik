@@ -4,12 +4,13 @@
 
 {% block body %}
     <div class="container">
-          <div class="card mb-12 mt-5">
+        <h2 class="mt-5">Votre produit actuel</h2>
+        <div class="card mb-12 mt-5">
             <div class="row g-0">
-                
                 <div class="col-md-4">
                     <img src="/uploads/images/{{product.image}}" class="img-fluid rounded-start" alt="...">
                 </div>
+
                 <div class="col-md-8">
                     <div class="card-body">
                         <h1 class="card-title text-primary">{{ product.name }}</h1>
@@ -21,5 +22,23 @@
                 </div>
             </div>
         </div>
+
+        <h2 class="mt-5">Dernier produits ajoutés</h2>
+         <div class="row">
+            {% for product in products %}
+                <div class="col-md-3 mt-4">
+                    <div class="card" style="width: 18rem;">
+                        <img src="{{ asset('uploads/images/'~product.image)}}" class="imgproduct card-img-top" alt="image des produits">
+                        <div class="card-body">
+                            <a class="titleProductLink" href="{{ path('app_home_product_show',{'id':product.id}) }} "><h5 class="card-title titleProduct">{{ product.name }}</h5></a>
+                            <p class="card-text">{{ product.description|slice(0,60) }}...</p>
+                            <h3>{{ product.price }} €</h3> <!-- altgr + e pour le sigle euro-->
+                            <a {#href="{{ path('app_cart_new',{'id':product.id}) }}"#} class="btn btn-outline-success">Ajouter au panier</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
     </div>
 {% endblock %}
