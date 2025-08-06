@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello OrderController!{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="example-wrapper">
+    <div class="container">
+        <div class="row">
+            <div class="col-8">
+                <h1 class='mt-4 mb-4'>Commande</h1>
+                 {{ form_start(form) }}
+                    {{ form_widget(form) }}
+                <input type="submit" value="Continuer" class="btn btn-outline-primary">
+                {{ form_end(form) }}
+            </div>
+            <div class="col-4">
+                 <span class='mb-2'>Montant à payer: </span>
+                <h3>
+                    <span id="card-price">{{ total }}</span>
+                    €
+                </h3>  
+                <span>Frais de livraison</span> 
+                <h3>
+            </div>
+        </div>
+    </div>   
+</div>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="crossorigin="anonymous">
+</script>
+<script>
+      $(document).ready(function(){
+        // Sélectionne l'élément HTML avec l'id "order_city" et stocke-le dans la variable citySelector
+            const citySelector = $('#order_city');
+                // Récupère la valeur actuelle de l'élément citySelector (c'est-à-dire la valeur sélectionnée dans la liste déroulante)
+            const cityValue = citySelector.val();
+      })
+</script>
+
+{% endblock %}
