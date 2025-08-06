@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}City index{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>City index</h1>
+
+   
+
+        <table class='table table-bordered border-primary'> {# table-bordered border-primary#}
+
+            <thead>    
+                <tr class="table-primary">
+                    <th scope="col">id</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Frais de livraison</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead> 
+        <tbody>
+        {% for city in cities %}
+            <tr>
+                <th scope="row" >{{city.id}}</th> 
+                <td>{{ city.name }}</td>
+                <td>{{ city.shippingCost }}</td>
+                <td>
+                    <a class="btn btn-primary" href="{{ path('app_city_show', {'id': city.id}) }}">Voir</a>
+                    <a class="btn btn-info" href="{{ path('app_city_edit', {'id': city.id}) }}">Modifier</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a class="btn btn-success" href="{{ path('app_city_new') }}">Create new</a>
+</div>
+{% endblock %}
