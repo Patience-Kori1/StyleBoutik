@@ -16,7 +16,7 @@
                         <h1 class="card-title text-primary">{{ product.name }}</h1>
                         <p class="card-text">{{ product.description }} </p>
                         <h3>{{ product.price }} €</h3>
-                        <a {#href="{{ path('',{'id':product.id}) }}"#} class="btn btn-outline-primary">Ajouter au panier</a>
+                        <a href="{{ path('app_cart_new',{'id':product.id}) }}" class="btn btn-outline-primary">Ajouter au panier</a>
                         <a href="{{ path('app_home_page') }}" class="btn btn-outline-success">Retour à la page d'accueil</a>
                     </div>
                 </div>
@@ -33,7 +33,7 @@
                             <a class="titleProductLink" href="{{ path('app_home_product_show',{'id':product.id}) }} "><h5 class="card-title titleProduct">{{ product.name }}</h5></a>
                             <p class="card-text">{{ product.description|slice(0,60) }}...</p>
                             <h3>{{ product.price }} €</h3> <!-- altgr + e pour le sigle euro-->
-                            <a {#href="{{ path('app_cart_new',{'id':product.id}) }}"#} class="btn btn-outline-success">Ajouter au panier</a>
+                            <a href="{{ path('app_cart_new',{'id':product.id}) }}" class="btn btn-outline-success">Ajouter au panier</a>
                         </div>
                     </div>
                 </div>
