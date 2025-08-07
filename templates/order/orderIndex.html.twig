@@ -19,16 +19,24 @@
                 {{ form_end(form) }}
             </div>
             <div class="col-4">
+                
                 <span class='mb-2'>Montant à payer: </span>
                 <h3>
                     <span id="card-price">{{ total }}</span>
                     €
                 </h3>  
+
                 <span>Frais de livraison</span> 
                 <h3>
                     <span id="shippingCost"></span>
                     €
-                </h3> 
+                </h3>
+
+                <span>Montant total de livraison</span> 
+                <h3>
+                    <span class="total_Price"></span>
+                    €
+                </h3>  
             </div> 
         </div>
     </div>   
@@ -43,21 +51,36 @@
         const cityValue = citySelector.val();
         const url = `http://localhost:8000/city/${cityValue}/shipping/cost`;
 
-    
-        $.ajax({
-            url: url,
-            type: 'GET',
-            success: function(response) {
-                const newResponse = JSON.parse(response)
-                if (parseInt(newResponse.status) === 200){
-                    console.log(newResponse.status)
-                    $("#shippingCost").text(newResponse.content)
+        function ajaxRequest(url) {
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function(response) {
+                    const newResponse = JSON.parse(response)
+                    if (parseInt(newResponse.status) === 200){
+                        console.log(newResponse.status);
+                        $("#shippingCost").text(newResponse.content);
+
+                        const cardPrice = parseInt($("#card-price").text());
+                        //console.log(cardPrice);
+
+                        const shippingCost = parseInt($('#shippingCost').text());
+                        //console.log(shippingCost);
+
+                        $('.total_Price').text(cardPrice + shippingCost);
+                    }
+                },
+                error:function(xhr,status,error){
+
                 }
-            },
-
-            error:function(xhr,status,error){
-
-            }
+            })  
+        } 
+        ajaxRequest(url)
+            
+        citySelector.on('change',function() {
+            const urlUpdate = `http://localhost:8000/city/${$(this).val()}/shipping/cost`;
+            //alert(urlUpdate)
+            ajaxRequest(urlUpdate)
         })
     })
 
