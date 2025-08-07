@@ -19,26 +19,48 @@
                 {{ form_end(form) }}
             </div>
             <div class="col-4">
-                 <span class='mb-2'>Montant à payer: </span>
+                <span class='mb-2'>Montant à payer: </span>
                 <h3>
                     <span id="card-price">{{ total }}</span>
                     €
                 </h3>  
                 <span>Frais de livraison</span> 
                 <h3>
-            </div>
+                    <span id="shippingCost"></span>
+                    €
+                </h3> 
+            </div> 
         </div>
     </div>   
 </div>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="crossorigin="anonymous">
 </script>
 <script>
-      $(document).ready(function(){
-        // Sélectionne l'élément HTML avec l'id "order_city" et stocke-le dans la variable citySelector
-            const citySelector = $('#order_city');
-                // Récupère la valeur actuelle de l'élément citySelector (c'est-à-dire la valeur sélectionnée dans la liste déroulante)
-            const cityValue = citySelector.val();
-      })
+
+    $(document).ready(function(){
+        
+        const citySelector = $('#order_city');
+        const cityValue = citySelector.val();
+        const url = `http://localhost:8000/city/${cityValue}/shipping/cost`;
+
+    
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function(response) {
+                const newResponse = JSON.parse(response)
+                if (parseInt(newResponse.status) === 200){
+                    console.log(newResponse.status)
+                    $("#shippingCost").text(newResponse.content)
+                }
+            },
+
+            error:function(xhr,status,error){
+
+            }
+        })
+    })
+
 </script>
 
 {% endblock %}

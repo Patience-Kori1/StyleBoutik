@@ -2,14 +2,15 @@
 
 namespace App\Controller;
 
+use App\Entity\City;
 use App\Entity\Order;
 use App\Form\OrderType;
 use App\Repository\ProductRepository;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 final class OrderController extends AbstractController
 {
@@ -22,7 +23,7 @@ final class OrderController extends AbstractController
             $cartWithData[] = [
                 'product' => $productRepo->find($id),
                 'quantity' => $quantity
-            ];
+            ];  
         }
 
         //Calcul du total du panier  
@@ -38,5 +39,14 @@ final class OrderController extends AbstractController
             'form'=>$form->createView(),
             'total'=> $total
         ]);
+    }
+    #[Route('/city/{id}/shipping/cost', name: 'app_city_shipping_cost')]
+    public function cityShippingCost(City $city): Response
+    {
+        
+        $cityShippingPrice = $city->getShippingCost();
+        // dd($cityShippingPrice);
+        return new Response(json_encode(['status'=>200, "message"=>'on', 'content'=> $cityShippingPrice]));
+
     }
 }
