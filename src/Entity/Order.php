@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\OrderRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
@@ -34,6 +36,17 @@ class Order
 
     #[ORM\Column]
     private ?bool $payOnDelivery = null;
+
+    /**
+     * @var Collection<int, OrderProducts>
+     */
+    #[ORM\OneToMany(targetEntity: OrderProducts::class, mappedBy: 'orderedProducts', orphanRemoval: true)]
+    private Collection $orderedProducts;
+
+    public function __construct()
+    {
+        $this->orderedProducts = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -120,6 +133,36 @@ class Order
     public function setPayOnDelivery(bool $payOnDelivery): static
     {
         $this->payOnDelivery = $payOnDelivery;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, OrderProducts>
+     */
+    public function getOrderedProducts(): Collection
+    {
+        return $this->orderedProducts;
+    }
+
+    public function addOrderedProduct(OrderProducts $orderedProduct): static
+    {
+        if (!$this->orderedProducts->contains($orderedProduct)) {
+            $this->orderedProducts->add($orderedProduct);
+            $orderedProduct->setOrderedProducts($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrderedProduct(OrderProducts $orderedProduct): static
+    {
+        if ($this->orderedProducts->removeElement($orderedProduct)) {
+            // set the owning side to null (unless already changed)
+            if ($orderedProduct->getOrderedProducts() === $this) {
+                $orderedProduct->setOrderedProducts(null);
+            }
+        }
 
         return $this;
     }
