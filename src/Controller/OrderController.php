@@ -6,6 +6,7 @@ use App\Entity\City;
 use App\Entity\Order;
 use App\Form\OrderType;
 use App\Repository\ProductRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -15,7 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 final class OrderController extends AbstractController
 {
     #[Route('/order', name: 'app_order')]
-    public function index(Request $request, SessionInterface $session, ProductRepository $productRepo): Response
+    public function index(Request $request, SessionInterface $session, ProductRepository $productRepo, EntityManagerInterface $em): Response
     {
         $cart= $session->get('cart',[]);
         $cartWithData = [];
@@ -35,6 +36,13 @@ final class OrderController extends AbstractController
         $order= new Order;
         $form= $this->createForm(OrderType::class, $order);
         $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($order);
+            $em->flush();
+
+            return $this->redirectToRoute('app_sub_category_index', [], Response::HTTP_SEE_OTHER);
+        }
+
         return $this->render('order/orderIndex.html.twig', [
             'form'=>$form->createView(),
             'total'=> $total
