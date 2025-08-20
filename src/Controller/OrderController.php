@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\City;
 use App\Entity\Order;
+use App\Service\Cart;
 use App\Form\OrderType;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,36 +17,35 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 final class OrderController extends AbstractController
 {
     #[Route('/order', name: 'app_order')]
-    public function index(Request $request, SessionInterface $session, ProductRepository $productRepo, EntityManagerInterface $em): Response
+    public function index(Request $request, SessionInterface $session, ProductRepository $productRepo, EntityManagerInterface $em, Cart $cart): Response
     {
-        $cart= $session->get('cart',[]);
-        $cartWithData = [];
-        foreach ($cart as $id => $quantity) {
-            $cartWithData[] = [
-                'product' => $productRepo->find($id),
-                'quantity' => $quantity
-            ];  
-        }
+        // Récupère les données du panier à partir de la session using le service Cart
+        $data = $cart->getCart($session);
 
-        //Calcul du total du panier  
-        $total = array_sum(array_map(function($item){
-            return $item['product']->getPrice()* $item['quantity'];
-        },$cartWithData));
-        // dd($cartWithData);
-
-        $order= new Order;
+        // Crée un nouvel objet Order
+        $order = new Order();
+        
+        // Crée un formulaire pour gérer la création de la commande en utilisant le type de formulaire OrderType
         $form= $this->createForm(OrderType::class, $order);
+        // dd($order);
+        // Gère la soumission du formulaire
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($order);
-            $em->flush();
 
-            return $this->redirectToRoute('app_sub_category_index', [], Response::HTTP_SEE_OTHER);
+        if ($form->isSubmitted() && $form->isValid()) {
+             if($order->isPayOnDelivery()) {
+
+                $order->setTotalPrice($data['total']);
+                // Définit la date de création de la commande
+                $order->setCreatedAt(new \DateTimeImmutable());
+                $em->persist($order);
+                $em->flush();
+            }
+            // return $this->redirectToRoute('app_sub_category_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('order/orderIndex.html.twig', [
             'form'=>$form->createView(),
-            'total'=> $total
+            'total'=> $data['total'],
         ]);
     }
     #[Route('/city/{id}/shipping/cost', name: 'app_city_shipping_cost')]
