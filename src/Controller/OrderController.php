@@ -6,6 +6,7 @@ use App\Entity\City;
 use App\Entity\Order;
 use App\Service\Cart;
 use App\Form\OrderType;
+use App\Entity\OrderProducts;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,6 +40,21 @@ final class OrderController extends AbstractController
                 $order->setCreatedAt(new \DateTimeImmutable());
                 $em->persist($order);
                 $em->flush();
+                // dd($data['cart']);
+
+                foreach($data['cart'] as $value) {
+                    // Crée un nouvel objet OrderProducts
+                    $orderProduct = new OrderProducts();
+                    // Définit la commande pour le produit de la commande
+                    $orderProduct->setOrderedProducts($order);
+                    // Définit le produit pour le produit de la commande
+                    $orderProduct->setProduct($value['product']);
+                    // Définit la quantité pour le produit de la commande
+                    $orderProduct->setQuantity($value['quantity']);
+                    // Enregistre le produit de la commande dans la base de données
+                    $em->persist($orderProduct);
+                    $em->flush();
+                }
             }
             // return $this->redirectToRoute('app_sub_category_index', [], Response::HTTP_SEE_OTHER);
         }
