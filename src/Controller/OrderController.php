@@ -33,28 +33,39 @@ final class OrderController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-             if($order->isPayOnDelivery()) {
+            if($order->isPayOnDelivery()) {
 
-                $order->setTotalPrice($data['total']);
-                // Définit la date de création de la commande
-                $order->setCreatedAt(new \DateTimeImmutable());
-                $em->persist($order);
-                $em->flush();
-                // dd($data['cart']);
+                // Vérifie si le total du panier n'est pas vide pour savoir si le panier n'est pas vide
+                if(!empty($data['total'])) {
+                    $order->setTotalPrice($data['total']);
+                    // Définit la date de création de la commande
+                    $order->setCreatedAt(new \DateTimeImmutable());
+                    $em->persist($order);
+                    // $em->flush();
+                    // dd($data['cart']);
 
-                foreach($data['cart'] as $value) {
-                    // Crée un nouvel objet OrderProducts
-                    $orderProduct = new OrderProducts();
-                    // Définit la commande pour le produit de la commande
-                    $orderProduct->setOrderedProducts($order);
-                    // Définit le produit pour le produit de la commande
-                    $orderProduct->setProduct($value['product']);
-                    // Définit la quantité pour le produit de la commande
-                    $orderProduct->setQuantity($value['quantity']);
-                    // Enregistre le produit de la commande dans la base de données
-                    $em->persist($orderProduct);
+                    foreach($data['cart'] as $value) {
+                        // Crée un nouvel objet OrderProducts
+                        $orderProduct = new OrderProducts();
+                        // Définit la commande pour le produit de la commande
+                        $orderProduct->setOrderedProducts($order);
+                        // Définit le produit pour le produit de la commande
+                        $orderProduct->setProduct($value['product']);
+                        // Définit la quantité pour le produit de la commande
+                        $orderProduct->setQuantity($value['quantity']);
+                        // Enregistre le produit de la commande dans la base de données
+                        $em->persist($orderProduct);
+                        // $em->flush();
+                    }
+                    //Nettoyer la logique de persistance (un seul flush à la fin).
                     $em->flush();
                 }
+                
+                // Remise à zéro du contenu du panier en session après chaque soumission
+                $session->set('cart',[]);
+                
+                //Redirection vers la page du panier qui normalement et remise à zéro
+                return $this->redirectToRoute('app_cart');
             }
             // return $this->redirectToRoute('app_sub_category_index', [], Response::HTTP_SEE_OTHER);
         }
