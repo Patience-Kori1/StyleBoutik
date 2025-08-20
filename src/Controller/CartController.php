@@ -2,11 +2,12 @@
 
 namespace App\Controller;
 
+use App\Service\Cart;
 use App\Repository\ProductRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 final class CartController extends AbstractController
 {
@@ -17,25 +18,15 @@ final class CartController extends AbstractController
     }
 
     #[Route('/cart', name: 'app_cart', methods:['GET'])]
-    public function cart(SessionInterface $session, ProductRepository $productRepo): Response
+    public function cart(SessionInterface $session, Cart $cart): Response
     {
-        $cart= $session->get('cart',[]);
-        $cartWithData = [];
-        foreach ($cart as $id => $quantity) {
-            $cartWithData[] = [
-                'product' => $this->productRepo->find($id),
-                'quantity' => $quantity
-            ];
-        }
+     
+         $data = $cart->getCart($session);
 
-        //Calcul du total du panier  
-        $total = array_sum(array_map(function($item){
-            return $item['product']->getPrice()* $item['quantity'];
-        },$cartWithData));
-        // dd($cartWithData);
+        // Rendu de la vue pour afficher le panier
         return $this->render('cart/cart.html.twig', [
-            'items' => $cartWithData,
-            'total' => $total,
+            'items'=>$data['cart'], //on retourne ses deux clés afin de les récuperer dans la vue
+            'total'=>$data['total']
         ]);
     }
 
