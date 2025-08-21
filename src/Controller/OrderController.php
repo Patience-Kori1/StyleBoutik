@@ -10,6 +10,7 @@ use App\Entity\OrderProducts;
 use App\Repository\OrderRepository;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -96,9 +97,15 @@ final class OrderController extends AbstractController
     }
 
     #[Route('/editor/order', name:'app_orders_show')]
-    public function getAllOrder(OrderRepository $orderRepo) : Response
+    public function getAllOrder(OrderRepository $orderRepo, Request $request, PaginatorInterface $paginator) : Response
     {
         $orders = $orderRepo->findAll(); 
+        $data = $orderRepo->findBy([],['id'=>'DESC']);
+        $orders = $paginator->paginate(
+            $data,
+            $request->query->getInt('page', 1),//met en place la pagination
+            3 //je choisi la limite de 6 commandes par page
+        );   
         return $this->render('order/orders.html.twig', [
             'orders'=>$orders
         ]);
