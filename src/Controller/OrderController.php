@@ -32,8 +32,10 @@ final class OrderController extends AbstractController
         // Gère la soumission du formulaire
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            if($order->isPayOnDelivery()) {
+        if ($form->isSubmitted() && $form->isValid()) 
+        {
+            if($order->isPayOnDelivery()) 
+            {
 
                 // Vérifie si le total du panier n'est pas vide pour savoir si le panier n'est pas vide
                 if(!empty($data['total'])) {
@@ -65,7 +67,7 @@ final class OrderController extends AbstractController
                 $session->set('cart',[]);
                 
                 //Redirection vers la page du panier qui normalement et remise à zéro
-                return $this->redirectToRoute('app_cart');
+                return $this->redirectToRoute('app_order_message');
             }
             // return $this->redirectToRoute('app_sub_category_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -75,6 +77,7 @@ final class OrderController extends AbstractController
             'total'=> $data['total'],
         ]);
     }
+
     #[Route('/city/{id}/shipping/cost', name: 'app_city_shipping_cost')]
     public function cityShippingCost(City $city): Response
     {
@@ -83,5 +86,11 @@ final class OrderController extends AbstractController
         // dd($cityShippingPrice);
         return new Response(json_encode(['status'=>200, "message"=>'on', 'content'=> $cityShippingPrice]));
 
+    }
+
+    #[Route('/order_message', name:'app_order_message')]
+    public function orderMessage() : Response 
+    {
+        return $this->render('order/order_message.html.twig');
     }
 }
