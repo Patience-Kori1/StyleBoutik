@@ -3,59 +3,57 @@
 {% block title %} Commandes {% endblock %}
 
 {% block body %}
+<div class="container my-5">
+    <h1 class="text-center mb-5">Historique des commandes</h1>
 
-<div class="container">
-    <h1 class="mt-4 mb-5 text-center">Les commandes</h1>
     {% for order in orders %}
-        <h2>Commande n° {{ order.id }}</h2>
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    Commande n° {{ order.id }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <!-- Infos utilisateur -->
+                <h6 class="text-primary mb-3">Informations client</h6>
+                <ul class="list-group list-group-flush mb-4">
+                    <li class="list-group-item"><strong>Nom :</strong> {{ order.firstName }} {{ order.lastName }}</li>
+                    <li class="list-group-item"><strong>Téléphone :</strong> {{ order.phone }}</li>
+                    <li class="list-group-item"><strong>Adresse :</strong> {{ order.adress }}, {{ order.city.name }}</li>
+                </ul>
 
-        <h5 class='text-primary'> Identification de l'utilisateur : {{ order.firstName }}</h5>
-        <table class='table'> {# table-bordered border-primary#}
-            <thead>    
-                <tr class="table-primary">
-                    <th scope="col">Nom</th>
-                    <th scope="col">Prenom</th>
-                    <th scope="col">Téléphone</th>
-                    <th scope="col">Adresse</th>
-                    <th scope="col">Ville</th>
-                </tr>
-            </thead> 
-            <tbody>
-                <tr>
-                    <th scope="row" >{{order.firstName}}</th> 
-                    <td>{{order.firstName}}</td>
-                    <td>{{order.lastName}}</td>
-                    <td>{{order.adress}}</td>
-                    <td>{{order.city.name}}</td>
-                </tr>
-            </tbody>
-        </table>
+                <!-- Produits -->
+                <h6 class="text-primary mb-3">Produits commandés</h6>
+                <div class="table-responsive mb-3">
+                    <table class="table table-bordered align-middle">
+                        <thead class="table-primary text-center">
+                            <tr>
+                                <th>Produit</th>
+                                <th>Prix unitaire</th>
+                                <th>Quantité</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in order.orderedProducts %}
+                                <tr>
+                                    <td>{{ product.product.name }}</td>
+                                    <td class="text-center">{{ product.product.price }} €</td>
+                                    <td class="text-center">{{ product.quantity }}</td>
+                                    <td class="text-center">{{ product.product.price * product.quantity }} €</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
 
-        <h5 class='text-primary'> Corps de la commande</h5>
-
-        <table class='table'> {# table-bordered border-primary#}
-            <thead>    
-                <tr class="table-primary">
-                    <th scope="col">Nom du produit</th>
-                    <th scope="col">Prix du produit</th>
-                    <th scope="col">Quantité</th>
-                    <th scope="col">Prix total</th>
-                </tr>
-            </thead> 
-            <tbody>
-                {% for product in order.orderedProducts %}
-                    <tr>
-                        <th scope="row">{{product.product.name}}</th> 
-                        <td>{{product.product.price}} € </td>
-                        <td>{{product.quantity}}</td>
-                        <td>{{product.product.price * product.quantity}} € </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    
-        <h5> Frais de livraison : {{ order.city.shippingCost}} €</h5>
-        <h5 class='mb-5'> Total à payer : {{ order.totalPrice}} €</h5>
-    {% endfor %}  
+                <!-- Totaux -->
+                <div class="d-flex justify-content-between align-items-center">
+                    <p class="mb-0">Frais de livraison : <strong>{{ order.city.shippingCost }} €</strong></p>
+                    <p class="mb-0 fs-5 fw-bold text-primary">Total : {{ order.totalPrice }} €</p>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
 </div>
 {% endblock %}
