@@ -7,6 +7,7 @@ use App\Entity\Order;
 use App\Service\Cart;
 use App\Form\OrderType;
 use App\Entity\OrderProducts;
+use App\Repository\OrderRepository;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -92,5 +93,14 @@ final class OrderController extends AbstractController
     public function orderMessage() : Response 
     {
         return $this->render('order/order_message.html.twig');
+    }
+
+    #[Route('/editor/order', name:'app_orders_show')]
+    public function getAllOrder(OrderRepository $orderRepo) : Response
+    {
+        $orders = $orderRepo->findAll(); 
+        return $this->render('order/orders.html.twig', [
+            'orders'=>$orders
+        ]);
     }
 }
