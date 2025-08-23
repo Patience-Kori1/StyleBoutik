@@ -116,14 +116,14 @@ final class OrderController extends AbstractController
     {
         $order = $orderRepository->find($id);
 
-        if($order->isCompleted() === false)
+        if($order->isCompleted() !== true )
         {
             $order->setIsCompleted(true);
             $entityManager->flush();
             $this->addFlash('success', 'Commande livrée');
         } 
 
-        elseif ($order->isCompleted() === true) 
+        elseif ($order->isCompleted() !== false) 
         {
             $order->setIsCompleted(false);
             $entityManager->flush();
@@ -133,5 +133,14 @@ final class OrderController extends AbstractController
         return $this->redirectToRoute('app_orders_show');
 
         // return $this->redirect($request->headers->get('referer'));//cela fait reference a la route precedent cette route ci
+    }
+
+    #[Route('/editor/order/{id}/remove', name: 'app_orders_remove')]
+    public function removeOrder(Order $order, EntityManagerInterface $em):Response 
+    {
+        $em->remove($order);
+        $em->flush();
+        $this->addFlash('danger', 'Commande supprimée');
+        return $this->redirectToRoute('app_orders_show');
     }
 }
