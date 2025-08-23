@@ -15,6 +15,7 @@
                 </h5>
             </div>
             <div class="card-body">
+
                 <!-- Infos utilisateur -->
                 <h6 class="text-primary mb-3">Informations client</h6>
                 <ul class="list-group list-group-flush mb-4">
@@ -23,8 +24,16 @@
                     <li class="list-group-item"><strong>Adresse :</strong> {{ order.adress }}, {{ order.city.name }}</li>
                 </ul>
 
-                <!-- Produits -->
-                <h6 class="text-primary mb-3">Produits commandés</h6>
+                <!-- Infos Produits -->
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="text-primary mb-3">Produits commandés</h6>
+                    {% if order.isCompleted ==true %}
+                        <p class="text-primary mb-3"> <span class="mb-0 fs-5 fw-bold text-success"> Livrée à {{ order.createdAt|date }} </span></p>
+                    {% else %}
+                        <p class="text-primary mb-3"><span class="mb-0 fs-5 fw-bold text-success"> Pas encore livrée</span>  </p>
+                    {% endif %}
+                </div>
+
                 <div class="table-responsive mb-3">
                     <table class="table table-bordered align-middle">
                         <thead class="table-primary text-center">
@@ -49,7 +58,7 @@
                 </div>
 
                 
-                <!-- Totaux -->
+                <!-- Infos Prix -->
                 <div class="d-flex justify-content-between align-items-center">
                     <p class="mb-0">Frais de livraison : <strong>{{ order.city.shippingCost }} €</strong></p>
                     <p class="mb-0 fs-5 fw-bold text-primary">Total : {{ order.totalPrice }} €</p>
