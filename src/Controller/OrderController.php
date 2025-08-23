@@ -115,9 +115,21 @@ final class OrderController extends AbstractController
     public function isCompletedUpdate(Request $request, $id, OrderRepository $orderRepository, EntityManagerInterface $entityManager):Response
     {
         $order = $orderRepository->find($id);
-        $order->setIsCompleted(true);
-        $entityManager->flush();
-        $this->addFlash('success', 'Commande livrée');
+
+        if($order->isCompleted() === false)
+        {
+            $order->setIsCompleted(true);
+            $entityManager->flush();
+            $this->addFlash('success', 'Commande livrée');
+        } 
+
+        elseif ($order->isCompleted() === true) 
+        {
+            $order->setIsCompleted(false);
+            $entityManager->flush();
+            $this->addFlash('danger', 'Commande pas encore livrée');
+        }
+        
         return $this->redirectToRoute('app_orders_show');
 
         // return $this->redirect($request->headers->get('referer'));//cela fait reference a la route precedent cette route ci

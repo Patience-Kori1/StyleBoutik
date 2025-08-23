@@ -29,7 +29,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <h6 class="text-primary mb-3">Produits commandés</h6>
                     {% if order.isCompleted ==true %}
-                        <p class="text-primary mb-3"> <span class="mb-0 fs-5 fw-bold text-success"> Livrée à <!--{{ order.createdAt|date }}--> </span></p>
+                        <p class="text-primary mb-3"> <span class="mb-0 fs-5 fw-bold text-success"> Commande Livrée </span></p>
                     {% else %}
                         <p class="text-primary mb-3"><span class="mb-0 fs-5 fw-bold text-success"> Pas encore livrée</span>  </p>
                     {% endif %}
@@ -61,8 +61,10 @@
                 
                 <!-- Infos Prix -->
                 <div class="d-flex justify-content-between align-items-center">
-                    {% if order.isCompleted != true %}
+                    {% if order.isCompleted == false %}
                         <a href="{{ path('app_orders_is-completed-update',{'id':order.id})}}" class='btn btn-outline-primary col-2 m-lg-1'>Marquer comme livrée</a>
+                    {% elseif order.isCompleted == true %}
+                        <a href="{{ path('app_orders_is-completed-update',{'id':order.id})}}" class='btn btn-outline-primary col-2 m-lg-1'>Marquer comme Non livrée</a>
                     {% endif %}
                     <p class="mb-0">Frais de livraison : <strong>{{ order.city.shippingCost }} €</strong></p>
                     <p class="mb-0 fs-5 fw-bold text-primary">Total : {{ order.totalPrice }} €</p>
