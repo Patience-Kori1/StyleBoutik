@@ -7,6 +7,7 @@ use App\Entity\Order;
 use App\Service\Cart;
 use App\Form\OrderType;
 use App\Entity\OrderProducts;
+use App\Service\StripePayment;
 use Symfony\Component\Mime\Email;
 use App\Repository\OrderRepository;
 use App\Repository\ProductRepository;
@@ -89,7 +90,9 @@ final class OrderController extends AbstractController
                 //Redirection vers la page du panier qui normalement et remise à zéro
                 return $this->redirectToRoute('app_order_message');
             }
-            // return $this->redirectToRoute('app_sub_category_index', [], Response::HTTP_SEE_OTHER);
+             // quand c'est false
+                $paymentStripe = new StripePayment(); //on importe notre service avec sa classe
+                $paymentStripe->startPayment($data); //on importe le panier donc $data
         }
 
         return $this->render('order/orderIndex.html.twig', [
