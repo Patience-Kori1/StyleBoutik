@@ -91,8 +91,11 @@ final class OrderController extends AbstractController
                 return $this->redirectToRoute('app_order_message');
             }
              // quand c'est false
-                $paymentStripe = new StripePayment(); //on importe notre service avec sa classe
-                $paymentStripe->startPayment($data); //on importe le panier donc $data
+            $paymentStripe = new StripePayment(); //on importe notre service avec sa classe
+            $paymentStripe->startPayment($data); //on importe le panier donc $data
+            $stripeRedirectUrl = $paymentStripe->getStripeRedirectUrl();
+            //dd( $stripeRedirectUrl);
+            return $this->redirect($stripeRedirectUrl);
         }
 
         return $this->render('order/orderIndex.html.twig', [
