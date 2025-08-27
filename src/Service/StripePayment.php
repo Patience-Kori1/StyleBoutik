@@ -14,12 +14,18 @@ class StripePayment
         Stripe::setApiVersion('2025-07-30.basil'); //on gère la version de Stripe
     }
 
-    public function startPayment($cart){
+    public function startPayment($cart, $shippingCost){
         // dd($cart);
         // Récupération des produits du panier
         $cartProducts = $cart['cart']; 
         // Initialisation d'un tableau vide pour stocker les produits formatés
-        $products = [];
+        $products = [
+             [ // Récupération à l'avance du prix de livraison selon la ville
+                'qte' => 1, 
+                'price' => $shippingCost,
+                'name' => "Frais de livraison"
+            ]
+        ];
 
         // Boucle pour parcourir chaque produit du panier
         foreach ($cartProducts as $value) {

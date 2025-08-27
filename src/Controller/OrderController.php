@@ -92,12 +92,12 @@ final class OrderController extends AbstractController
             }
              // quand c'est false
             $paymentStripe = new StripePayment(); //on importe notre service avec sa classe
-            $paymentStripe->startPayment($data); //on importe le panier donc $data
+            $shippingCost = $order->getCity()->getShippingCost();
+            $paymentStripe->startPayment($data, $shippingCost); //on importe le panier donc $data
             $stripeRedirectUrl = $paymentStripe->getStripeRedirectUrl();
             //dd( $stripeRedirectUrl);
             return $this->redirect($stripeRedirectUrl);
         }
-
         return $this->render('order/orderIndex.html.twig', [
             'form'=>$form->createView(),
             'total'=> $data['total'],

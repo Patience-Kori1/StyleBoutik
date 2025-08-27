@@ -1,0 +1,147 @@
+{% extends 'base.html.twig' %}
+{% block title %}Paiement succes{% endblock %}
+
+{% block body %}
+
+
+<div class="container">
+    {# <h1>Paiement réalisé avec succès</h1> #}
+
+    <div class="card">
+        <div class="card-header">
+             Bonjour {#{{ order.firstName }} {{ order.lastName }} #}
+        </div>
+        <div class="card-body">
+            <!-- Infos utilisateur -->
+            {# <h6>Informations client</h6> #}
+            <h4>Votre paiement a été réalisé avec succès </h4>
+
+            <!-- Infos Produits -->
+            {# <h6>Détails de votre commande</h6> #}
+            {# <table>
+                <thead>
+                    <tr>
+                        <th>Nom du Produit</th>
+                        <th>Prix unitaire</th>
+                        <th>Quantité</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in order.orderedProducts %}
+                        <tr>
+                            <td>{{ product.product.name }}</td>
+                            <td>{{ product.product.price }} €</td>
+                            <td>{{ product.quantity }}</td>
+                            <td>{{ product.product.price * product.quantity }} €</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Infos Prix -->
+            <div class="footer">
+                <p>Frais de livraison : <strong>{{ order.city.shippingCost }} €</strong></p>
+                <p class="total">Total : {{ order.totalPrice }} €</p>
+            </div> #}
+        </div>
+    </div>
+</div>
+
+<style>
+    {# body {
+        font-family: DejaVu Sans, sans-serif;
+        font-size: 12px;
+        margin: 20px;
+        color: #333;
+    } #}
+
+    .container {
+        width: 50%;
+        margin: 0 auto;
+    }
+
+    h1 {
+        text-align: center;
+        margin: 2rem 0 2rem 0;
+    }
+
+    .card {
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-top: 10rem;
+    }
+
+    .card-header {
+        background-color: #0d6efd;
+        color: white;
+        padding: 10px;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .card-body {
+        padding: 15px;
+    }
+
+    h6 {
+        color: #0d6efd;
+        margin-bottom: 10px;
+        font-size: 13px;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    ul li {
+        padding: 8px 10px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    ul li:last-child {
+        border-bottom: none;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 15px;
+    }
+
+    table thead {
+        background-color: #cfe2ff;
+    }
+
+    table th, table td {
+        border: 1px solid #ddd;
+        padding: 6px;
+        text-align: center;
+    }
+
+    table th {
+        font-weight: bold;
+    }
+
+    .footer {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+        font-size: 1.2rem;
+    }
+
+    .footer strong {
+        font-weight: bold;
+    }
+
+    .footer .total {
+        font-size: 1.2rem;
+        color: #0d6efd;
+        font-weight: bold;
+    }
+</style>
+{% endblock %}
