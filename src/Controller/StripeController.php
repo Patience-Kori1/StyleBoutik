@@ -2,19 +2,21 @@
 
 namespace App\Controller;
 
+use Stripe\Stripe;
 use App\Repository\OrderRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Stripe\Stripe;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 final class StripeController extends AbstractController
 {
     #[Route('/pay/success', name: 'app_stripe_success')]
-    public function success(): Response
+    public function success(SessionInterface $session): Response
     {
+         $session->set('cart',[]);
         return $this->render('stripe/stripeSuccess.html.twig', [
             'controller_name' => 'StripeController',
         ]);
@@ -66,8 +68,15 @@ final class StripeController extends AbstractController
                 $fileName = 'stripe-detail-'.uniqid().'.txt';  
                 $orderId = $paymentIntent->metadata->orderId; // Récupère l'id dans Stripe
                 $order = $orderRepo->find($orderId); //récupère l'id dans l'entity
-                $order->setIsPaymentCompleted(1); // set paymentcompleted à true
-                $em->flush();
+
+                //Vérification du prix total de l'entity order et du stripe sont égaux
+                $cartPrice = $order->getTotalPrice();
+                $stripeTotalAmount = $paymentIntent->amount/100;
+                if($cartPrice==$stripeTotalAmount){
+                    $order->setIsPaymentCompleted(1);
+                    $em->flush();
+                }
+
 
                 file_put_contents($fileName, $orderId);//affiche dans le fichier Stripe de public l'id de la commande
                 break;
