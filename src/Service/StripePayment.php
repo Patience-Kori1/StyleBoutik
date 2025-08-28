@@ -14,7 +14,7 @@ class StripePayment
         Stripe::setApiVersion('2025-07-30.basil'); //on gère la version de Stripe
     }
 
-    public function startPayment($cart, $shippingCost){
+    public function startPayment($cart, $shippingCost, $orderId){
         // dd($cart);
         // Récupération des produits du panier
         $cartProducts = $cart['cart']; 
@@ -60,8 +60,10 @@ class StripePayment
             'shipping_address_collection' => [ //tableau de pays où on souhaite autorisés le paiement
                 'allowed_countries' => ['FR','EG'],
             ],
-            'metadata' => [
-                // 'orderid' =>$orderId//id de la commande
+            'payment_intent_data' => [
+                'metadata' => [
+                    'orderId' =>$orderId//id de la commande
+                ]
             ]
             
         ]); 

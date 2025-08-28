@@ -88,8 +88,8 @@ final class OrderController extends AbstractController
                 }
                 // quand c'est false
                 $paymentStripe = new StripePayment(); //on importe notre service avec sa classe
-                $shippingCost = $order->getCity()->getShippingCost();
-                $paymentStripe->startPayment($data, $shippingCost, $order->getId()); //on importe le panier donc $data
+                $shippingCost = $order->getCity()->getShippingCost(); // Récupération dans une variable, du pris de la livraison par ville
+                $paymentStripe->startPayment($data, $shippingCost, $order->getId()); //on importe le panier donc $data le cout de la livraison par ville et l'id de la commande, tout ça pour les envoyer dans Stripe 
                 $stripeRedirectUrl = $paymentStripe->getStripeRedirectUrl();
                 //dd( $stripeRedirectUrl);
                 return $this->redirect($stripeRedirectUrl);

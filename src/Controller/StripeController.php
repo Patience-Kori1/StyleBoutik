@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Repository\OrderRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Stripe\Stripe;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,7 +29,7 @@ final class StripeController extends AbstractController
     }
 
     #[Route('/stripe/notify', name: 'app_stripe_notify')]
-    public function stripeNotify(Request $request): Response
+    public function stripeNotify(Request $request, OrderRepository $orderRepo, EntityManagerInterface $em): Response
     {
         // Définir la clé secrète de Stripe à partir de la variable d'environnement
         Stripe::setApiKey($_SERVER['STRIPE_SECRET_KEY']);
@@ -62,8 +64,12 @@ final class StripeController extends AbstractController
                 
                 // Enregistrer les détails du paiement dans un fichier
                 $fileName = 'stripe-detail-'.uniqid().'.txt';  
-                
-                file_put_contents($fileName, $paymentIntent);
+                $orderId = $paymentIntent->metadata->orderId; // Récupère l'id dans Stripe
+                $order = $orderRepo->find($orderId); //récupère l'id dans l'entity
+                $order->setIsPaymentCompleted(1); // set paymentcompleted à true
+                $em->flush();
+
+                file_put_contents($fileName, $orderId);//affiche dans le fichier Stripe de public l'id de la commande
                 break;
             case 'payment_method.attached':   // Événement de méthode de paiement attachée
                 // Récupérer l'objet payment_method
