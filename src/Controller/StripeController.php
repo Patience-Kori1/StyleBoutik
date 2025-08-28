@@ -62,6 +62,7 @@ final class StripeController extends AbstractController
                 
                 // Enregistrer les détails du paiement dans un fichier
                 $fileName = 'stripe-detail-'.uniqid().'.txt';  
+                
                 file_put_contents($fileName, $paymentIntent);
                 break;
             case 'payment_method.attached':   // Événement de méthode de paiement attachée

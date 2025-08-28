@@ -42,62 +42,60 @@ final class OrderController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) 
         {
-            if($order->isPayOnDelivery()) 
-            {
+            // Vérifie si le total du panier n'est pas vide pour savoir si le panier n'est pas vide
+            if(!empty($data['total'])) {
+                $order->setTotalPrice($data['total']);
+                // Définit la date de création de la commande
+                $order->setCreatedAt(new \DateTimeImmutable());
+                $order->setIsPaymentCompleted(0); //on initialise a false 
+                $em->persist($order);
+                $em->flush();
+                // dd($data['cart']);
 
-                // Vérifie si le total du panier n'est pas vide pour savoir si le panier n'est pas vide
-                if(!empty($data['total'])) {
-                    $order->setTotalPrice($data['total']);
-                    // Définit la date de création de la commande
-                    $order->setCreatedAt(new \DateTimeImmutable());
-                    $em->persist($order);
-                    // $em->flush();
-                    // dd($data['cart']);
-
-                    foreach($data['cart'] as $value) {
-                        // Crée un nouvel objet OrderProducts
-                        $orderProduct = new OrderProducts();
-                        // Définit la commande pour le produit de la commande
-                        $orderProduct->setOrderedProducts($order);
-                        // Définit le produit pour le produit de la commande
-                        $orderProduct->setProduct($value['product']);
-                        // Définit la quantité pour le produit de la commande
-                        $orderProduct->setQuantity($value['quantity']);
-                        // Enregistre le produit de la commande dans la base de données
-                        $em->persist($orderProduct);
-                        // $em->flush();
-                    }
-                    //Nettoyer la logique de persistance (un seul flush à la fin).
+                foreach($data['cart'] as $value) {
+                    // Crée un nouvel objet OrderProducts
+                    $orderProduct = new OrderProducts();
+                    // Définit la commande pour le produit de la commande
+                    $orderProduct->setOrderedProducts($order);
+                    // Définit le produit pour le produit de la commande
+                    $orderProduct->setProduct($value['product']);
+                    // Définit la quantité pour le produit de la commande
+                    $orderProduct->setQuantity($value['quantity']);
+                    // Enregistre le produit de la commande dans la base de données
+                    $em->persist($orderProduct);
                     $em->flush();
                 }
                 
-                // Remise à zéro du contenu du panier en session après chaque soumission
-                $session->set('cart',[]);
+                if($order->isPayOnDelivery()) {
+                    // Remise à zéro du contenu du panier en session après chaque soumission
+                    $session->set('cart',[]);
 
-                // Gestion du mail de la confirmation de commande
+                    // Gestion du mail de la confirmation de commande
 
-                $html = $this->renderView('email/orderConfirm.html.twig',[ //crée une vue mail
-                    'order'=>$order //on recupere le $order apres le flush donc on a toutes les infos           
-                ]);
-                $email = (new Email()) //On importe la classe depuis Symfony\Component\Mime\Email;
-                ->from('sneakhub@gmailcom') //Adresse de l'expéditeur donc notre boutique ou vous mêmes
-                // ->to('to@gmailcom') //Adresse du receveur
-                ->to($order->getEmail())
-                ->subject('Confirmation de réception de commande') //Intitulé du mail
-                ->html($html); // Une fonction et un contructeur ont été créer en haut pour gérer l'envoi du mail
-                $this->mailer->send($email);
-                
-                //Redirection vers la page du panier qui normalement et remise à zéro
-                return $this->redirectToRoute('app_order_message');
+                    $html = $this->renderView('email/orderConfirm.html.twig',[ //crée une vue mail
+                        'order'=>$order //on recupere le $order apres le flush donc on a toutes les infos           
+                    ]);
+                    $email = (new Email()) //On importe la classe depuis Symfony\Component\Mime\Email;
+                    ->from('sneakhub@gmailcom') //Adresse de l'expéditeur donc notre boutique ou vous mêmes
+                    // ->to('to@gmailcom') //Adresse du receveur
+                    ->to($order->getEmail())
+                    ->subject('Confirmation de réception de commande') //Intitulé du mail
+                    ->html($html); // Une fonction et un contructeur ont été créer en haut pour gérer l'envoi du mail
+                    $this->mailer->send($email);
+                    
+                    //Redirection vers la page du panier qui normalement et remise à zéro
+                    return $this->redirectToRoute('app_order_message');
+                }
+                // quand c'est false
+                $paymentStripe = new StripePayment(); //on importe notre service avec sa classe
+                $shippingCost = $order->getCity()->getShippingCost();
+                $paymentStripe->startPayment($data, $shippingCost, $order->getId()); //on importe le panier donc $data
+                $stripeRedirectUrl = $paymentStripe->getStripeRedirectUrl();
+                //dd( $stripeRedirectUrl);
+                return $this->redirect($stripeRedirectUrl);
             }
-             // quand c'est false
-            $paymentStripe = new StripePayment(); //on importe notre service avec sa classe
-            $shippingCost = $order->getCity()->getShippingCost();
-            $paymentStripe->startPayment($data, $shippingCost); //on importe le panier donc $data
-            $stripeRedirectUrl = $paymentStripe->getStripeRedirectUrl();
-            //dd( $stripeRedirectUrl);
-            return $this->redirect($stripeRedirectUrl);
         }
+
         return $this->render('order/orderIndex.html.twig', [
             'form'=>$form->createView(),
             'total'=> $data['total'],

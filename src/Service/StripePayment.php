@@ -61,7 +61,7 @@ class StripePayment
                 'allowed_countries' => ['FR','EG'],
             ],
             'metadata' => [
-                // 'orderId' =>$cart->Id//id de la commande
+                // 'orderid' =>$orderId//id de la commande
             ]
             
         ]); 
