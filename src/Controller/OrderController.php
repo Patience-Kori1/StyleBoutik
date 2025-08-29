@@ -119,11 +119,21 @@ final class OrderController extends AbstractController
         return $this->render('order/order_message.html.twig');
     }
 
-    #[Route('/editor/order', name:'app_orders_show')]
-    public function getAllOrder(OrderRepository $orderRepo, Request $request, PaginatorInterface $paginator) : Response
+    #[Route('/editor/order/{type}/', name: 'app_orders_show')]
+    public function getAllOrder($type, OrderRepository $orderRepo, Request $request, PaginatorInterface $paginator) : Response
     {
-        $orders = $orderRepo->findAll(); 
-        $data = $orderRepo->findBy([],['id'=>'DESC']);
+        if($type == 'is-completed'){
+            $data = $orderRepo->findBy(['isCompleted'=>1],['id'=>'DESC']);
+        }else if($type == 'pay-on-stripe-not-delivered'){
+            $data = $orderRepo->findBy(['isCompleted'=>null,'payOnDelivery'=>0,'isPaymentCompleted'=>1],['id'=>'DESC']);
+        }else if($type == 'pay-on-stripe-is-delivered'){
+            $data = $orderRepo->findBy(['isCompleted'=>1,'payOnDelivery'=>0,'isPaymentCompleted'=>1],['id'=>'DESC']);
+        }else if($type == 'no_delivery'){
+            $data = $orderRepo->findBy(['isCompleted'=>null,'payOnDelivery'=>0,'isPaymentCompleted'=>0],['id'=>'DESC']);
+        }
+
+        // $orders = $orderRepo->findAll(); 
+        // $data = $orderRepo->findBy([],['id'=>'DESC']);
         $orders = $paginator->paginate(
             $data,
             $request->query->getInt('page', 1),//met en place la pagination
