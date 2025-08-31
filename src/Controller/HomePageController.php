@@ -16,6 +16,8 @@ final class HomePageController extends AbstractController
     #[Route('/', name: 'app_home_page')]
     public function homePage(ProductRepository $productRepo, CategorieRepository $categoryRepo, Request $request, PaginatorInterface $paginator): Response
     {
+        $search = $productRepo->searchEngine('nike'); //je met un produit qui est en table product
+        // dd($search);
         $products= $productRepo->findAll();
         $category = $categoryRepo->findAll();
         $data = $productRepo->findby([],['id'=>"DESC"]);

@@ -115,9 +115,9 @@
                 
                 
             </ul>
-            <form class="d-flex">
-                <input class="form-control me-sm-2" type="search" placeholder="Search">
-                <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+            <form data-turbo='false' method="GET" action="{{ path('app_search_engine')}}" class="d-flex" role="search">
+                <input name="word" class="form-control me-2" type="search" placeholder="Rechercher un produit" aria-label="Search">
+                <button class="btn btn-secondary my-2 my-sm-0" type="submit">Recherchez</button>
             </form>
         </div>
     </div>

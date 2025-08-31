@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Les produits{% endblock %}
+
+{% block body %}
+
+<style>
+    h1 {text-align:center}
+    .titleProductLink {text-decoration:none; font-weight: }
+    .titleProductLink h5 {font-weight: 600}
+    .row {margin-bottom: 2rem}
+</style>
+<div class="container">
+    <h1 class="mb-5 mt-5">Résultats de la recherche du mot " {{ word }} "</h1>
+    <div class="row">
+        {% for product in products %}
+            <div class="col-md-3 mt-4">
+                <div class="card" style="width: 18rem;">
+                    <img src="{{ asset('uploads/images/'~product.image)}}" class="imgproduct card-img-top" alt="image des produits">
+                    <div class="card-body">
+                        <a class="titleProductLink" href="{{ path('app_home_product_show',{'id':product.id}) }} ">
+                            <h5 class="card-title titleProduct">{{ product.name }}</h5>
+                        </a>
+                        
+                        <p class="card-text">{{ product.description|slice(0,60) }}...</p>
+                        <h3>{{ product.price }} €</h3> <!-- altgr + e pour le sigle euro-->
+                        <a href="{{ path('app_cart_new',{'id':product.id}) }}" class="btn btn-outline-primary">Ajouter au panier</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    {# {{ knp_pagination_render(products, 'layouts/pagination_template.html.twig') }} #}
+</div>
+
+{% endblock %}
