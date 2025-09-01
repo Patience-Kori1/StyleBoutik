@@ -49,6 +49,7 @@ final class OrderController extends AbstractController
                 // Définit la date de création de la commande
                 $order->setCreatedAt(new \DateTimeImmutable());
                 $order->setIsPaymentCompleted(0); //on initialise a false 
+                // $order->setIsCompleted(0); //on initialise a false pour solutionner le findBy quand il est à null
                 $em->persist($order);
                 $em->flush();
                 // dd($data['cart']);
@@ -122,22 +123,40 @@ final class OrderController extends AbstractController
     #[Route('/editor/order/{type}/', name: 'app_orders_show')]
     public function getAllOrder($type, OrderRepository $orderRepo, Request $request, PaginatorInterface $paginator) : Response
     {
-        if($type == 'is-completed'){
-            $data = $orderRepo->findBy(['isCompleted'=>1],['id'=>'DESC']);
-        }else if($type == 'pay-on-stripe-not-delivered'){
-            $data = $orderRepo->findBy(['isCompleted'=>null,'payOnDelivery'=>0,'isPaymentCompleted'=>1],['id'=>'DESC']);
-        }else if($type == 'pay-on-stripe-is-delivered'){
-            $data = $orderRepo->findBy(['isCompleted'=>1,'payOnDelivery'=>0,'isPaymentCompleted'=>1],['id'=>'DESC']);
-        }else if($type == 'no_delivery'){
-            $data = $orderRepo->findBy(['isCompleted'=>null,'payOnDelivery'=>0,'isPaymentCompleted'=>0],['id'=>'DESC']);
+        //En c'est la méthode findBy() qu'on manipule par ses paramètres en jouant sur les valeurs des champs de l'entity order selon le filtrage qu'on veut en faire
+
+        // Affiche toutes les commandes
+        if($type == 'all'){
+            $data = $orderRepo->findBy([],['id'=>'DESC']);
         }
+        // Affiche les commandes livrées avec isCompleted dans la bdd égal à true 1
+        elseif($type == 'is-completed'){
+            $data = $orderRepo->findBy(['isCompleted'=>1],['id'=>'DESC']);
+        }
+          
+        // Commandes non livrées avec isCompleted dans la bdd égal à false 0
+        elseif($type == 'is-not-completed'){
+            $data = $orderRepo->findBy(['isCompleted'=>0],['id'=>'DESC']);
+        }
+
+        // Commandes payées en ligne non livrées avec isCompleted = 0, etc..
+        else if($type == 'pay-on-stripe-not-delivered'){
+            $data = $orderRepo->findBy(['isCompleted'=>0,'payOnDelivery'=>0,'isPaymentCompleted'=>1],['id'=>'DESC']);
+        }
+        
+        // Commandes payées en ligne livrées avec isCompleted = 1, etc..
+        else if($type == 'pay-on-stripe-is-delivered'){
+            $data = $orderRepo->findBy(['isCompleted'=>1,'payOnDelivery'=>0,'isPaymentCompleted'=>1],['id'=>'DESC']);
+        }
+
+        // NB; la manup de l'affichage de ces conditions se trouve dans la navbar
 
         // $orders = $orderRepo->findAll(); 
         // $data = $orderRepo->findBy([],['id'=>'DESC']);
         $orders = $paginator->paginate(
             $data,
             $request->query->getInt('page', 1),//met en place la pagination
-            3 //je choisi la limite de 3 commandes par page
+            6 //je choisi la limite de 3 commandes par page
         );   
         return $this->render('order/orders.html.twig', [
             'orders'=>$orders
