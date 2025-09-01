@@ -5,8 +5,18 @@
 {% block body %}
 <div class="container my-5">
 
-    {# {% if type == 'pay-on-stripe-not-delivered' %} #}
-    <h1 class="text-center mb-5">Historique des commandes</h1>
+    {% if type == 'all' %}
+        <h1 class="text-center mb-5">Toutes les commandes</h1>
+    {% elseif type == 'is-completed' %}
+        <h1 class="text-center mb-5">Commandes livrées</h1>
+    {% elseif type == 'is-not-completed' %}
+        <h1 class="text-center mb-5">Commandes non livrées</h1>
+    {% elseif type == 'pay-on-stripe-not-delivered' %}
+        <h1 class="text-center mb-5">Commandes payées en ligne non livrées</h1>
+    {% elseif type == 'pay-on-stripe-is-delivered' %}
+        <h1 class="text-center mb-5">Commandes payées en ligne livrées</h1>
+    {% endif %}
+
           {{ include ('layouts/flash_message.html.twig')}}
 
     {% for order in orders %}

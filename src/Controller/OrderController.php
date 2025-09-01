@@ -159,7 +159,8 @@ final class OrderController extends AbstractController
             6 //je choisi la limite de 3 commandes par page
         );   
         return $this->render('order/orders.html.twig', [
-            'orders'=>$orders
+            'orders'=>$orders,
+            'type' => $type
         ]);
     }
 
