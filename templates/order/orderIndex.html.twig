@@ -1,89 +1,167 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Commande{% endblock %}
+{% block title %}Finaliser ma commande - {{ parent() }}{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <div class="container">
-        <div class="row">
-            <div class="col-8">
-                <h1 class='mt-4 mb-4'>Commande</h1>
-                 {{ form_start(form) }}
-                    {{ form_widget(form) }}
-                <input type="submit" value="Continuer" class="btn btn-outline-primary">
-                {{ form_end(form) }}
-            </div>
-            <div class="col-4">
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-4 border-0">
+                    <h1 class="h2 text-center text-primary mb-0">🛒 Finaliser ma commande</h1>
+                    <p class="text-muted text-center mb-0">Vérifiez vos informations avant de payer</p>
+                </div>
                 
-                <span class='mb-2'>Montant à payer: </span>
-                <h3>
-                    <span id="card-price">{{ total }}</span>
-                    €
-                </h3>  
-
-                <span>Frais de livraison</span> 
-                <h3>
-                    <span id="shippingCost"></span>
-                    €
-                </h3>
-
-                <span>Montant total de livraison</span> 
-                <h3>
-                    <span class="total_Price"></span>
-                    €
-                </h3>  
-            </div> 
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Formulaire -->
+                        <div class="col-lg-8">
+                            <div class="pe-lg-4">
+                                <h4 class="mb-4">📋 Informations de livraison</h4>
+                                
+                                {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                                
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        {{ form_label(form.firstName, 'Prénom *', {'label_attr': {'class': 'form-label fw-medium'}}) }}
+                                        {{ form_widget(form.firstName, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Votre prénom'}}) }}
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        {{ form_label(form.lastName, 'Nom *', {'label_attr': {'class': 'form-label fw-medium'}}) }}
+                                        {{ form_widget(form.lastName, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Votre nom'}}) }}
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        {{ form_label(form.phone, 'Téléphone *', {'label_attr': {'class': 'form-label fw-medium'}}) }}
+                                        {{ form_widget(form.phone, {'attr': {'class': 'form-control rounded-3', 'placeholder': '06 12 34 56 78'}}) }}
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        {{ form_label(form.adress, 'Adresse *', {'label_attr': {'class': 'form-label fw-medium'}}) }}
+                                        {{ form_widget(form.adress, {'attr': {'class': 'form-control rounded-3', 'placeholder': '123 Rue Example'}}) }}
+                                    </div>
+                                    
+                                    <div class="col-12">
+                                        {{ form_label(form.city, 'Ville *', {'label_attr': {'class': 'form-label fw-medium'}}) }}
+                                        {{ form_widget(form.city, {'attr': {'class': 'form-select rounded-3', 'id': 'order_city'}}) }}
+                                        <div class="form-text">Les frais de livraison varient selon la ville</div>
+                                    </div>
+                                    
+                                    <div class="col-12 mt-4">
+                                        <button type="submit" class="btn btn-primary btn-lg w-100 rounded-3">
+                                            💳 Payer maintenant
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                {{ form_end(form) }}
+                            </div>
+                        </div>
+                        
+                        <!-- Récapitulatif -->
+                        <div class="col-lg-4">
+                            <div class="bg-light rounded-3 p-4 sticky-top" style="top: 20px;">
+                                <h4 class="mb-4">💰 Récapitulatif</h4>
+                                
+                                <div class="d-grid gap-2">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="text-muted">Sous-total:</span>
+                                        <strong id="card-price">{{ total }} €</strong>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="text-muted">Frais de livraison:</span>
+                                        <strong id="shippingCost">0 €</strong>
+                                    </div>
+                                    
+                                    <hr>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="fw-bold fs-5">Total:</span>
+                                        <strong class="text-primary fs-4 total_Price">0 €</strong>
+                                    </div>
+                                    
+                                    <div class="mt-3">
+                                        <div class="alert alert-info border-0 rounded-3">
+                                            <div class="d-flex">
+                                                <i class="bi bi-truck me-2"></i>
+                                                <small>Livraison sous 2-3 jours ouvrés</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div> 
+    </div>
 </div>
-<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="crossorigin="anonymous">
-</script>
+
+<!-- JavaScript -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
-
-    $(document).ready(function(){
+$(document).ready(function(){
+    function updateShippingCost(cityId) {
+        if (!cityId) return;
         
-        const citySelector = $('#order_city');
-        const cityValue = citySelector.val();
-        const url = `http://localhost:8000/city/${cityValue}/shipping/cost`;
-
-        function ajaxRequest(url) {
-            $.ajax({
-                url: url,
-                type: 'GET',
-                success: function(response) {
-                    const newResponse = JSON.parse(response)
-                    if (parseInt(newResponse.status) === 200){
-                        console.log(newResponse.status);
-                        $("#shippingCost").text(newResponse.content);
-
-                        const cardPrice = parseInt($("#card-price").text());
-                        //console.log(cardPrice);
-
-                        const shippingCost = parseInt($('#shippingCost').text());
-                        //console.log(shippingCost);
-
-                        $('.total_Price').text(cardPrice + shippingCost);
-                    }
-                },
-                error:function(xhr,status,error){
-
+        $.ajax({
+            url: `/city/${cityId}/shipping/cost`,
+            type: 'GET',
+            success: function(response) {
+                const data = JSON.parse(response);
+                if (data.status === 200) {
+                    $('#shippingCost').text(data.content + ' €');
+                    
+                    const subtotal = parseFloat($('#card-price').text());
+                    const shipping = parseFloat(data.content);
+                    const total = subtotal + shipping;
+                    
+                    $('.total_Price').text(total.toFixed(2) + ' €');
                 }
-            })  
-        } 
-        ajaxRequest(url)
-            
-        citySelector.on('change',function() {
-            const urlUpdate = `http://localhost:8000/city/${$(this).val()}/shipping/cost`;
-            //alert(urlUpdate)
-            ajaxRequest(urlUpdate)
-        })
-    })
+            },
+            error: function(xhr, status, error) {
+                console.error('Erreur:', error);
+                $('#shippingCost').text('0 €');
+                $('.total_Price').text($('#card-price').text() + ' €');
+            }
+        });
+    }
 
+    // Initial load
+    const initialCityId = $('#order_city').val();
+    updateShippingCost(initialCityId);
+
+    // On change
+    $('#order_city').on('change', function() {
+        updateShippingCost($(this).val());
+    });
+});
 </script>
 
+<style>
+.card {
+    border-radius: 16px;
+}
+.form-control, .form-select {
+    border: 2px solid #e9ecef;
+    padding: 12px 16px;
+    transition: all 0.3s ease;
+}
+.form-control:focus, .form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+.btn-primary {
+    padding: 12px 24px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.sticky-top {
+    z-index: 1;
+}
+</style>
 {% endblock %}
