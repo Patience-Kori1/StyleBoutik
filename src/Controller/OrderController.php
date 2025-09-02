@@ -182,10 +182,10 @@ final class OrderController extends AbstractController
             $entityManager->flush();
             $this->addFlash('danger', 'Commande pas encore livrée');
         }
-        
-        return $this->redirectToRoute('app_orders_show');
+        // 
+        // return $this->redirectToRoute('app_orders_show', ['type'=> 'all']); //On utilisera plutot celui là si on veut à cette route avec le type all
 
-        // return $this->redirect($request->headers->get('referer'));//cela fait reference a la route precedent cette route ci
+        return $this->redirect($request->headers->get('referer'));//refer fait qu'on retourner a la route precedente, on utilise celui là si on veut rester à la meme route du bouton
     }
 
     #[Route('/editor/order/{id}/remove', name: 'app_orders_remove')]
