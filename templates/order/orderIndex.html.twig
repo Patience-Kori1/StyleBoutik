@@ -1,167 +1,100 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Finaliser ma commande - {{ parent() }}{% endblock %}
+{% block title %}Commande{% endblock %}
 
 {% block body %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-10">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white py-4 border-0">
-                    <h1 class="h2 text-center text-primary mb-0">🛒 Finaliser ma commande</h1>
-                    <p class="text-muted text-center mb-0">Vérifiez vos informations avant de payer</p>
+<div class="container my-5">
+    <div class="row g-4">
+
+        <!-- Formulaire commande -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-primary text-white rounded-top-4">
+                    <h3 class="mb-0">Informations de commande</h3>
                 </div>
-                
-                <div class="card-body">
-                    <div class="row">
-                        <!-- Formulaire -->
-                        <div class="col-lg-8">
-                            <div class="pe-lg-4">
-                                <h4 class="mb-4">📋 Informations de livraison</h4>
-                                
-                                {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
-                                
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        {{ form_label(form.firstName, 'Prénom *', {'label_attr': {'class': 'form-label fw-medium'}}) }}
-                                        {{ form_widget(form.firstName, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Votre prénom'}}) }}
-                                    </div>
-                                    
-                                    <div class="col-md-6">
-                                        {{ form_label(form.lastName, 'Nom *', {'label_attr': {'class': 'form-label fw-medium'}}) }}
-                                        {{ form_widget(form.lastName, {'attr': {'class': 'form-control rounded-3', 'placeholder': 'Votre nom'}}) }}
-                                    </div>
-                                    
-                                    <div class="col-md-6">
-                                        {{ form_label(form.phone, 'Téléphone *', {'label_attr': {'class': 'form-label fw-medium'}}) }}
-                                        {{ form_widget(form.phone, {'attr': {'class': 'form-control rounded-3', 'placeholder': '06 12 34 56 78'}}) }}
-                                    </div>
-                                    
-                                    <div class="col-md-6">
-                                        {{ form_label(form.adress, 'Adresse *', {'label_attr': {'class': 'form-label fw-medium'}}) }}
-                                        {{ form_widget(form.adress, {'attr': {'class': 'form-control rounded-3', 'placeholder': '123 Rue Example'}}) }}
-                                    </div>
-                                    
-                                    <div class="col-12">
-                                        {{ form_label(form.city, 'Ville *', {'label_attr': {'class': 'form-label fw-medium'}}) }}
-                                        {{ form_widget(form.city, {'attr': {'class': 'form-select rounded-3', 'id': 'order_city'}}) }}
-                                        <div class="form-text">Les frais de livraison varient selon la ville</div>
-                                    </div>
-                                    
-                                    <div class="col-12 mt-4">
-                                        <button type="submit" class="btn btn-primary btn-lg w-100 rounded-3">
-                                            💳 Payer maintenant
-                                        </button>
-                                    </div>
-                                </div>
-                                
-                                {{ form_end(form) }}
-                            </div>
+                <div class="card-body p-4">
+                    {{ form_start(form) }}
+                        <div class="mb-3">
+                            {{ form_widget(form) }}
                         </div>
-                        
-                        <!-- Récapitulatif -->
-                        <div class="col-lg-4">
-                            <div class="bg-light rounded-3 p-4 sticky-top" style="top: 20px;">
-                                <h4 class="mb-4">💰 Récapitulatif</h4>
-                                
-                                <div class="d-grid gap-2">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="text-muted">Sous-total:</span>
-                                        <strong id="card-price">{{ total }} €</strong>
-                                    </div>
-                                    
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="text-muted">Frais de livraison:</span>
-                                        <strong id="shippingCost">0 €</strong>
-                                    </div>
-                                    
-                                    <hr>
-                                    
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="fw-bold fs-5">Total:</span>
-                                        <strong class="text-primary fs-4 total_Price">0 €</strong>
-                                    </div>
-                                    
-                                    <div class="mt-3">
-                                        <div class="alert alert-info border-0 rounded-3">
-                                            <div class="d-flex">
-                                                <i class="bi bi-truck me-2"></i>
-                                                <small>Livraison sous 2-3 jours ouvrés</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                        <button type="submit" class="btn btn-primary px-4 py-2 rounded-pill">
+                            Continuer
+                        </button>
+                    {{ form_end(form) }}
                 </div>
             </div>
         </div>
+
+        <!-- Résumé commande -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-light rounded-top-4">
+                    <h4 class="mb-0 text-primary fw-bold">Résumé de commande</h4>
+                </div>
+                <div class="card-body p-4">
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="fw-medium">Montant des produits :</span>
+                        <span class="fw-bold text-dark fs-5">
+                            <span id="card-price">{{ total }}</span> €
+                        </span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="fw-medium">Frais de livraison :</span>
+                        <span class="fw-bold text-dark fs-5">
+                            <span id="shippingCost">0</span> €
+                        </span>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-bold fs-5 text-primary">Montant total :</span>
+                        <span class="fw-bold fs-4 text-success">
+                            <span class="total_Price">0</span> €
+                        </span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
-<!-- JavaScript -->
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+        crossorigin="anonymous"></script>
+
 <script>
-$(document).ready(function(){
-    function updateShippingCost(cityId) {
-        if (!cityId) return;
-        
-        $.ajax({
-            url: `/city/${cityId}/shipping/cost`,
-            type: 'GET',
-            success: function(response) {
-                const data = JSON.parse(response);
-                if (data.status === 200) {
-                    $('#shippingCost').text(data.content + ' €');
-                    
-                    const subtotal = parseFloat($('#card-price').text());
-                    const shipping = parseFloat(data.content);
-                    const total = subtotal + shipping;
-                    
-                    $('.total_Price').text(total.toFixed(2) + ' €');
+    $(document).ready(function() {
+        const citySelector = $('#order_city');
+        const cardPrice = parseInt($("#card-price").text());
+
+        function updateShipping(url) {
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function(response) {
+                    const newResponse = JSON.parse(response);
+                    if (parseInt(newResponse.status) === 200) {
+                        const shippingCost = parseInt(newResponse.content);
+                        $("#shippingCost").text(shippingCost);
+                        $('.total_Price').text(cardPrice + shippingCost);
+                    }
                 }
-            },
-            error: function(xhr, status, error) {
-                console.error('Erreur:', error);
-                $('#shippingCost').text('0 €');
-                $('.total_Price').text($('#card-price').text() + ' €');
-            }
+            });
+        }
+
+        // Initial request
+        updateShipping(`http://localhost:8000/city/${citySelector.val()}/shipping/cost`);
+
+        // On change city
+        citySelector.on('change', function() {
+            updateShipping(`http://localhost:8000/city/${$(this).val()}/shipping/cost`);
         });
-    }
-
-    // Initial load
-    const initialCityId = $('#order_city').val();
-    updateShippingCost(initialCityId);
-
-    // On change
-    $('#order_city').on('change', function() {
-        updateShippingCost($(this).val());
     });
-});
 </script>
-
-<style>
-.card {
-    border-radius: 16px;
-}
-.form-control, .form-select {
-    border: 2px solid #e9ecef;
-    padding: 12px 16px;
-    transition: all 0.3s ease;
-}
-.form-control:focus, .form-select:focus {
-    border-color: #0d6efd;
-    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
-}
-.btn-primary {
-    padding: 12px 24px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-.sticky-top {
-    z-index: 1;
-}
-</style>
 {% endblock %}
