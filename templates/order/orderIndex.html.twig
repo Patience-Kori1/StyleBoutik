@@ -1,97 +1,343 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Commande{% endblock %}
-
+{% block title %}Finaliser ma commande{% endblock %}
 {% block body %}
-<div class="container my-5">
-    <div class="row g-4">
+<!-- Font Awesome pour les icônes -->
 
-        <!-- Formulaire commande -->
-        <div class="col-lg-8">
-            <div class="card shadow-sm border-0 rounded-4">
-                <div class="card-header bg-primary text-white rounded-top-4">
-                    <h3 class="mb-0">Informations de commande</h3>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@400;700&display=swap');
+
+    body {
+        font-family: 'Montserrat', sans-serif;
+        background-color: #f9f9f9;
+        color: #333333;
+    }
+
+    .order-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .order-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.2rem;
+        color: #1a1a1a;
+        text-align: center;
+        margin-bottom: 2rem;
+        font-weight: 700;
+    }
+
+    .order-grid {
+        display: grid;
+        grid-template-columns: 1fr 350px;
+        gap: 2rem;
+    }
+
+    /* Fonds dorés pour les titres (pleine largeur) */
+    .section-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.6rem;
+        color: #ffffff;
+        margin-bottom: 1.2rem;
+        padding: 0.8rem 1.5rem;
+        background-color: #d4af37;
+        border-radius: 8px 8px 0 0;
+        width: calc(100% + 4rem);
+        margin-left: -2rem;
+        margin-top: -2rem;
+        display: block;
+    }
+
+    /* Cartes avec fond blanc */
+    .form-card, .summary-card {
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        padding: 2rem;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+        position: relative;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.3rem;
+        font-weight: 500;
+        color: #1a1a1a;
+    }
+
+    i {
+        margin-right: 0.5rem;
+        color: #d4af37;
+    }
+
+    /* Style des champs (y compris le select) */
+    .form-control {
+        width: 100%;
+        padding: 0.6rem 1rem 0.6rem 2.5rem; /* Espace pour l'icône */
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 0.9rem;
+        transition: all 0.3s;
+        background-color: #ffffff !important;
+        color: #333333;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+    }
+
+ 
+    /* Style personnalisé pour le select (ville) */
+    select.form-control {
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231a1a1a'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 0.8rem center;
+        background-size: 1em;
+        padding-right: 2.2rem;
+    }
+
+    /* Style du dropdown du select (forcé en blanc) */
+    select.form-control option {
+        background-color: #ffffff !important;
+        color: #333333 !important;
+    }
+
+    select.form-control:focus {
+        background-color: #ffffff !important;
+    }
+
+    /* Pour Firefox */
+    select.form-control optgroup {
+        background-color: #ffffff !important;
+        color: #333333 !important;
+    }
+
+    /* Animation et validation visuelle */
+    .form-control:focus {
+        border-color: #d4af37;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+        transform: scale(1.01);
+    }
+
+    .form-control.is-valid {
+        border-color: #2e8b57;
+    }
+
+    .form-control.is-invalid {
+        border-color: #dc3545;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        margin: 1rem 0;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+        margin-right: 0.5rem;
+    }
+
+    .btn-submit {
+        background-color: #d4af37;
+        color: #ffffff;
+        border: none;
+        padding: 0.7rem 2rem;
+        font-weight: 600;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: all 0.3s;
+        width: 100%;
+        margin-top: 0.5rem;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-submit:hover {
+        background-color: #e8c86c;
+        color: #1a1a1a;
+        transform: translateY(-2px);
+    }
+
+    .btn-submit i {
+        margin-right: 0.5rem;
+    }
+
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.8rem;
+        font-size: 0.95rem;
+    }
+
+    .summary-item span:first-child {
+        font-weight: 500;
+        color: #333333;
+    }
+
+    .summary-item span:last-child {
+        font-weight: 600;
+        color: #1a1a1a;
+    }
+
+    .summary-total {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 1rem;
+        padding-top: 0.8rem;
+        border-top: 1px solid #e0e0e0;
+    }
+
+    .summary-total span:first-child {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.2rem;
+        color: #1a1a1a;
+    }
+
+    .summary-total span:last-child {
+        font-size: 1.3rem;
+        color: #2e8b57;
+        font-weight: 700;
+    }
+
+    .shipping-info {
+        font-size: 0.8rem;
+        color: #666666;
+        margin-top: 0.2rem;
+    }
+
+    /* Spinner de chargement */
+    #loading-spinner {
+        display: none;
+        text-align: center;
+        margin-top: 0.5rem;
+        color: #d4af37;
+        font-size: 0.9rem;
+    }
+
+    @media (max-width: 992px) {
+        .order-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="order-container">
+    <h1 class="order-title">Finaliser ma commande</h1>
+    <div class="order-grid">
+        <!-- Formulaire -->
+        <div class="form-card">
+            <span class="section-title">Informations de livraison</span>
+            {{ form_start(form) }}
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="order_firstName"><i class="fas fa-user"></i> Prénom</label>
+                        
+                        {{ form_widget(form.firstName) }}
+                    </div>
+                    <div class="form-group">
+                        <label for="order_lastName"><i class="fas fa-user"></i> Nom</label>                        
+                        {{ form_widget(form.lastName) }}
+                    </div>
                 </div>
-                <div class="card-body p-4">
-                    {{ form_start(form) }}
-                        <div class="mb-3">
-                            {{ form_widget(form) }}
-                        </div>
-                        <button type="submit" class="btn btn-primary px-4 py-2 rounded-pill">
-                            Continuer
-                        </button>
-                    {{ form_end(form) }}
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="order_email"><i class="fas fa-envelope"></i> Email</label>
+                        {{ form_widget(form.email) }}
+                    </div>
+                    <div class="form-group">
+                        <label for="order_phone"><i class="fas fa-phone"></i> Téléphone</label>
+                        {{ form_widget(form.phone) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="order_adress">Adresse</label>
+                    {{ form_widget(form.adress) }}
+                </div>
+                <div class="form-group">
+                    <label for="order_city"><i class="fas fa-city"></i> Ville</label>
+                    {{ form_widget(form.city) }}
+                    <div id="loading-spinner">
+                        <i class="fas fa-spinner fa-spin"></i> Calcul des frais en cours...
+                    </div>
+                </div>
+                
+                <div class="checkbox-group">
+                    {{ form_widget(form.payOnDelivery) }}
+                    <label for="order_payOnDelivery"><i class="fas fa-money-bill-wave me-2"></i> Payez à la livraison</label>
+                </div>
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-check-circle"></i> Finaliser la commande
+                </button>
+            {{ form_end(form) }}
+        </div>
+
+        <!-- Résumé de commande -->
+        <div class="summary-card">
+            <span class="section-title">Résumé</span>
+            <div class="card-body" style="padding: 0; margin-top: 1rem;">
+                <div class="summary-item">
+                    <span>Montant des produits</span>
+                    <span><span id="card-price">{{ total }}</span> €</span>
+                </div>
+                <div class="summary-item">
+                    <span>Frais de livraison</span>
+                    <span><span id="shippingCost">0</span> €</span>
+                </div>
+                <div class="shipping-info">Calculés selon votre ville</div>
+                <div class="summary-total">
+                    <span>Total</span>
+                    <span><span class="total_Price">0</span> €</span>
                 </div>
             </div>
         </div>
-
-        <!-- Résumé commande -->
-        <div class="col-lg-4">
-            <div class="card shadow-sm border-0 rounded-4">
-                <div class="card-header bg-light rounded-top-4">
-                    <h4 class="mb-0 text-primary fw-bold">Résumé de commande</h4>
-                </div>
-                <div class="card-body p-4">
-                    
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="fw-medium">Montant des produits :</span>
-                        <span class="fw-bold text-dark fs-5">
-                            <span id="card-price">{{ total }}</span> €
-                        </span>
-                    </div>
-
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="fw-medium">Frais de livraison :</span>
-                        <span class="fw-bold text-dark fs-5">
-                            <span id="shippingCost">0</span> €
-                        </span>
-                    </div>
-
-                    <hr>
-
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span class="fw-bold fs-5 text-primary">Montant total :</span>
-                        <span class="fw-bold fs-4 text-success">
-                            <span class="total_Price">0</span> €
-                        </span>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
     </div>
 </div>
 
 <!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"
-        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
-        crossorigin="anonymous"></script>
-
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <script>
     $(document).ready(function() {
         const citySelector = $('#order_city');
         const cardPrice = parseInt($("#card-price").text());
+        const loadingSpinner = $('#loading-spinner');
 
         function updateShipping(url) {
+            loadingSpinner.show();
             $.ajax({
                 url: url,
                 type: 'GET',
                 success: function(response) {
+                    loadingSpinner.hide();
                     const newResponse = JSON.parse(response);
                     if (parseInt(newResponse.status) === 200) {
                         const shippingCost = parseInt(newResponse.content);
                         $("#shippingCost").text(shippingCost);
                         $('.total_Price').text(cardPrice + shippingCost);
                     }
+                },
+                error: function() {
+                    loadingSpinner.hide();
+                    alert("Une erreur est survenue lors du calcul des frais de livraison.");
                 }
             });
         }
 
-        // Initial request
+        // Mise à jour initiale
         updateShipping(`http://localhost:8000/city/${citySelector.val()}/shipping/cost`);
 
-        // On change city
+        // Mise à jour au changement de ville
         citySelector.on('change', function() {
             updateShipping(`http://localhost:8000/city/${$(this).val()}/shipping/cost`);
         });

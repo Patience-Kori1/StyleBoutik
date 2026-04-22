@@ -1,57 +1,268 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Hello UserController!{% endblock %}
-
+{% block title %}Gestion des utilisateurs{% endblock %}
 {% block body %}
-    <div class="container">
-    
-        <h1 class="mt-4 mb-5">Liste des utilisateurs</h1>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@400;700&display=swap');
 
-        {% include 'layouts/flash_message.html.twig' %}
+    body {
+        font-family: 'Montserrat', sans-serif;
+        background-color: #f9f9f9;
+        color: #333333;
+    }
 
-        <table class='table'> {# table-bordered border-primary#}
+    .container {
+        max-width: 1400px; /* Largeur augmentée */
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
 
-            <thead>    
-                <tr class="table-primary">
-                    <th scope="col">id</th>
-                    <th scope="col">Nom</th>
-                    <th scope="col">Prenom</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Role</th>
-                    <th scope="col">Action</th>
-                </tr>
-            </thead> 
+    /* Titre centré */
+    .page-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.5rem;
+        color: #1a1a1a;
+        text-align: center;
+        margin-bottom: 2rem;
+        position: relative;
+        display: inline-block;
+    }
 
-            <tbody>
-                {% for user in users %}
-                    <tr>
-                        <th scope="row" >{{user.id}}</th> 
+    .page-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 2px;
+        background-color: #d4af37;
+    }
 
-                        <td>{{user.firstName}}</td>
-                        <td>{{user.lastName}}</td>
-                        <td>{{user.email}}</td>
-                        <td>
-                            {{user.roles|join(' et ') }} {# C'est la méthode optimale mais on peut aussi utilisé une boucle for comme en bas #}
+    /* Tableau stylisé */
+    .users-table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #ffffff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        margin-bottom: 2rem;
+    }
 
-                            {# {% for role in user.roles %}
-                                {{role}}
-                            {% endfor %} #}
+    /* En-tête doré adouci */
+    .users-table thead {
+        background-color: #c4a447; /* Doré adouci */
+        color: #ffffff; /* Texte noir pour contraste */
+    }
 
-                        </td>
-                        <td>
-                             {% if ('ROLE_ADMIN' in user.roles) == false %}
-                                <a {#href="{{ path('app_update_form', {'id' : data.id})}}"#} class="btn btn-primary" >Modifier</a> 
-                                <a onclick= "return confirm('Voulez vous vraiment affecter ce rôle à ce user ?')" class="btn btn-outline-primary" href="{{ path('app_user_to_editor', {'id': user.id}) }}"> Ajouter le rôle éditeur </a>
-                                <a  href="{{ path('app_user_remove_editor_role', {'id' : user.id})}}" class="btn btn-info">Supprimer le role éditeur</a>
-                                <a  href="{{ path('app_user_remove', {'id' : user.id})}}" class="btn btn-primary">Supprimer le user</a>
-                            {% else %}
-                                <a  {#href="{{ path('delete', {'id' : user.id})}}"#} class="btn btn-success col-md-11">Je suis admin</a>
-                            {% endif %}
+    .users-table th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        border-bottom: 2px solid #1a1a1a;
+    }
 
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+    .users-table th:first-child {
+        border-top-left-radius: 12px;
+        padding-left: 1.5rem;
+    }
+
+    .users-table th:last-child {
+        border-top-right-radius: 12px;
+        padding-right: 1.5rem;
+    }
+
+    /* Corps du tableau */
+    .users-table tbody tr {
+        transition: background-color 0.2s;
+        border-bottom: 1px solid #e8d8b0;
+    }
+
+    .users-table tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    .users-table tbody tr:hover {
+        background-color: #f8f4e8;
+    }
+
+    .users-table td {
+        padding: 1rem;
+        vertical-align: middle;
+        min-width: 120px; /* Largeur minimale pour chaque colonne */
+    }
+
+    .users-table td:first-child {
+        padding-left: 1.5rem;
+        font-weight: 600;
+        color: #1a1a1a;
+    }
+
+    .users-table td:last-child {
+        padding-right: 1.5rem;
+    }
+
+    /* Cellule des rôles - CORRIGÉE */
+    .role-cell {
+        
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .role-badge {
+        background-color: #f8f4e8;
+        color: #8b6f38;
+        padding: 0.3rem 0.6rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        border: 1px solid #d4af37;
+    }
+
+    .role-badge.admin {
+        background-color: #2e8b57;
+        color: #ffffff;
+        border-color: #2e8b57;
+        padding: 0.4rem 0.8rem;
+        font-weight: 600;
+    }
+
+    /* Cellule des actions - STRICTEMENT DANS SA COLONNE */
+    .action-cell {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        min-width: 300px; /* Espace suffisant pour 4 boutons */
+    }
+
+    .action-btn {
+        padding: 0.5rem 0.8rem;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        transition: all 0.2s;
+        white-space: nowrap;
+    }
+
+    .action-btn i {
+        margin-right: 0.3rem;
+    }
+
+    .action-btn.primary {
+        background-color: #d4af37;
+        color: #1a1a1a;
+        border: none;
+    }
+
+    .action-btn.success {
+        background-color: #2e8b57;
+        color: #ffffff;
+        border: none;
+    }
+
+    .action-btn.info {
+        background-color: #f8f4e8;
+        color: #8b6f38;
+        border: 1px solid #d4af37;
+    }
+
+    .action-btn.danger {
+        background-color: #ffffff;
+        color: #dc3545;
+        border: 1px solid #dc3545;
+    }
+
+    /* Badge admin spécial */
+    .admin-badge {
+        background-color: #2e8b57;
+        color: #ffffff;
+        padding: 0.5rem;
+        border-radius: 6px;
+        font-weight: 600;
+        text-align: center;
+        width: 100%;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .users-table {
+            display: block;
+            overflow-x: auto;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .action-cell {
+            flex-direction: column;
+        }
+        .action-btn {
+            width: 100%;
+            margin-bottom: 0.3rem;
+        }
+    }
+</style>
+
+<div class="container">
+    <h1 class="page-title">Gestion des utilisateurs</h1>
+
+    {{ include('layouts/flash_message.html.twig') }}
+
+    <table class="users-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Email</th>
+                <th>Rôles</th>
+                <th style="min-width: 300px;">Actions</th> <!-- Largeur fixe pour les actions -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.lastName }}</td>
+                <td>{{ user.firstName }}</td>
+                <td>{{ user.email }}</td>
+                <td class="role-cell">
+                    {% for role in user.roles %}
+                        {% if role == 'ROLE_ADMIN' %}
+                            <span class="role-badge admin">
+                                <i class="fas fa-crown me-1"></i> Administrateur
+                            </span>
+                        {% else %}
+                            <span class="role-badge">
+                                {{ role|replace({'ROLE_': ''})|capitalize }}
+                            </span>
+                        {% endif %}
+                    {% endfor %}
+                </td>
+                <td class="action-cell">
+                    {% if 'ROLE_ADMIN' not in user.roles %}
+                        <a href="#" class="action-btn primary">
+                            <i class="fas fa-edit"></i> Modifier
+                        </a>
+                        <a onclick="return confirm('Voulez-vous vraiment affecter ce rôle à cet utilisateur ?')" href="{{ path('app_user_to_editor', {'id': user.id}) }}" class="action-btn success">
+                            <i class="fas fa-user-edit"></i> Éditeur
+                        </a>
+                        <a href="{{ path('app_user_remove_editor_role', {'id': user.id}) }}" class="action-btn info">
+                            <i class="fas fa-user-times"></i> Retirer éditeur
+                        </a>
+                        <a onclick="return confirm('Voulez-vous vraiment supprimer cet utilisateur ?')" href="{{ path('app_user_remove', {'id': user.id}) }}" class="action-btn danger">
+                            <i class="fas fa-trash"></i> Supprimer
+                        </a>
+                    {% else %}
+                        <div class="admin-badge">
+                            <i class="fas fa-crown me-1"></i> Compte Admin
+                        </div>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}
+

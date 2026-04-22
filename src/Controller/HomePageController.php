@@ -44,7 +44,7 @@ final class HomePageController extends AbstractController
         ]);
     }
 
-     #[Route('/product/subcategory/{id}/filter ', name: 'app_home_product_filter', methods: ['GET'])]
+    #[Route('/product/subcategory/{id}/filter ', name: 'app_home_product_filter', methods: ['GET'])]
     public function filter($id, SubCategoryRepository $subCatRepo): Response //ici on recupere l'id et la repo des sous catégories
     
     {
@@ -52,7 +52,6 @@ final class HomePageController extends AbstractController
         // dd($productSubCat);
         return $this->render('home_page/filter.html.twig', [ //il faut bien sur créer ce fichier
             'subCategory'=> $subCategory,
-            
         ]);
     }
 }

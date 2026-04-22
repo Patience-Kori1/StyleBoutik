@@ -52,7 +52,6 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
                         $newFileImageName);/* on recup l'image et on la renomme et on la stocke dans le repoertoire */
                 }catch (FileException $exception) {}/*en cas d'erreur*/
                     $product->setImage($newFileImageName);
-                
             }
 
             $entityManager->persist($product);

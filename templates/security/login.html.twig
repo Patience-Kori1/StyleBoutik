@@ -1,57 +1,214 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}Connexion | StyleBoutik{% endblock %}
-
 {% block body %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-4">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white text-center">
-                    <h1 class="h4 mb-0"> Connectez-vous </h1>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@400;700&display=swap');
+
+    body {
+        font-family: 'Montserrat', sans-serif;
+        background-color: #f9f9f9;
+        color: #333333;
+    }
+
+    .login-container {
+        max-width: 500px;
+        margin: 3rem auto;
+        padding: 0 1rem;
+    }
+
+    .login-card {
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        border: 1px solid #e8d8b0;
+    }
+
+    .card-header {
+        background-color: #d4af37;
+        color: #ffffff; /* Texte blanc pour harmonisation */
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .card-header h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.8rem;
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.3rem;
+        font-weight: 500;
+        color: #1a1a1a;
+    }
+
+    .form-group label i {
+        margin-right: 0.5rem;
+        color: #d4af37;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.6rem 1rem 0.6rem 2.5rem;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 0.9rem;
+        transition: all 0.3s;
+        background-color: #ffffff;
+    }
+
+    .input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 2.1rem;
+        color: #d4af37;
+        font-size: 1rem;
+    }
+
+    .form-control:focus {
+        border-color: #d4af37;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+        transform: scale(1.01);
+    }
+
+    .btn-submit {
+        background-color: #d4af37;
+        color: #ffffff;
+        border: none;
+        padding: 0.7rem;
+        font-weight: 600;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: all 0.3s;
+        width: 100%;
+        font-size: 1rem;
+        margin-top: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-submit:hover {
+        background-color: #e8c86c;
+        color: #1a1a1a;
+        transform: translateY(-2px);
+    }
+
+    .btn-submit i {
+        margin-right: 0.5rem;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+        padding: 0.75rem 1.25rem;
+        margin-bottom: 1.5rem;
+        border-radius: 6px;
+        border: 1px solid #f5c6cb;
+    }
+
+    .register-link {
+        text-align: center;
+        margin-top: 1.5rem;
+        font-size: 0.9rem;
+        color: #666666;
+    }
+
+    .register-link a {
+        color: #2e8b57;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    .register-link a:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+        .login-container {
+            margin: 1.5rem auto;
+            padding: 0 0.5rem;
+        }
+
+        .card-header h1 {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+
+<div class="login-container">
+    <h1 class="registration-title" style="font-family: 'Playfair Display', serif; font-size: 2.2rem; color: #1a1a1a; text-align: center; margin-bottom: 2rem; font-weight: 700;">
+        Veuillez vous connecter
+    </h1>
+
+    <div class="login-card">
+        <div class="card-header">
+            <h1>Connexion</h1>
+        </div>
+
+        <div class="card-body">
+            <form method="post">
+                {% if error %}
+                    <div class="alert alert-danger">
+                        {{ error.messageKey|trans(error.messageData, 'security') }}
+                    </div>
+                {% endif %}
+
+                <div class="form-group">
+                    <label for="inputEmail"><i class="fas fa-envelope"></i> Email</label>
+                    <input
+                        type="email"
+                        value="{{ last_username }}"
+                        name="_username"
+                        id="inputEmail"
+                        class="form-control"
+                        autocomplete="off"
+                        placeholder="exemple@email.com"
+                        required
+                    >
                 </div>
-                <div class="card-body">
-                    <form method="post">
-                        {% if error %}
-                            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-                        {% endif %}
 
-                        <div class="mb-3">
-                            <label for="inputEmail" class="form-label">Email</label>
-                            <input 
-                                type="email" 
-                                value="{{ last_username }}" 
-                                name="_username" 
-                                id="inputEmail" 
-                                class="form-control" 
-                                autocomplete="off" 
-                                placeholder="exemple@email.com" 
-                                required
-                            >
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="inputPassword" class="form-label">Mot de passe</label>
-                            <input 
-                                type="password" 
-                                name="_password" 
-                                id="inputPassword" 
-                                class="form-control" 
-                                autocomplete="current-password" 
-                                {# placeholder="••••••••"  #}
-                                required
-                            >
-                        </div>
-
-                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-
-                        <div class="d-grid">
-                            <button class="btn btn-primary" type="submit">Se connecter</button>
-                        </div>
-                    </form>
+                <div class="form-group">
+                    <label for="inputPassword"><i class="fas fa-lock"></i> Mot de passe</label>
+                    <input
+                        type="password"
+                        name="_password"
+                        id="inputPassword"
+                        class="form-control"
+                        autocomplete="current-password"
+                        placeholder="••••••••"
+                        required
+                    >
                 </div>
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-sign-in-alt"></i> Se connecter
+                </button>
+            </form>
+
+            <div class="register-link">
+                Vous n'avez pas de compte ? <a href="{{ path('app_register') }}">Inscrivez-vous</a>
             </div>
         </div>
     </div>
 </div>
 {% endblock %}
+

@@ -15,7 +15,6 @@ final class BillController extends AbstractController
     public function index($id, OrderRepository $orderRepo): Response
     {
         $order = $orderRepo->find($id);
-
         $pdfOptions = new Options(); //definit la nouvelle instanciation de classe Options de Dompdf
         $pdfOptions->set('defaultFont','Arial'); //Définit la font
         $domPdf = new Dompdf($pdfOptions);//On ajoute les options
@@ -27,7 +26,6 @@ final class BillController extends AbstractController
         $domPdf->stream('SneakHub-Facture-'.$order->getId().'.pdf',[//On concatene la facture avec la terminaison"pdf"
             'Attachment'=>false //ca permet de dire on va telecharger le fichier, ou l'afficher et decider de l'imprimer et telecharger
         ]); 
-        
         return new Response('',200,[ //
             'Content-Type' => 'application/pdf' 
         ]);

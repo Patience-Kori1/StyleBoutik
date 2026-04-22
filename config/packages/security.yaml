@@ -36,6 +36,7 @@ security:
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/cart, roles: ROLE_USER }
+        - { path: ^/editor/order/, roles: ROLE_ADMIN }
 
 when@test:
     security:

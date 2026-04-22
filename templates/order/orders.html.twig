@@ -1,100 +1,336 @@
 {% extends 'base.html.twig' %}
-
-{% block title %} Commandes {% endblock %}
-
+{% block title %} Historique des commandes {% endblock %}
 {% block body %}
-<div class="container my-5">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@400;700&display=swap');
 
+    body {
+        font-family: 'Montserrat', sans-serif;
+        background-color: #f9f9f9;
+        color: #333333;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    /* Titre centré */
+    .page-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.5rem;
+        color: #1a1a1a;
+        text-align: center;
+        margin-bottom: 2rem;
+        font-weight: 700;
+        width: 100%;
+    }
+
+    .page-title::after {
+        content: '';
+        display: block;
+        margin: 0.5rem auto 0;
+        width: 100px;
+        height: 2px;
+        background-color: #c4a447;
+    }
+
+    /* Cartes des commandes */
+    .order-card {
+        background-color: #ffffff;
+        border: 1px solid #e8d8b0;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        margin: 0 auto 2rem;
+        max-width: 900px;
+        overflow: hidden;
+        transition: all 0.3s;
+    }
+
+    .order-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    /* En-tête */
+    .order-header {
+        background-color: #f8f4e8;
+        color: #1a1a1a;
+        padding: 1rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .order-header h5 {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    /* Statut */
+    .order-status {
+        font-size: 0.9rem;
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+
+    .order-status.delivered {
+        background-color: rgba(46, 139, 87, 0.1);
+        color: #2e8b57;
+    }
+
+    .order-status.pending {
+        background-color: rgba(255, 193, 7, 0.1);
+        color: #ff8c00;
+    }
+
+    /* Corps */
+    .order-body {
+        padding: 1.5rem;
+    }
+
+    /* Infos client */
+    .customer-info {
+        margin-bottom: 1.5rem;
+    }
+
+    .customer-info h6 {
+        font-family: 'Playfair Display', serif;
+        color: #1a1a1a;
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
+    }
+
+    .info-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .info-list li {
+        display: flex;
+        font-size: 0.95rem;
+        background-color: #f9f9f9;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        border: 1px solid #e8d8b0;
+    }
+
+    .info-list li strong {
+        min-width: 80px;
+        color: #1a1a1a;
+    }
+
+    /* Tableau des produits */
+    .products-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 1.5rem;
+        background-color: #ffffff;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #e8d8b0;
+    }
+
+    .products-table th,
+    .products-table td {
+        padding: 0.75rem;
+        text-align: center;
+        border: 1px solid #e8d8b0;
+    }
+
+    .products-table th {
+        background-color: #f8f4e8;
+        font-weight: 600;
+    }
+
+    /* Images des produits - TAILLE CORRIGÉE */
+    .products-table img {
+        max-width: 50px; /* Taille réduite */
+        max-height: 50px; /* Taille réduite */
+        width: auto;
+        height: auto;
+        object-fit: contain; /* Pour garder les proportions */
+        display: block;
+        margin: 0 auto;
+    }
+
+    /* Pied */
+    .order-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        background-color: #f8f4e8;
+        border-top: 1px solid #e8d8b0;
+    }
+
+    /* Boutons */
+    .action-btn {
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.3s;
+        margin-right: 0.5rem;
+        border: 1px solid #c4a447;
+    }
+
+    .action-btn.primary {
+        background-color: #f8f4e8;
+        color: #1a1a1a;
+    }
+
+    .action-btn.primary:hover {
+        background-color: #e8d8b0;
+    }
+
+    .action-btn.success {
+        background-color: #2e8b57;
+        color: #ffffff;
+        border-color: #2e8b57;
+    }
+
+    .action-btn.danger {
+        background-color: #ffffff;
+        color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    /* Prix total */
+    .total-price {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.4rem;
+        color: #2e8b57;
+        font-weight: 700;
+    }
+
+    /* Pagination */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .order-footer {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .action-btn {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+        .info-list {
+            flex-direction: column;
+        }
+        .info-list li {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="container">
     {% if type == 'all' %}
-        <h1 class="text-center mb-5">Toutes les commandes</h1>
+        <h1 class="page-title">Toutes les commandes</h1>
     {% elseif type == 'is-completed' %}
-        <h1 class="text-center mb-5">Commandes livrées</h1>
+        <h1 class="page-title">Commandes livrées</h1>
     {% elseif type == 'is-not-completed' %}
-        <h1 class="text-center mb-5">Commandes non livrées</h1>
+        <h1 class="page-title">Commandes non livrées</h1>
     {% elseif type == 'pay-on-stripe-not-delivered' %}
-        <h1 class="text-center mb-5">Commandes payées en ligne non livrées</h1>
+        <h1 class="page-title">Commandes payées en ligne non livrées</h1>
     {% elseif type == 'pay-on-stripe-is-delivered' %}
-        <h1 class="text-center mb-5">Commandes payées en ligne livrées</h1>
+        <h1 class="page-title">Commandes payées en ligne livrées</h1>
     {% endif %}
 
-          {{ include ('layouts/flash_message.html.twig')}}
+    {{ include('layouts/flash_message.html.twig') }}
 
     {% for order in orders %}
-        <div class="card shadow-sm mb-4">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">
-                    Commande n° {{ order.id }}
-                    <small class="text-light">({{ order.createdAt|date('d/m/Y H:i') }})</small>
-                </h5>
-            </div>
-            <div class="card-body">
-
-                <!-- Infos utilisateur -->
-                <h6 class="text-primary mb-3">Informations client</h6>
-                <ul class="list-group list-group-flush mb-4">
-                    <li class="list-group-item"><strong>Nom :</strong> {{ order.firstName }} {{ order.lastName }}</li>
-                    <li class="list-group-item"><strong>Téléphone :</strong> {{ order.phone }}</li>
-                    <li class="list-group-item"><strong>Adresse :</strong> {{ order.adress }}, {{ order.city.name }}</li>
-                </ul>
-
-                <!-- Infos Produits -->
-                <div class="d-flex justify-content-between align-items-center">
-                    <h6 class="text-primary mb-3">Produits commandés</h6>
-                    {% if order.isCompleted ==true %}
-                        <p class="text-primary mb-3"> <span class="mb-0 fs-5 fw-bold text-success"> Commande Livrée </span></p>
+        <div class="order-card">
+            <div class="order-header">
+                <h5>Commande n° {{ order.id }}</h5>
+                <span class="order-status {% if order.isCompleted %}delivered{% else %}pending{% endif %}">
+                    {% if order.isCompleted %}
+                        <i class="fas fa-check-circle me-1"></i> Livrée
                     {% else %}
-                        <p class="text-primary mb-3"><span class="mb-0 fs-5 fw-bold text-success"> Pas encore livrée</span>  </p>
+                        <i class="fas fa-clock me-1"></i> En attente
                     {% endif %}
+                </span>
+                <small>{{ order.createdAt|date('d/m/Y H:i') }}</small>
+            </div>
+
+            <div class="order-body">
+                <div class="customer-info">
+                    <h6><i class="fas fa-user me-2"></i> Informations client</h6>
+                    <ul class="info-list">
+                        <li><strong>Nom :</strong> {{ order.firstName }} {{ order.lastName }}</li>
+                        <li><strong>Téléphone :</strong> {{ order.phone }}</li>
+                        <li><strong>Adresse :</strong> {{ order.adress }}, {{ order.city.name }}</li>
+                    </ul>
                 </div>
 
-                <div class="table-responsive mb-3">
-                    <table class="table table-bordered align-middle">
-                        <thead class="table-primary text-center">
+                <h6 class="mb-3"><i class="fas fa-shopping-bag me-2"></i> Produits commandés</h6>
+                <table class="products-table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Nom du produit</th>
+                            <th>Prix unitaire</th>
+                            <th>Quantité</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in order.orderedProducts %}
                             <tr>
-                                <th>Image du Produit</th>
-                                <th>Nom du Produit</th>
-                                <th>Prix unitaire</th>
-                                <th>Quantité</th>
-                                <th>Total</th>
+                                <td>
+                                    <img src="{{ asset('uploads/images/' ~ product.product.image) }}" alt="{{ product.product.name }}">
+                                </td>
+                                <td>{{ product.product.name }}</td>
+                                <td>{{ product.product.price }} €</td>
+                                <td>{{ product.quantity }}</td>
+                                <td>{{ product.product.price * product.quantity }} €</td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            {% for product in order.orderedProducts %}
-                                <tr>
-                                    <td class="text-center">
-                                        <img style="width: 30px" src="{{ asset('uploads/images/'~product.product.image)}}">
-                                    </td>
-                                    <td class="text-center">{{ product.product.name }}</td>
-                                    <td class="text-center">{{ product.product.price }} €</td>
-                                    <td class="text-center">{{ product.quantity }}</td>
-                                    <td class="text-center">{{ product.product.price * product.quantity }} €</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                        {% endfor %}
+                    </tbody>
+                </table>
 
-                
-                <!-- Infos Prix -->
-                <div class="d-flex justify-content-between align-items-center">
-                    
-                    {% if order.isCompleted != true %}
-                        <a href="{{ path('app_orders_is-completed-update',{'id':order.id})}}" class='btn btn-outline-primary col-2 m-lg-1'>Marquer comme livrée</a>
-                    {% elseif order.isCompleted != false %}
-                        <a href="{{ path('app_orders_is-completed-update',{'id':order.id})}}" class='btn btn-outline-primary col-2 m-lg-1'>Marquer comme non livrée</a>
-                    {% endif %}
-
-                     <a href="{{ path('app_bill',{'id':order.id})}}" class='btn btn-outline-success col-2 m-lg-1'>Imprimer la facture</a>
-
-                    <a href="{{ path('app_orders_remove',{'id':order.id})}}" class='btn btn-outline-danger col-2 m-lg-1'>Supprimer la commande</a>
-
-                    <p class="mb-0">Frais de livraison : <strong>{{ order.city.shippingCost }} €</strong></p>
-
-                    <p class="mb-0 fs-5 fw-bold text-primary">Total : {{ order.totalPrice }} €</p>
+                <div class="order-footer">
+                    <div>
+                        {% if order.isCompleted %}
+                            <a href="{{ path('app_orders_is-completed-update', {'id': order.id}) }}" class="action-btn danger">
+                                <i class="fas fa-undo me-1"></i> Marquer comme non livrée
+                            </a>
+                        {% else %}
+                            <a href="{{ path('app_orders_is-completed-update', {'id': order.id}) }}" class="action-btn primary">
+                                <i class="fas fa-check me-1"></i> Marquer comme livrée
+                            </a>
+                        {% endif %}
+                        <a href="{{ path('app_bill', {'id': order.id}) }}" class="action-btn success">
+                            <i class="fas fa-file-pdf me-1"></i> Facture
+                        </a>
+                    </div>
+                    <div class="text-end">
+                        <p class="mb-0"><strong>Frais de livraison :</strong> {{ order.city.shippingCost }} €</p>
+                        <p class="mb-0"><strong>Total :</strong> <span class="total-price">{{ order.totalPrice }} €</span></p>
+                    </div>
                 </div>
             </div>
         </div>
     {% endfor %}
-    {{ knp_pagination_render(orders, 'layouts/pagination_template.html.twig') }}
+
+    <div class="pagination">
+        {{ knp_pagination_render(orders, 'layouts/pagination_template.html.twig') }}
+    </div>
 </div>
 {% endblock %}
+
