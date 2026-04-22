@@ -1,42 +1,253 @@
+{# ==========================================================
+   base.html.twig — StyleBoutik
+   Template de base hérité par toutes les pages
+   Charte : Luxe Sombre | Noir #0a0a0a + Or #c9a84c
+   Fonts  : Cormorant Garamond (titres) + Jost (corps)
+   ========================================================== #}
 <!DOCTYPE html>
-<html>
+<html lang="fr">
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}StyleBoutik{% endblock %} — Votre Boutique Premium</title>
 
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> <!-- Ajoute des icones de la librairie officielle font awesome -->
+        {# ── Google Fonts : Cormorant Garamond + Jost ── #}
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous"> <!--Pour intégrer le CSS de bootstrap-->
+        {# ── Font Awesome (icônes) via CDN ── #}
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"> <!-- Ajoute des icones spéciales de la librairie officielle d'icônes de Bootstrap -->
+        {# ── Bootstrap 5 CSS (grid responsive + collapse navbar mobile) ── #}
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-        {% block stylesheets %}
-        {% endblock %}
-
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
-    </head>
-    <body>
+        {# ══════════════════════════════════════════════
+        CHARTE GRAPHIQUE — Variables CSS globales
+        Une variable = tout le site se met à jour
+        ══════════════════════════════════════════════ #}
         <style>
-            .example-wrapper { margin: 1em auto; max-width: 1100px; width: 95%; font: 18px/1.5 sans-serif; display:flex; gap: 3rem; flex-wrap:wrap; justify-content: space-evenly}
-            body { background-color: #d9dfe4ff}
-            {# body { background-color: #f8f9fa;font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;} #}
-            {#url('{{ asset('uploads/images/Basket-Puma-688fc290d48f1.webp') }}')#}
-            #a { position:absolute; top:84px; left:1305px}
-            
-            {# @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@400;700&display=swap'); importe la font family Montserrat de google #}
+            :root {
+                /* Palette or */
+                --gold:         #c9a84c;
+                --gold-light:   #e0c97a;
+                --gold-dark:    #a07830;
+                --gold-subtle:  rgba(201,168,76,.10);
+
+                /* Palette noire */
+                --black:        #0a0a0a;
+                --black-soft:   #111111;
+                --black-card:   #161616;
+                --black-border: #2a2a2a;
+                --black-hover:  #1e1e1e;
+
+                /* Texte */
+                --white:        #f5f0e8;
+                --white-muted:  #b0a898;
+                --white-dim:    #666666;
+
+                /* Sémantique */
+                --danger:       #c0392b;
+                --success:      #27ae60;
+
+                /* Typographie */
+                --font-display: 'Cormorant Garamond', Georgia, serif;
+                --font-body:    'Jost', system-ui, sans-serif;
+
+                /* Transition globale */
+                --transition:   all 0.25s ease;
+            }
+
+            /* ── Base ── */
+            *, *::before, *::after { box-sizing: border-box; }
+            html { scroll-behavior: smooth; }
+            body {
+                font-family: var(--font-body);
+                background: var(--black);
+                color: var(--white);
+                min-height: 100vh;
+                line-height: 1.6;
+                -webkit-font-smoothing: antialiased;
+            }
+
+            h1,h2,h3,h4,h5,h6 {
+                font-family: var(--font-display);
+                font-weight: 400;
+                color: var(--white);
+                line-height: 1.2;
+            }
+
+            a { color: var(--gold); text-decoration: none; transition: var(--transition); }
+            a:hover { color: var(--gold-light); }
+
+            /* ── Boutons ── */
+            .btn-gold {
+                display: inline-flex; align-items: center; gap: 8px;
+                background: transparent;
+                border: 1px solid var(--gold);
+                color: var(--gold);
+                padding: 10px 24px;
+                font-family: var(--font-body);
+                font-size: .78rem; font-weight: 500;
+                letter-spacing: 2px; text-transform: uppercase;
+                cursor: pointer; transition: var(--transition);
+                text-decoration: none;
+            }
+            .btn-gold:hover { background: var(--gold); color: var(--black); }
+            .btn-gold.filled { background: var(--gold); color: var(--black); }
+            .btn-gold.filled:hover { background: var(--gold-light); }
+
+            .btn-danger-sb {
+                display: inline-flex; align-items: center; gap: 6px;
+                background: transparent;
+                border: 1px solid var(--danger);
+                color: #e07065;
+                padding: 8px 20px;
+                font-size: .75rem; letter-spacing: 1.5px; text-transform: uppercase;
+                cursor: pointer; transition: var(--transition); text-decoration: none;
+            }
+            .btn-danger-sb:hover { background: var(--danger); color: #fff; }
+
+            /* ── Cards ── */
+            .sb-card {
+                background: var(--black-card);
+                border: 1px solid var(--black-border);
+                overflow: hidden; transition: var(--transition);
+            }
+            .sb-card:hover {
+                border-color: var(--gold);
+                transform: translateY(-4px);
+                box-shadow: 0 8px 32px rgba(201,168,76,.08);
+            }
+            .sb-card-img {
+                width: 100%; height: 240px;
+                object-fit: cover; display: block;
+                transition: var(--transition);
+            }
+            .sb-card:hover .sb-card-img { transform: scale(1.03); }
+            .sb-card-body { padding: 1.2rem; }
+            .sb-card-title {
+                font-family: var(--font-display);
+                font-size: 1.15rem; color: var(--white); margin-bottom: 6px;
+            }
+            .sb-card-desc {
+                font-size: .78rem; color: var(--white-dim); margin-bottom: 10px;
+                display: -webkit-box; -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical; overflow: hidden;
+            }
+            .sb-card-price {
+                font-family: var(--font-display);
+                font-size: 1.4rem; color: var(--gold); font-weight: 300;
+            }
+
+            /* ── Titres section ── */
+            .sb-section-tag {
+                font-size: .7rem; letter-spacing: 4px;
+                text-transform: uppercase; color: var(--gold);
+                text-align: center; margin-bottom: 12px; display: block;
+            }
+            .sb-section-title {
+                font-family: var(--font-display);
+                font-size: 2.2rem; font-weight: 300;
+                color: var(--white); text-align: center; margin-bottom: 8px;
+            }
+            .sb-divider {
+                width: 60px; height: 1px;
+                background: linear-gradient(90deg, transparent, var(--gold), transparent);
+                margin: 1rem auto 2rem;
+            }
+
+            /* ── Formulaires ── */
+            .sb-form-control {
+                background: var(--black-card);
+                border: 1px solid var(--black-border);
+                color: var(--white);
+                padding: 12px 16px;
+                font-family: var(--font-body); font-size: .9rem;
+                width: 100%; outline: none; transition: var(--transition); display: block;
+            }
+            .sb-form-control:focus { border-color: var(--gold); }
+            .sb-form-control::placeholder { color: var(--white-dim); }
+            select.sb-form-control option { background: var(--black-soft); }
+            .sb-form-label {
+                font-size: .75rem; letter-spacing: 2px;
+                text-transform: uppercase; color: var(--white-muted);
+                margin-bottom: 6px; display: block;
+            }
+
+            /* ── Tables admin ── */
+            .sb-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+            .sb-table th {
+                background: var(--black-card); color: var(--gold);
+                font-size: .7rem; letter-spacing: 2px; text-transform: uppercase;
+                padding: 14px 16px; border-bottom: 1px solid var(--black-border);
+                font-weight: 500; font-family: var(--font-body);
+            }
+            .sb-table td {
+                padding: 14px 16px; border-bottom: 1px solid var(--black-border);
+                color: var(--white-muted); vertical-align: middle;
+            }
+            .sb-table tr:hover td { background: var(--black-hover); color: var(--white); }
+
+            /* ── Badges ── */
+            .sb-badge {
+                display: inline-block; padding: 3px 10px;
+                font-size: .7rem; letter-spacing: 1px;
+                text-transform: uppercase; font-weight: 500;
+            }
+            .sb-badge-gold    { background: var(--gold-subtle); color: var(--gold); border: 1px solid var(--gold); }
+            .sb-badge-success { background: rgba(39,174,96,.15); color: #6ee297; border: 1px solid #27ae60; }
+            .sb-badge-danger  { background: rgba(192,57,43,.15); color: #e07065; border: 1px solid #c0392b; }
+
+            /* ── Pagination (KnpPaginator) ── */
+            .pagination {
+                display: flex; justify-content: center;
+                gap: 4px; margin-top: 2rem;
+                list-style: none; padding: 0;
+            }
+            .pagination li a,
+            .pagination li span {
+                display: inline-flex; align-items: center; justify-content: center;
+                width: 36px; height: 36px;
+                border: 1px solid var(--black-border);
+                color: var(--white-muted); font-size: .8rem;
+                transition: var(--transition); text-decoration: none;
+            }
+            .pagination li a:hover,
+            .pagination li.active span {
+                border-color: var(--gold); color: var(--gold);
+            }
+            .pagination li.disabled span { color: var(--white-dim); cursor: default; }
         </style>
 
+        {# Styles spécifiques à chaque page (définis dans les enfants) #}
+        {% block stylesheets %}{% endblock %}
+    </head>
+    <body>
+
+        {# ── Navbar ── #}
         {% block nav %}
-            {% include 'layouts/navbar.html.twig' %} {# Inclut la navbar dans toutes les pages en amont#}
+            {% include 'layouts/navbar.html.twig' %}
         {% endblock %}
 
-        {% block body %}
-            {# C'est à l'intérieur de ce block que va contenir le code des autres pages du projet #}
+        {# ── Messages flash ── #}
+        {% block flash %}
+            {% include 'layouts/flash_message.html.twig' %}
         {% endblock %}
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script> <!--Pour intégrer le dynamisme JS du code bootstrap-->
+
+        {# ── Contenu principal ── #}
+        {% block body %}{% endblock %}
+
+        {# ── Footer ── #}
+        {% block footer %}
+            {# {% include 'layouts/footer.html.twig' %} #}
+        {% endblock %}
+
+        {# Bootstrap 5 JS (en bas pour performance) #}
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+        {# Scripts spécifiques à chaque page #}
+        {% block javascripts %}{% endblock %}
+
     </body>
 </html>
