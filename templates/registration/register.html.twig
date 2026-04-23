@@ -1,238 +1,101 @@
 {% extends 'base.html.twig' %}
-{% block title %}Inscription | StyleBoutik{% endblock %}
+
+{% block title %}Créer un compte{% endblock %}
+
 {% block body %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@400;700&display=swap');
 
-    body {
-        font-family: 'Montserrat', sans-serif;
-        background-color: #f9f9f9;
-        color: #333333;
-    }
+<div style="
+    min-height:80vh; display:flex;
+    align-items:center; justify-content:center;
+    padding:3rem 1.5rem;
+">
+    <div style="width:100%; max-width:480px;">
 
-    .registration-container {
-        max-width: 800px;
-        margin: 2rem auto;
-        padding: 0 1rem;
-    }
-
-    .registration-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 2.2rem;
-        color: #1a1a1a;
-        text-align: center;
-        margin-bottom: 2rem;
-        font-weight: 700;
-    }
-
-    .form-card {
-        background-color: #ffffff;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        padding: 2rem;
-        margin: 0 auto;
-    }
-
-    .section-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 1.6rem;
-        color: #ffffff;
-        margin-bottom: 1.2rem;
-        padding: 0.8rem 1.5rem;
-        background-color: #d4af37;
-        border-radius: 8px 8px 0 0;
-        width: calc(100% + 4rem);
-        margin-left: -2rem;
-        margin-top: -2rem;
-        display: block;
-    }
-
-    .form-group {
-        margin-bottom: 1.5rem;
-        position: relative;
-    }
-
-    .form-group label {
-        display: block;
-        margin-bottom: 0.3rem;
-        font-weight: 500;
-        color: #1a1a1a;
-    }
-
-    .form-group label i {
-        margin-right: 0.5rem;
-        color: #d4af37;
-    }
-
-    .form-control {
-        width: 100%;
-        padding: 0.6rem 1rem 0.6rem 2.5rem;
-        border: 1px solid #e0e0e0;
-        border-radius: 6px;
-        font-family: 'Montserrat', sans-serif;
-        font-size: 0.9rem;
-        transition: all 0.3s;
-        background-color: #ffffff !important;
-        color: #333333;
-    }
-
-    .input-icon {
-        position: absolute;
-        left: 1rem;
-        top: 2.1rem;
-        color: #d4af37;
-        font-size: 1rem;
-    }
-
-    .form-control:focus {
-        border-color: #d4af37;
-        outline: none;
-        box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
-        transform: scale(1.01);
-    }
-
-    .form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-    }
-
-    .checkbox-group {
-        display: flex;
-        align-items: center;
-        margin: 1.5rem 0;
-    }
-
-    .checkbox-group input[type="checkbox"] {
-        margin-right: 0.5rem;
-    }
-
-    .checkbox-group label {
-        font-weight: 500;
-        color: #1a1a1a;
-    }
-
-    /* CORRECTIONS DEMANDÉES */
-    .checkbox-group i {
-        color: #d4af37; /* Icône dorée */
-        margin-right: 0.5rem;
-    }
-
-    .checkbox-group label a {
-        color: #2e8b57; /* Lien vert émeraude */
-        text-decoration: none;
-    }
-
-    .checkbox-group label a:hover {
-        text-decoration: underline;
-    }
-    /* FIN DES CORRECTIONS */
-
-    .btn-submit {
-        background-color: #d4af37;
-        color: #ffffff;
-        border: none;
-        padding: 0.7rem 2rem;
-        font-weight: 600;
-        border-radius: 25px;
-        cursor: pointer;
-        transition: all 0.3s;
-        width: 100%;
-        margin-top: 1rem;
-        font-size: 0.95rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .btn-submit:hover {
-        background-color: #e8c86c;
-        color: #1a1a1a;
-        transform: translateY(-2px);
-    }
-
-    .btn-submit i {
-        margin-right: 0.5rem;
-    }
-
-    .login-link {
-        text-align: center;
-        margin-top: 1.5rem;
-        font-size: 0.9rem;
-        color: #666666;
-    }
-
-    .login-link a {
-        color: #2e8b57;
-        font-weight: 500;
-        text-decoration: none;
-    }
-
-    .login-link a:hover {
-        text-decoration: underline;
-    }
-
-    @media (max-width: 768px) {
-        .form-row {
-            grid-template-columns: 1fr;
-        }
-
-        .registration-container {
-            padding: 0 0.5rem;
-        }
-    }
-</style>
-
-<div class="registration-container">
-    <h1 class="registration-title">Créer un compte</h1>
-
-    <div class="form-card">
-        <span class="section-title">Informations personnelles</span>
-
-        {{ form_start(registrationForm) }}
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="registration_form_firstName"><i class="fas fa-user"></i> Prénom</label>
-                    
-                    {{ form_widget(registrationForm.firstName, {'attr': {'class': 'form-control', 'placeholder': 'Votre prénom'}}) }}
-                </div>
-
-                <div class="form-group">
-                    <label for="registration_form_lastName"><i class="fas fa-user"></i> Nom</label>
-                    
-                    {{ form_widget(registrationForm.lastName, {'attr': {'class': 'form-control', 'placeholder': 'Votre nom'}}) }}
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="registration_form_email"><i class="fas fa-envelope"></i> Email</label>
-               
-                {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control', 'placeholder': 'votre@email.com'}}) }}
-            </div>
-
-            <div class="form-group">
-                <label for="registration_form_plainPassword"><i class="fas fa-lock"></i> Mot de passe</label>
-                {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control', 'placeholder': '••••••••'}}) }}
-            </div>
-
-            <div class="checkbox-group">
-                {{ form_widget(registrationForm.agreeTerms) }}
-                <label for="registration_form_agreeTerms">
-                    <i class="fas fa-file-contract"></i> <!-- Icône dorée -->
-                    J'accepte les <a href="#" target="_blank">conditions d'utilisation</a>
-                </label>
-            </div>
-
-            <button type="submit" class="btn-submit">
-                <i class="fas fa-user-plus"></i> S'inscrire
-            </button>
-        {{ form_end(registrationForm) }}
-
-        <div class="login-link">
-            Vous avez déjà un compte ? <a href="#">Connectez-vous</a>
+        {# Logo centré #}
+        <div style="text-align:center; margin-bottom:2.5rem;">
+            <a href="{{ path('app_home_page') }}" style="
+                font-family:var(--font-display);
+                font-size:2.2rem; font-weight:300;
+                color:var(--gold); letter-spacing:4px;
+                text-decoration:none;
+            ">StyleBoutik</a>
+            <div style="width:60px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:1rem auto;"></div>
+            <p style="font-size:.7rem;letter-spacing:3px;text-transform:uppercase;color:var(--white-dim);">
+                Rejoindre la boutique
+            </p>
         </div>
+
+        {# Formulaire #}
+        <div style="background:var(--black-card);border:1px solid var(--black-border);padding:2rem;">
+
+            {{ form_errors(registrationForm) }}
+
+            {{ form_start(registrationForm, {'attr': {'style': 'display:flex;flex-direction:column;gap:1.25rem;'}}) }}
+
+                {# Prénom #}
+                <div>
+                    <label class="sb-form-label">
+                        <i class="fas fa-user" style="color:var(--gold);margin-right:6px;"></i>
+                        Prénom
+                    </label>
+                    {{ form_widget(registrationForm.firstName, {
+                        'attr': {'class': 'sb-form-control', 'placeholder': 'Votre prénom'}
+                    }) }}
+                    {{ form_errors(registrationForm.firstName) }}
+                </div>
+
+                {# Nom #}
+                <div>
+                    <label class="sb-form-label">
+                        <i class="fas fa-user" style="color:var(--gold);margin-right:6px;"></i>
+                        Nom
+                    </label>
+                    {{ form_widget(registrationForm.lastName, {
+                        'attr': {'class': 'sb-form-control', 'placeholder': 'Votre nom'}
+                    }) }}
+                    {{ form_errors(registrationForm.lastName) }}
+                </div>
+
+                {# Email #}
+                <div>
+                    <label class="sb-form-label">
+                        <i class="fas fa-envelope" style="color:var(--gold);margin-right:6px;"></i>
+                        Adresse e-mail
+                    </label>
+                    {{ form_widget(registrationForm.email, {
+                        'attr': {'class': 'sb-form-control', 'placeholder': 'votre@email.com'}
+                    }) }}
+                    {{ form_errors(registrationForm.email) }}
+                </div>
+
+                {# Mot de passe #}
+                <div>
+                    <label class="sb-form-label">
+                        <i class="fas fa-lock" style="color:var(--gold);margin-right:6px;"></i>
+                        Mot de passe
+                    </label>
+                    {{ form_widget(registrationForm.plainPassword, {
+                        'attr': {'class': 'sb-form-control', 'placeholder': '8 caractères minimum'}
+                    }) }}
+                    {{ form_errors(registrationForm.plainPassword) }}
+                </div>
+
+                {# Bouton inscription #}
+                <button type="submit" class="btn-gold filled" style="width:100%;justify-content:center;padding:14px;margin-top:.5rem;">
+                    <i class="fas fa-user-plus"></i> Créer mon compte
+                </button>
+
+            {{ form_end(registrationForm) }}
+
+        </div>
+
+        {# Lien connexion #}
+        <p style="text-align:center;margin-top:1.5rem;font-size:.8rem;color:var(--white-dim);">
+            Déjà un compte ?
+            <a href="{{ path('app_login') }}" style="color:var(--gold);">Se connecter</a>
+        </p>
+
     </div>
 </div>
-{% endblock %}
 
+{% endblock %}
