@@ -1,42 +1,144 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Panier{% endblock %}
+{% block title %}Mon Panier{% endblock %}
 
 {% block body %}
-    <div class="container">
-        <h1>Panier</h1>
-        <table class="table table-bordered">
-            <tr>
-                <th>Produit</th>
-                <th>Prix</th>
-                <th>Quantité</th>
-                <th>Prix total</th>
-                <th>Action</th>
-            </tr>
+
+<div style="max-width:1000px; margin:0 auto; padding:3rem 1.5rem;">
+
+    {# En-tête section #}
+    <div style="text-align:center; margin-bottom:3rem;">
+        <p class="sb-section-tag">✦ Votre sélection ✦</p>
+        <h1 class="sb-section-title">Mon Panier</h1>
+        <div class="sb-divider"></div>
+    </div>
+
+    {% if items|length > 0 %}
+
+        {# Tableau du panier #}
+        <div style="border:1px solid var(--black-border); margin-bottom:2rem;">
+
+            {# En-tête tableau #}
+            <div style="
+                display:grid; grid-template-columns:3fr 1fr 1fr 1fr auto;
+                padding:14px 20px;
+                background:var(--black-card);
+                border-bottom:1px solid var(--black-border);
+                font-size:.7rem; letter-spacing:2px; text-transform:uppercase;
+                color:var(--gold);
+            ">
+                <span>Produit</span>
+                <span style="text-align:center;">Prix unitaire</span>
+                <span style="text-align:center;">Quantité</span>
+                <span style="text-align:center;">Total</span>
+                <span></span>
+            </div>
+
+            {# Lignes produits #}
             {% for item in items %}
-                <tr>
-                    <td>{{ item.product.name }} </td>
-                    <td>{{ item.product.price }} </td>
-                    <td>{{ item.quantity }} </td>
-                    <td>{{ item.product.price * item.quantity }} </td>
-                    <td>
-                        <a href="{{ path('app_cart_product_remove',{'id':item.product.id}) }} "  class="text-danger text-decoration-none">Supprimer du panier</a> 
-                    </td>
-                </tr>
-            {% else %}
-                <h5>Votre panier est vide</h5>
-                <div class="row">
-                    <a href="{{ path('app_home_page')}}"  class="btn btn-primary col-2 m-lg-1">Retour à la page d'accueil</a>
+                <div style="
+                    display:grid; grid-template-columns:3fr 1fr 1fr 1fr auto;
+                    padding:20px; align-items:center;
+                    border-bottom:1px solid var(--black-border);
+                    transition:var(--transition);
+                " onmouseover="this.style.background='var(--black-hover)'" onmouseout="this.style.background='transparent'">
+
+                    {# Produit #}
+                    <div style="display:flex; align-items:center; gap:16px;">
+                        <img
+                            src="{{ asset('uploads/images/' ~ item.product.image) }}"
+                            alt="{{ item.product.name }}"
+                            style="width:70px; height:70px; object-fit:cover; border:1px solid var(--black-border);"
+                        >
+                        <div>
+                            <a href="{{ path('app_home_product_show', {'id': item.product.id}) }}"
+                               style="font-family:var(--font-display);font-size:1.05rem;color:var(--white);text-decoration:none;">
+                                {{ item.product.name }}
+                            </a>
+                        </div>
+                    </div>
+
+                    {# Prix unitaire #}
+                    <div style="text-align:center; color:var(--white-muted); font-size:.9rem;">
+                        {{ item.product.price }} €
+                    </div>
+
+                    {# Quantité #}
+                    <div style="text-align:center;">
+                        <span style="
+                            display:inline-block; width:36px; height:36px;
+                            border:1px solid var(--black-border);
+                            line-height:36px; text-align:center;
+                            color:var(--white); font-size:.9rem;
+                        ">{{ item.quantity }}</span>
+                    </div>
+
+                    {# Total ligne #}
+                    <div style="text-align:center; font-family:var(--font-display); font-size:1.1rem; color:var(--gold);">
+                        {{ item.product.price * item.quantity }} €
+                    </div>
+
+                    {# Supprimer #}
+                    <div>
+                        <a href="{{ path('app_cart_product_remove', {'id': item.product.id}) }}"
+                           class="btn-danger-sb" style="padding:6px 12px; font-size:.65rem;"
+                           title="Retirer du panier">
+                            <i class="fas fa-times"></i>
+                        </a>
+                    </div>
+
                 </div>
             {% endfor %}
-        </table>
-        {% if total > 0 %}
-            <h2>Total: {{ total }} €</h2>
-            <div class="row">
-                <a data-turbo='false' href="{{ path('app_order')}}" class="btn btn-primary col-2 m-lg-1">Valider la commande</a>
-                <a href="{{ path('app_cart_remove')}}"  class="btn btn-outline-danger col-2 m-lg-1">Supprimer le panier</a>
-                <a href="{{ path('app_home_page')}}"  class="btn btn-outline-success col-2 m-lg-1">Retour à la page d'accueil</a>
+
+        </div>
+
+        {# Récapitulatif et actions #}
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1.5rem;">
+
+            {# Bouton vider #}
+            <a href="{{ path('app_cart_remove') }}" class="btn-danger-sb">
+                <i class="fas fa-trash"></i> Vider le panier
+            </a>
+
+            {# Total + CTA #}
+            <div style="
+                background:var(--black-card);
+                border:1px solid var(--black-border);
+                padding:1.5rem 2rem; min-width:280px;
+            ">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                    <span style="font-size:.75rem;letter-spacing:2px;text-transform:uppercase;color:var(--white-muted);">Total</span>
+                    <span style="font-family:var(--font-display);font-size:2rem;color:var(--gold);font-weight:300;">
+                        {{ total }} €
+                    </span>
+                </div>
+                <div style="height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin-bottom:1rem;"></div>
+                <a data-turbo="false" href="{{ path('app_order') }}" class="btn-gold filled" style="width:100%;justify-content:center;">
+                    <i class="fas fa-arrow-right"></i> Valider la commande
+                </a>
+                <a href="{{ path('app_home_page') }}" class="btn-gold" style="width:100%;justify-content:center;margin-top:.75rem;">
+                    <i class="fas fa-arrow-left"></i> Continuer mes achats
+                </a>
             </div>
-        {% endif %}
-    </div>
+
+        </div>
+
+    {% else %}
+
+        {# Panier vide #}
+        <div style="text-align:center; padding:5rem 2rem; border:1px solid var(--black-border);">
+            <i class="fas fa-shopping-bag" style="font-size:3rem;color:var(--gold);display:block;margin-bottom:1.5rem;opacity:.5;"></i>
+            <h2 style="font-size:1.8rem;font-weight:300;margin-bottom:1rem;">Votre panier est vide</h2>
+            <p style="color:var(--white-dim);margin-bottom:2rem;">
+                Découvrez notre collection et ajoutez vos pièces préférées.
+            </p>
+            <a href="{{ path('app_home_page') }}" class="btn-gold filled">
+                <i class="fas fa-arrow-right"></i> Découvrir la collection
+            </a>
+        </div>
+
+    {% endif %}
+
+</div>
+
 {% endblock %}
