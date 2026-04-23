@@ -1,11 +1,30 @@
-{% for type, messages in app.flashes(['success', 'danger', 'info']) %}
+{# layouts/flash_message.html.twig — StyleBoutik #}
+<style>
+    .sb-flash {
+        padding: 14px 20px;
+        font-size: .85rem;
+        border-left: 3px solid;
+        letter-spacing: .5px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .sb-flash.success { background: rgba(39,174,96,.10); border-color: var(--success); color: #6ee297; }
+    .sb-flash.danger  { background: rgba(192,57,43,.10); border-color: var(--danger); color: #e07065; }
+    .sb-flash.info    { background: var(--gold-subtle); border-color: var(--gold); color: var(--gold-light); }
+</style>
 
+{% for type, messages in app.flashes(['success', 'danger', 'info']) %}
     {% for message in messages %}
-        <div class="col-md-12 mx-auto mt-2">
-            <div class="alert alert-{{ type }} alert-admissible fade show">
-                {{ message }}
-            </div>
+        <div class="sb-flash {{ type }}">
+            {% if type == 'success' %}
+                <i class="fas fa-check-circle"></i>
+            {% elseif type == 'danger' %}
+                <i class="fas fa-exclamation-triangle"></i>
+            {% else %}
+                <i class="fas fa-info-circle"></i>
+            {% endif %}
+            {{ message }}
         </div>
     {% endfor %}
-    
 {% endfor %}
