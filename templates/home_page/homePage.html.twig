@@ -1,97 +1,127 @@
 {% extends 'base.html.twig' %}
-{% block title %}Les produits{% endblock %}
+
+{% block title %}Catalogue{% endblock %}
+
 {% block body %}
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@400;700&display=swap');
 
-    body {
-        font-family: 'Montserrat', sans-serif;
-        background-color: #f9f9f9;
-    }
+{# ════════════════════════════════════
+   HERO SECTION
+   ════════════════════════════════════ #}
+<section style="
+    background: linear-gradient(135deg, #0a0a0a 0%, #110d02 40%, #0a0a0a 100%);
+    border-bottom: 1px solid #2a2a2a;
+    padding: 5rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+">
+    {# Effet de lumière dorée en arrière-plan #}
+    <div style="
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        width: 600px; height: 300px;
+        background: radial-gradient(ellipse, rgba(201,168,76,0.07) 0%, transparent 70%);
+        pointer-events: none;
+    "></div>
 
-    h1 {
-        text-align: center;
-        font-family: 'Playfair Display', serif;
-        color: #1a1a1a;
-        margin: 3rem 0;
-    }
+    <p class="sb-section-tag">✦ Collection 2026 ✦</p>
+    <h1 style="
+        font-family: var(--font-display);
+        font-size: clamp(2.5rem, 6vw, 4.5rem);
+        font-weight: 300;
+        color: var(--white);
+        margin-bottom: 1rem;
+        letter-spacing: 2px;
+    ">
+        L'Art du <em style="color: var(--gold); font-style: italic;">Style</em>
+    </h1>
+    <p style="color: var(--white-dim); font-size: 0.9rem; letter-spacing: 2px; margin-bottom: 2rem; max-width: 480px; margin-left: auto; margin-right: auto;">
+        Des pièces sélectionnées avec soin — Nike, Adidas, Levi's, Puma et bien plus
+    </p>
+    <a href="#catalogue" class="btn-gold">
+        <i class="fas fa-arrow-down"></i> Découvrir la collection
+    </a>
+</section>
 
-    .card {
-        background-color: #ffffff;
-        border: 1px solid #e0e0e0;
-        border-radius: 8px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s;
-        margin-bottom: 2rem;
-    }
+{# ════════════════════════════════════
+   CATALOGUE PRODUITS
+   ════════════════════════════════════ #}
+<section id="catalogue" style="padding: 4rem 2rem; max-width: 1400px; margin: 0 auto;">
 
-    .card:hover {
-        transform: translateY(-5px);
-    }
+    <div style="text-align:center; margin-bottom: 3rem;">
+        <p class="sb-section-tag">— Nos Produits —</p>
+        <h2 class="sb-section-title">Collection Complète</h2>
+        <div class="sb-divider"></div>
+    </div>
 
-    .card-img-top {
-        height: 200px;
-        object-fit: cover;
-        border-top-left-radius: 8px;
-        border-top-right-radius: 8px;
-    }
-
-    .card-body {
-        padding: 1.5rem;
-    }
-
-    .card-title {
-        font-family: 'Playfair Display', serif;
-        color: #1a1a1a;
-        font-size: 1.2rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .card-text {
-        color: #333333;
-        font-size: 0.9rem;
-    }
-
-    .card h3 {
-        color: #d4af37;
-        font-weight: 700;
-        margin: 1rem 0;
-    }
-
-    .btn-outline-primary {
-        background-color: #d4af37;
-        color: #ffffff;
-        border: none;
-        border-radius: 4px;
-        padding: 0.5rem 1rem;
-        font-weight: 600;
-    }
-
-    .btn-outline-primary:hover {
-        background-color: #e8c86c;
-        color: #1a1a1a;
-    }
-</style>
-
-<div class="container">
-    <h1>Nos Produits</h1>
-    <div class="row">
+    {# Grille de produits #}
+    <div style="
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 1.5rem;
+    ">
         {% for product in products %}
-            <div class="col-md-3 mt-4">
-                <div class="card">
-                    <img src="{{ asset('uploads/images/' ~ product.image) }}" class="card-img-top imgproduct" alt="Image de {{ product.name }}">
-                    <div class="card-body">
-                        <a class="titleProductLink" href="{{ path('app_home_product_show', {'id': product.id}) }}">
-                            <h5 class="card-title">{{ product.name }}</h5>
-                        </a>
-                        <p class="card-text">{{ product.description|slice(0, 60) }}...</p>
-                        <h3>{{ product.price }} €</h3>
-                        <a href="{{ path('app_cart_new', {'id': product.id}) }}" class="btn btn-outline-primary">Ajouter au panier</a>
+            <div class="sb-card">
+
+                {# Image du produit #}
+                <div style="overflow: hidden; position: relative;">
+                    <img
+                        src="{{ asset('uploads/images/' ~ product.image) }}"
+                        alt="{{ product.name }}"
+                        class="sb-card-img"
+                    >
+                    {# Badge stock faible #}
+                    {% if product.stock <= 3 and product.stock > 0 %}
+                        <span class="sb-badge sb-badge-gold" style="position:absolute; top:12px; right:12px;">
+                            Dernières pièces
+                        </span>
+                    {% elseif product.stock == 0 %}
+                        <span class="sb-badge sb-badge-danger" style="position:absolute; top:12px; right:12px;">
+                            Épuisé
+                        </span>
+                    {% endif %}
+                </div>
+
+                {# Contenu de la card #}
+                <div class="sb-card-body">
+                    <a href="{{ path('app_home_product_show', {'id': product.id}) }}" style="text-decoration:none;">
+                        <h3 class="sb-card-title">{{ product.name }}</h3>
+                    </a>
+
+                    {% if product.description %}
+                        <p class="sb-card-desc">{{ product.description|slice(0, 70) }}...</p>
+                    {% endif %}
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1rem;">
+                        <span class="sb-card-price">{{ product.price }} €</span>
+
+                        {% if product.stock > 0 %}
+                            <a href="{{ path('app_cart_new', {'id': product.id}) }}" class="btn-gold" style="padding: 8px 16px; font-size: 0.7rem;">
+                                <i class="fas fa-plus"></i> Panier
+                            </a>
+                        {% else %}
+                            <span style="color: var(--white-dim); font-size: 0.75rem; letter-spacing: 1px;">ÉPUISÉ</span>
+                        {% endif %}
                     </div>
                 </div>
+
+            </div>
+        {% else %}
+            <div style="grid-column: 1/-1; text-align:center; padding: 4rem; color: var(--white-dim);">
+                <i class="fas fa-box-open" style="font-size: 3rem; color: var(--gold); margin-bottom: 1rem; display:block;"></i>
+                <p style="font-family: var(--font-display); font-size: 1.5rem;">Aucun produit disponible</p>
             </div>
         {% endfor %}
     </div>
-    {{ knp_pagination_render(products) }}
-</div>
+
+    {# Pagination #}
+    {% if products is defined and products.count > 0 %}
+        <div style="margin-top: 3rem; display: flex; justify-content: center;">
+            {{ knp_pagination_render(products) }}
+        </div>
+    {% endif %}
+
+</section>
+
 {% endblock %}
