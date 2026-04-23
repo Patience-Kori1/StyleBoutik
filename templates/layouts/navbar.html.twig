@@ -1,151 +1,245 @@
-<nav class="navbar navbar-expand-lg" style="
-    background-color: #1a1a1a;
-    font-family: 'Montserrat', sans-serif;
-    padding: 0.5rem 1rem;
-    border-bottom: 1px solid #333;
-">
-    <div class="container-fluid">
-        <!-- Logo + Panier (à gauche) -->
-        <div class="d-flex align-items-center">
-            <a class="navbar-brand me-4" href="{{ path('app_home_page') }}" style="
-                font-family: 'Playfair Display', serif;
-                font-size: 24px;
-                color: #d4af37 !important;
-                font-weight: 700;
-            ">StyleBoutik</a>
-            <!-- Icône Panier avec badge (exemple : 3 articles) -->
-            
-        </div>
-
-        <!-- Bouton toggler (mobile) -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation" style="border-color: #d4af37;">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <!-- Menu principal -->
-        <div class="collapse navbar-collapse" id="navbarColor01">
-            <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll">
-                <!-- Lien Accueil avec icône -->
-                <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{{ path('app_home_page') }}" style="color: #ffffff; font-weight: 500;">
-                        <i class="fas fa-home me-1"></i> Accueil
-                    </a>
-                </li>
-
-                <!-- Dropdown Catégories avec icône -->
-                {% if categories is defined %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="{{ path('app_allCategories') }}" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="color: #ffffff; font-weight: 500;">
-                            <i class="fas fa-list me-1"></i> Catégories
-                        </a>
-                        <ul class="dropdown-menu" style="background-color: #1a1a1a; border: none;">
-                            {% for category in categories %}
-                                <li><a class="dropdown-item" href="{{ path('app_allCategories') }}" style="color: #ffffff;"><i class="fas fa-tag me-2"></i>{{ category.name }}</a></li>
-                                {% for subCategory in category.subCategories %}
-                                    <li><a class="dropdown-item" href="{{ path('app_home_product_filter', {'id': subCategory.id}) }}" style="color: #ffffff; padding-left: 2rem;"><i class="fas fa-angle-right me-2"></i>{{ subCategory.name }}</a></li>
-                                {% endfor %}
-                                <li><hr class="dropdown-divider" style="border-color: #333;"></li>
-                            {% endfor %}
-                        </ul>
-                    </li>
-                {% endif %}
-
-                <!-- Section Admin (si ROLE_ADMIN) avec icône -->
-                {% if is_granted('ROLE_ADMIN') %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" style="color: #ffffff; font-weight: 500;">
-                            <i class="fas fa-user-shield me-1"></i> Admin
-                        </a>
-                        <ul class="dropdown-menu" style="background-color: #1a1a1a; border: none;">
-                            <li><a class="dropdown-item" href="{{ path('app_allCategories') }}" style="color: #ffffff;"><i class="fas fa-box me-2"></i>Les catégories</a></li>
-                            <li><a class="dropdown-item" href="{{ path('app_category_new') }}" style="color: #ffffff;"><i class="fas fa-plus me-2"></i>Ajouter une catégorie</a></li>
-                            <li><hr class="dropdown-divider" style="border-color: #333;"></li>
-                            <li><a class="dropdown-item" href="{{ path('app_sub_category_index') }}" style="color: #ffffff;"><i class="fas fa-boxes me-2"></i>Sous-catégories</a></li>
-                            <li><a class="dropdown-item" href="#" style="color: #ffffff;"><i class="fas fa-plus me-2"></i>Ajouter une sous-catégorie</a></li>
-                            <li><hr class="dropdown-divider" style="border-color: #333;"></li>
-                            <li><a class="dropdown-item" href="{{ path('app_product_index') }}" style="color: #ffffff;"><i class="fas fa-tshirt me-2"></i>Les produits</a></li>
-                            <li><a class="dropdown-item" href="{{ path('app_product_new') }}" style="color: #ffffff;"><i class="fas fa-plus me-2"></i>Ajouter un produit</a></li>
-                            <li><hr class="dropdown-divider" style="border-color: #333;"></li>
-                            <li><a class="dropdown-item" href="{{ path('app_user') }}" style="color: #ffffff;"><i class="fas fa-users me-2"></i>Utilisateurs</a></li>
-                            <li><hr class="dropdown-divider" style="border-color: #333;"></li>
-                            <li><a class="dropdown-item" href="{{ path('app_cart') }}" style="color: #ffffff;"><i class="fas fa-shopping-cart me-2"></i>Mon panier</a></li>
-                            <li><a class="dropdown-item" href="{{ path('app_order') }}" style="color: #ffffff;"><i class="fas fa-shopping-bag me-2"></i>Faire une commande</a></li>
-                            <li><hr class="dropdown-divider" style="border-color: #333;"></li>
-                            <li><a class="dropdown-item" href="{{ path('app_orders_show', {'type': 'all'}) }}" style="color: #ffffff;"><i class="fas fa-history me-2"></i>Historique des commandes</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ path('app_logout') }}" class="nav-link" style="color: #ffffff; font-weight: 500;">
-                            <i class="fas fa-sign-out-alt me-1"></i> Se déconnecter
-                        </a>
-                    </li>
-                {% endif %}
-
-                <!-- Dropdown Commandes avec icône -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" style="color: #ffffff; font-weight: 500;">
-                        <i class="fas fa-clipboard-list me-1"></i> Commandes
-                    </a>
-                    <ul class="dropdown-menu" style="background-color: #1a1a1a; border: none;">
-                        <li><a class="dropdown-item" href="{{ path('app_orders_show', {'type': 'all'}) }}" style="color: #ffffff;"><i class="fas fa-list me-2"></i>Toutes les commandes</a></li>
-                        <li><a class="dropdown-item" href="{{ path('app_orders_show', {'type': 'is-completed'}) }}" style="color: #ffffff;"><i class="fas fa-check-circle me-2"></i>Commandes livrées</a></li>
-                        <li><a class="dropdown-item" href="{{ path('app_orders_show', {'type': 'is-not-completed'}) }}" style="color: #ffffff;"><i class="fas fa-times-circle me-2"></i>Commandes non livrées</a></li>
-                        <li><a class="dropdown-item" href="{{ path('app_orders_show', {'type': 'pay-on-stripe-is-delivered'}) }}" style="color: #ffffff;"><i class="fas fa-credit-card me-2"></i>Commandes payées en ligne livrées</a></li>
-                        <li><a class="dropdown-item" href="{{ path('app_orders_show', {'type': 'pay-on-stripe-not-delivered'}) }}" style="color: #ffffff;"><i class="fas fa-credit-card me-2"></i>Commandes payées en ligne non livrées</a></li>
-                    </ul>
-                </li>
-
-                <!-- Liens Connexion/Inscription (si utilisateur non connecté) -->
-                {% if app.user == false %}
-                    <li class="nav-item">
-                        <a href="{{ path('app_register') }}" class="nav-link" style="color: #ffffff; font-weight: 500;">
-                            <i class="fas fa-user-plus me-1"></i> S'inscrire
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ path('app_login') }}" class="nav-link" style="color: #ffffff; font-weight: 500;">
-                            <i class="fas fa-sign-in-alt me-1"></i> Se connecter
-                        </a>
-                    </li>
-                {% endif %}
-            </ul>
-            <a href="{{ path('app_cart') }}" class="position-relative me-3" style="color: #d4af37;">
-                <i class="fas fa-shopping-cart fa-lg"></i>
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 10px; padding: 0.3em 0.5em;"></span>
-            </a>
-
-            <!-- Barre de recherche -->
-            <form data-turbo="false" method="GET" action="{{ path('app_search_engine') }}" class="d-flex" role="search">
-                <input name="word" class="form-control me-2" type="search" placeholder="Rechercher un produit" aria-label="Search" style="
-                    border-radius: 0;
-                    border: 1px solid #333;
-                    background-color: #ffffff;
-                    color: #333333;
-                    
-                ">
-                <button class="btn" type="submit" style="
-                    background-color: #d4af37;
-                    color: #ffffff;
-                    border: none;
-                    border-radius: 0;
-                    font-weight: 500;
-                ">
-                    <i class="fas fa-search me-1"></i> Rechercher
-                </button>
-            </form>
-        </div>
-    </div>
-</nav>
-
-<!-- CSS pour le survol des liens (à ajouter dans ton fichier CSS ou dans un bloc style) -->
+{# ==========================================================
+   layouts/navbar.html.twig — StyleBoutik
+   Utilise 'all_categories' injectée par AppGlobalsExtension
+   Catégories : visibles par tous
+   Commandes : ROLE_EDITOR ou ROLE_ADMIN uniquement
+   ========================================================== #}
 <style>
-    .navbar-nav .nav-link:hover,
-    .dropdown-menu .dropdown-item:hover {
-        color: #d4af37 !important;
-        background-color: rgba(212, 175, 55, 0.1);
+    .sb-navbar {
+        background: var(--black-soft);
+        border-bottom: 1px solid var(--black-border);
+        position: sticky; top: 0; z-index: 1000;
     }
-    .dropdown-menu {
-        border-radius: 0;
+    .sb-navbar .container-fluid { padding: 0 1.5rem; }
+    .sb-navbar-inner {
+        display: flex; align-items: center;
+        justify-content: space-between;
+        height: 64px; gap: 1rem;
+    }
+    .sb-logo {
+        font-family: var(--font-display);
+        font-size: 1.75rem; font-weight: 600;
+        color: var(--gold) !important;
+        letter-spacing: 2px; white-space: nowrap;
+        text-decoration: none; flex-shrink: 0;
+        transition: var(--transition);
+    }
+    .sb-logo:hover { color: var(--gold-light) !important; }
+    .sb-nav {
+        display: flex; align-items: center;
+        gap: 0; list-style: none; margin: 0; padding: 0; flex: 1;
+    }
+    .sb-nav .nav-item { position: relative; }
+    .sb-nav .nav-link {
+        display: flex; align-items: center; gap: 6px;
+        padding: 0 14px; height: 64px;
+        color: var(--white-muted) !important;
+        font-size: .76rem; font-weight: 500;
+        letter-spacing: 1.5px; text-transform: uppercase;
+        text-decoration: none; white-space: nowrap;
+        transition: var(--transition);
+    }
+    .sb-nav .nav-link:hover { color: var(--gold) !important; }
+    .sb-nav .nav-link.gold { color: var(--gold) !important; }
+    .sb-nav .nav-link .chevron { font-size: .55rem; margin-left: 2px; }
+    .sb-dropdown {
+        position: absolute; top: 100%; left: 0;
+        min-width: 230px;
+        background: var(--black-soft);
+        border: 1px solid var(--black-border);
+        border-top: 2px solid var(--gold);
+        padding: .5rem 0;
+        opacity: 0; visibility: hidden;
+        transform: translateY(-6px);
+        transition: var(--transition); z-index: 1001;
+    }
+    .sb-nav .nav-item:hover .sb-dropdown {
+        opacity: 1; visibility: visible; transform: translateY(0);
+    }
+    .sb-dropdown .dd-item {
+        display: flex; align-items: center; gap: 10px;
+        padding: 10px 18px;
+        color: var(--white-muted) !important;
+        font-size: .8rem; letter-spacing: .5px;
+        transition: var(--transition); text-decoration: none;
+    }
+    .sb-dropdown .dd-item:hover { color: var(--gold) !important; background: var(--gold-subtle); }
+    .sb-dropdown .dd-item.sub { padding-left: 36px; font-size: .75rem; color: var(--white-dim) !important; }
+    .sb-dropdown .dd-divider { border: none; border-top: 1px solid var(--black-border); margin: 4px 0; }
+    .sb-dropdown .dd-item i { color: var(--gold); font-size: .7rem; width: 14px; }
+    .sb-search { display: flex; align-items: center; flex-shrink: 0; }
+    .sb-search input {
+        background: var(--black-card);
+        border: 1px solid var(--black-border); border-right: none;
+        color: var(--white); padding: 8px 14px;
+        font-family: var(--font-body); font-size: .8rem; width: 200px;
+        outline: none; transition: var(--transition);
+    }
+    .sb-search input:focus { border-color: var(--gold); }
+    .sb-search input::placeholder { color: var(--white-dim); }
+    .sb-search button {
+        background: var(--gold); border: none; color: var(--black);
+        padding: 8px 14px; font-size: .75rem; cursor: pointer;
+        transition: var(--transition); white-space: nowrap;
+    }
+    .sb-search button:hover { background: var(--gold-light); }
+    .sb-cart {
+        color: var(--gold); font-size: 1.1rem; padding: 0 6px;
+        flex-shrink: 0; transition: var(--transition); text-decoration: none;
+    }
+    .sb-cart:hover { color: var(--gold-light) !important; }
+    .sb-toggler {
+        display: none; background: none;
+        border: 1px solid var(--black-border);
+        color: var(--gold); padding: 6px 10px; cursor: pointer; font-size: 1rem;
+    }
+    @media (max-width: 992px) {
+        .sb-nav { display: none; }
+        .sb-toggler { display: block; }
+        .sb-search input { width: 130px; }
     }
 </style>
 
+<nav class="sb-navbar">
+    <div class="container-fluid">
+        <div class="sb-navbar-inner">
+
+            <a href="{{ path('app_home_page') }}" class="sb-logo">StyleBoutik</a>
+
+            <button class="sb-toggler" data-bs-toggle="collapse" data-bs-target="#sbNavMenu">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <ul class="sb-nav" id="sbNavMenu">
+
+                {# Accueil — tous #}
+                <li class="nav-item">
+                    <a href="{{ path('app_home_page') }}" class="nav-link">
+                        <i class="fas fa-home"></i> Accueil
+                    </a>
+                </li>
+
+                {# ── Catégories — tous les visiteurs
+                     all_categories vient de App\Twig\AppGlobalsExtension
+                     disponible sur toutes les pages sans passer par le contrôleur ── #}
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-layer-group"></i> Catégories
+                        <i class="fas fa-chevron-down chevron"></i>
+                    </a>
+                    <div class="sb-dropdown">
+                        {% if all_categories is defined and all_categories|length > 0 %}
+                            {% for category in all_categories %}
+                                <a class="dd-item" style="cursor:default; opacity:.7;">
+                                    <i class="fas fa-circle"></i> {{ category.name }}
+                                </a>
+                                {% for subCategory in category.subCategories %}
+                                    <a href="{{ path('app_home_product_filter', {'id': subCategory.id}) }}" class="dd-item sub">
+                                        <i class="fas fa-angle-right"></i> {{ subCategory.name }}
+                                    </a>
+                                {% endfor %}
+                                <hr class="dd-divider">
+                            {% endfor %}
+                        {% else %}
+                            <span class="dd-item" style="color:var(--white-dim);cursor:default;">
+                                <i class="fas fa-info-circle"></i> Aucune catégorie
+                            </span>
+                        {% endif %}
+                    </div>
+                </li>
+
+                {# ── Admin — ROLE_ADMIN uniquement ── #}
+                {% if is_granted('ROLE_ADMIN') %}
+                    <li class="nav-item">
+                        <a href="#" class="nav-link gold">
+                            <i class="fas fa-crown"></i> Admin
+                            <i class="fas fa-chevron-down chevron"></i>
+                        </a>
+                        <div class="sb-dropdown">
+                            <a href="{{ path('app_allCategories') }}" class="dd-item"><i class="fas fa-folder"></i> Catégories</a>
+                            <a href="{{ path('app_category_new') }}" class="dd-item"><i class="fas fa-plus"></i> Nouvelle catégorie</a>
+                            <hr class="dd-divider">
+                            <a href="{{ path('app_sub_category_index') }}" class="dd-item"><i class="fas fa-folder-open"></i> Sous-catégories</a>
+                            <hr class="dd-divider">
+                            <a href="{{ path('app_product_index') }}" class="dd-item"><i class="fas fa-tshirt"></i> Produits</a>
+                            <a href="{{ path('app_product_new') }}" class="dd-item"><i class="fas fa-plus"></i> Nouveau produit</a>
+                            <hr class="dd-divider">
+                            <a href="{{ path('app_user') }}" class="dd-item"><i class="fas fa-users"></i> Utilisateurs</a>
+                            <hr class="dd-divider">
+                            <a href="{{ path('app_orders_show', {'type': 'all'}) }}" class="dd-item"><i class="fas fa-history"></i> Toutes les commandes</a>
+                        </div>
+                    </li>
+                {% endif %}
+
+                {# ── Éditeur — ROLE_EDITOR uniquement (pas admin) ── #}
+                {% if is_granted('ROLE_EDITOR') and not is_granted('ROLE_ADMIN') %}
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-edit"></i> Éditeur
+                            <i class="fas fa-chevron-down chevron"></i>
+                        </a>
+                        <div class="sb-dropdown">
+                            <a href="{{ path('app_product_index') }}" class="dd-item"><i class="fas fa-tshirt"></i> Mes produits</a>
+                            <a href="{{ path('app_product_new') }}" class="dd-item"><i class="fas fa-plus"></i> Nouveau produit</a>
+                            <hr class="dd-divider">
+                            <a href="{{ path('app_orders_show', {'type': 'all'}) }}" class="dd-item"><i class="fas fa-history"></i> Commandes</a>
+                        </div>
+                    </li>
+                {% endif %}
+
+                {# ── Commandes — ROLE_EDITOR ou ROLE_ADMIN seulement ── #}
+                {% if is_granted('ROLE_EDITOR') or is_granted('ROLE_ADMIN') %}
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-clipboard-list"></i> Commandes
+                            <i class="fas fa-chevron-down chevron"></i>
+                        </a>
+                        <div class="sb-dropdown">
+                            <a href="{{ path('app_orders_show', {'type': 'all'}) }}" class="dd-item"><i class="fas fa-list"></i> Toutes</a>
+                            <a href="{{ path('app_orders_show', {'type': 'is-completed'}) }}" class="dd-item"><i class="fas fa-check-circle"></i> Livrées</a>
+                            <a href="{{ path('app_orders_show', {'type': 'is-not-completed'}) }}" class="dd-item"><i class="fas fa-times-circle"></i> Non livrées</a>
+                            <hr class="dd-divider">
+                            <a href="{{ path('app_orders_show', {'type': 'pay-on-stripe-is-delivered'}) }}" class="dd-item"><i class="fas fa-credit-card"></i> Stripe livrées</a>
+                            <a href="{{ path('app_orders_show', {'type': 'pay-on-stripe-not-delivered'}) }}" class="dd-item"><i class="fas fa-credit-card"></i> Stripe non livrées</a>
+                        </div>
+                    </li>
+                {% endif %}
+
+                {# ── Visiteur non connecté ── #}
+                {% if app.user is null %}
+                    <li class="nav-item">
+                        <a href="{{ path('app_register') }}" class="nav-link">
+                            <i class="fas fa-user-plus"></i> S'inscrire
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ path('app_login') }}" class="nav-link gold">
+                            <i class="fas fa-sign-in-alt"></i> Connexion
+                        </a>
+                    </li>
+                {% endif %}
+
+                {# ── Connecté ── #}
+                {% if app.user is not null %}
+                    <li class="nav-item">
+                        <a href="{{ path('app_logout') }}" class="nav-link">
+                            <i class="fas fa-sign-out-alt"></i> Déconnexion
+                        </a>
+                    </li>
+                {% endif %}
+
+            </ul>
+
+            <div style="display:flex;align-items:center;gap:.75rem;flex-shrink:0;">
+                <a href="{{ path('app_cart') }}" class="sb-cart">
+                    <i class="fas fa-shopping-bag"></i>
+                </a>
+                <form data-turbo="false" method="GET" action="{{ path('app_search_engine') }}" class="sb-search">
+                    <input type="search" name="word" placeholder="Rechercher..." aria-label="Recherche">
+                    <button type="submit"><i class="fas fa-search"></i></button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</nav>
