@@ -1,36 +1,69 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Les produits{% endblock %}
+{% block title %}Résultats — {{ word }}{% endblock %}
 
 {% block body %}
 
-<style>
-    h1 {text-align:center}
-    .titleProductLink {text-decoration:none; font-weight: }
-    .titleProductLink h5 {font-weight: 600}
-    .row {margin-bottom: 2rem}
-</style>
-<div class="container">
-    <h1 class="mb-5 mt-5">Résultats de la recherche du mot " {{ word }} "</h1>
-    <div class="row">
-        {% for product in products %}
-            <div class="col-md-3 mt-4">
-                <div class="card" style="width: 18rem;">
-                    <img src="{{ asset('uploads/images/'~product.image)}}" class="imgproduct card-img-top" alt="image des produits">
-                    <div class="card-body">
-                        <a class="titleProductLink" href="{{ path('app_home_product_show',{'id':product.id}) }} ">
-                            <h5 class="card-title titleProduct">{{ product.name }}</h5>
+<div style="max-width:1200px; margin:0 auto; padding:3rem 1.5rem;">
+
+    {# En-tête résultats #}
+    <div style="margin-bottom:3rem;">
+        <p class="sb-section-tag">— Résultats de recherche —</p>
+        <h1 class="sb-section-title">
+            "{{ word }}"
+        </h1>
+        <div class="sb-divider"></div>
+        <p style="text-align:center;color:var(--white-dim);font-size:.85rem;letter-spacing:1px;">
+            {{ products|length }} résultat{{ products|length > 1 ? 's' : '' }} trouvé{{ products|length > 1 ? 's' : '' }}
+        </p>
+    </div>
+
+    {% if products|length > 0 %}
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.5rem;">
+            {% for product in products %}
+                <div class="sb-card">
+                    <div style="overflow:hidden;">
+                        <img src="{{ asset('uploads/images/' ~ product.image) }}"
+                             alt="{{ product.name }}" class="sb-card-img">
+                    </div>
+                    <div class="sb-card-body">
+                        <a href="{{ path('app_home_product_show', {'id': product.id}) }}" style="text-decoration:none;">
+                            <h3 class="sb-card-title">{{ product.name }}</h3>
                         </a>
-                        
-                        <p class="card-text">{{ product.description|slice(0,60) }}...</p>
-                        <h3>{{ product.price }} €</h3> <!-- altgr + e pour le sigle euro-->
-                        <a href="{{ path('app_cart_new',{'id':product.id}) }}" class="btn btn-outline-primary">Ajouter au panier</a>
+                        {% if product.description %}
+                            <p class="sb-card-desc">{{ product.description|slice(0, 70) }}...</p>
+                        {% endif %}
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:1rem;">
+                            <span class="sb-card-price">{{ product.price }} €</span>
+                            {% if product.stock > 0 %}
+                                <a href="{{ path('app_cart_new', {'id': product.id}) }}" class="btn-gold" style="padding:8px 16px;font-size:.7rem;">
+                                    <i class="fas fa-plus"></i> Panier
+                                </a>
+                            {% else %}
+                                <span class="sb-badge sb-badge-danger">Épuisé</span>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
-            </div>
-        {% endfor %}
-    </div>
-    {# {{ knp_pagination_render(products, 'layouts/pagination_template.html.twig') }} #}
+            {% endfor %}
+        </div>
+
+    {% else %}
+
+        <div style="text-align:center;padding:4rem;border:1px solid var(--black-border);">
+            <i class="fas fa-search" style="font-size:2.5rem;color:var(--gold);display:block;margin-bottom:1rem;opacity:.4;"></i>
+            <h2 style="font-size:1.5rem;font-weight:300;margin-bottom:.75rem;">Aucun résultat</h2>
+            <p style="color:var(--white-dim);margin-bottom:2rem;">
+                Aucun produit ne correspond à votre recherche "{{ word }}".
+            </p>
+            <a href="{{ path('app_home_page') }}" class="btn-gold filled">
+                <i class="fas fa-arrow-left"></i> Retour au catalogue
+            </a>
+        </div>
+
+    {% endif %}
+
 </div>
 
 {% endblock %}
