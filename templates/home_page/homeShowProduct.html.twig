@@ -1,44 +1,142 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Page produit{% endblock %}
+{% block title %}{{ product.name }}{% endblock %}
 
 {% block body %}
-    <div class="container">
-        <h3 class="mt-4">Votre produit actuel</h3>
-        <div class="card mb-12 mt-5">
-            <div class="row g-0">
-                <div class="col-md-4">
-                    <img src="/uploads/images/{{product.image}}" class="img-fluid rounded-start" alt="...">
-                </div>
 
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <h1 class="card-title text-primary">{{ product.name }}</h1>
-                        <p class="card-text">{{ product.description }} </p>
-                        <h3>{{ product.price }} €</h3>
-                        <a href="{{ path('app_cart_new',{'id':product.id}) }}" class="btn btn-outline-primary">Ajouter au panier</a>
-                        <a href="{{ path('app_home_page') }}" class="btn btn-outline-success">Retour à la page d'accueil</a>
-                    </div>
+{# ════════════════════════════════
+   DÉTAIL PRODUIT
+   ════════════════════════════════ #}
+<div style="max-width:1200px; margin:0 auto; padding:3rem 1.5rem;">
+
+    {# Fil d'Ariane #}
+    <nav style="margin-bottom:2rem; font-size:.75rem; letter-spacing:1px; color:var(--white-dim);">
+        <a href="{{ path('app_home_page') }}" style="color:var(--white-dim);">Accueil</a>
+        <span style="margin:0 8px; color:var(--gold);">✦</span>
+        <span style="color:var(--white-muted);">{{ product.name }}</span>
+    </nav>
+
+    {# Produit principal #}
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:3rem; margin-bottom:4rem;">
+
+        {# Image #}
+        <div style="position:relative; overflow:hidden;">
+            <img
+                src="{{ asset('uploads/images/' ~ product.image) }}"
+                alt="{{ product.name }}"
+                style="width:100%; height:500px; object-fit:cover; display:block;"
+            >
+            {# Badge stock #}
+            {% if product.stock <= 3 and product.stock > 0 %}
+                <div class="sb-badge sb-badge-gold" style="position:absolute;top:16px;right:16px;">
+                    Dernières pièces
                 </div>
-            </div>
+            {% elseif product.stock == 0 %}
+                <div class="sb-badge sb-badge-danger" style="position:absolute;top:16px;right:16px;">
+                    Épuisé
+                </div>
+            {% endif %}
+            {# Ligne dorée décorative #}
+            <div style="position:absolute;bottom:0;left:0;right:0;height:2px;
+                background:linear-gradient(90deg,transparent,var(--gold),transparent);"></div>
         </div>
 
-        <h3 class="mt-4">Dernier produits ajoutés</h3>
-         <div class="row">
-            {% for product in products %}
-                <div class="col-md-3 mt-4">
-                    <div class="card" style="width: 18rem;">
-                        <img src="{{ asset('uploads/images/'~product.image)}}" class="imgproduct card-img-top" alt="image des produits">
-                        <div class="card-body">
-                            <a class="titleProductLink" href="{{ path('app_home_product_show',{'id':product.id}) }} "><h5 class="card-title titleProduct">{{ product.name }}</h5></a>
-                            <p class="card-text">{{ product.description|slice(0,60) }}...</p>
-                            <h3>{{ product.price }} €</h3> <!-- altgr + e pour le sigle euro-->
-                            <a href="{{ path('app_cart_new',{'id':product.id}) }}" class="btn btn-outline-success">Ajouter au panier</a>
+        {# Informations produit #}
+        <div style="display:flex; flex-direction:column; justify-content:center;">
+
+            <p class="sb-section-tag" style="text-align:left;">✦ StyleBoutik Collection</p>
+
+            <h1 style="font-size:2.8rem; font-weight:300; margin-bottom:1rem;">
+                {{ product.name }}
+            </h1>
+
+            <div style="width:60px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin-bottom:1.5rem;"></div>
+
+            <p style="color:var(--white-muted); font-size:.9rem; line-height:1.8; margin-bottom:2rem;">
+                {{ product.description }}
+            </p>
+
+            {# Prix #}
+            <div style="display:flex; align-items:baseline; gap:12px; margin-bottom:1.5rem;">
+                <span style="font-family:var(--font-display);font-size:2.5rem;color:var(--gold);font-weight:300;">
+                    {{ product.price }} €
+                </span>
+                <span style="font-size:.75rem;letter-spacing:2px;color:var(--white-dim);text-transform:uppercase;">
+                    Prix TTC
+                </span>
+            </div>
+
+            {# Stock #}
+            <div style="margin-bottom:2rem;">
+                {% if product.stock > 5 %}
+                    <span class="sb-badge sb-badge-success">
+                        <i class="fas fa-check"></i> En stock ({{ product.stock }} disponibles)
+                    </span>
+                {% elseif product.stock > 0 %}
+                    <span class="sb-badge sb-badge-gold">
+                        <i class="fas fa-exclamation"></i> Plus que {{ product.stock }} en stock
+                    </span>
+                {% else %}
+                    <span class="sb-badge sb-badge-danger">
+                        <i class="fas fa-times"></i> Épuisé
+                    </span>
+                {% endif %}
+            </div>
+
+            {# Actions #}
+            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                {% if product.stock > 0 %}
+                    <a href="{{ path('app_cart_new', {'id': product.id}) }}" class="btn-gold filled" style="flex:1; justify-content:center;">
+                        <i class="fas fa-shopping-bag"></i> Ajouter au panier
+                    </a>
+                {% else %}
+                    <button class="btn-gold" disabled style="flex:1; justify-content:center; opacity:.4; cursor:not-allowed;">
+                        <i class="fas fa-times"></i> Indisponible
+                    </button>
+                {% endif %}
+                <a href="{{ path('app_home_page') }}" class="btn-gold" style="padding:10px 20px;">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    {# ════════════════════════════════
+       DERNIERS PRODUITS AJOUTÉS
+       ════════════════════════════════ #}
+    <div>
+        <p class="sb-section-tag">— Vous pourriez aussi aimer —</p>
+        <h2 class="sb-section-title" style="font-size:1.8rem;">Nouveautés</h2>
+        <div class="sb-divider"></div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:1.2rem;">
+            {% for p in products %}
+                {% if p.id != product.id %}
+                    <div class="sb-card">
+                        <div style="overflow:hidden;">
+                            <img src="{{ asset('uploads/images/' ~ p.image) }}"
+                                 alt="{{ p.name }}" class="sb-card-img" style="height:180px;">
+                        </div>
+                        <div class="sb-card-body">
+                            <a href="{{ path('app_home_product_show', {'id': p.id}) }}" style="text-decoration:none;">
+                                <h3 class="sb-card-title" style="font-size:1rem;">{{ p.name }}</h3>
+                            </a>
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:.75rem;">
+                                <span class="sb-card-price" style="font-size:1.1rem;">{{ p.price }} €</span>
+                                {% if p.stock > 0 %}
+                                    <a href="{{ path('app_cart_new', {'id': p.id}) }}" class="btn-gold" style="padding:6px 14px;font-size:.65rem;">
+                                        + Panier
+                                    </a>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
-                </div>
+                {% endif %}
             {% endfor %}
         </div>
-
     </div>
+
+</div>
+
 {% endblock %}
