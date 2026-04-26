@@ -1,346 +1,243 @@
 {% extends 'base.html.twig' %}
-{% block title %}Finaliser ma commande{% endblock %}
+
+{% block title %}Passer une commande{% endblock %}
+
 {% block body %}
-<!-- Font Awesome pour les icônes -->
 
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@400;700&display=swap');
+<div style="max-width:1100px; margin:0 auto; padding:3rem 1.5rem;">
 
-    body {
-        font-family: 'Montserrat', sans-serif;
-        background-color: #f9f9f9;
-        color: #333333;
-    }
-
-    .order-container {
-        max-width: 1200px;
-        margin: 2rem auto;
-        padding: 0 1rem;
-    }
-
-    .order-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 2.2rem;
-        color: #1a1a1a;
-        text-align: center;
-        margin-bottom: 2rem;
-        font-weight: 700;
-    }
-
-    .order-grid {
-        display: grid;
-        grid-template-columns: 1fr 350px;
-        gap: 2rem;
-    }
-
-    /* Fonds dorés pour les titres (pleine largeur) */
-    .section-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 1.6rem;
-        color: #ffffff;
-        margin-bottom: 1.2rem;
-        padding: 0.8rem 1.5rem;
-        background-color: #d4af37;
-        border-radius: 8px 8px 0 0;
-        width: calc(100% + 4rem);
-        margin-left: -2rem;
-        margin-top: -2rem;
-        display: block;
-    }
-
-    /* Cartes avec fond blanc */
-    .form-card, .summary-card {
-        background-color: #ffffff;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        padding: 2rem;
-    }
-
-    .form-group {
-        margin-bottom: 1rem;
-        position: relative;
-    }
-
-    .form-group label {
-        display: block;
-        margin-bottom: 0.3rem;
-        font-weight: 500;
-        color: #1a1a1a;
-    }
-
-    i {
-        margin-right: 0.5rem;
-        color: #d4af37;
-    }
-
-    /* Style des champs (y compris le select) */
-    .form-control {
-        width: 100%;
-        padding: 0.6rem 1rem 0.6rem 2.5rem; /* Espace pour l'icône */
-        border: 1px solid #e0e0e0;
-        border-radius: 6px;
-        font-family: 'Montserrat', sans-serif;
-        font-size: 0.9rem;
-        transition: all 0.3s;
-        background-color: #ffffff !important;
-        color: #333333;
-        appearance: none;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-    }
-
- 
-    /* Style personnalisé pour le select (ville) */
-    select.form-control {
-        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231a1a1a'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right 0.8rem center;
-        background-size: 1em;
-        padding-right: 2.2rem;
-    }
-
-    /* Style du dropdown du select (forcé en blanc) */
-    select.form-control option {
-        background-color: #ffffff !important;
-        color: #333333 !important;
-    }
-
-    select.form-control:focus {
-        background-color: #ffffff !important;
-    }
-
-    /* Pour Firefox */
-    select.form-control optgroup {
-        background-color: #ffffff !important;
-        color: #333333 !important;
-    }
-
-    /* Animation et validation visuelle */
-    .form-control:focus {
-        border-color: #d4af37;
-        outline: none;
-        box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
-        transform: scale(1.01);
-    }
-
-    .form-control.is-valid {
-        border-color: #2e8b57;
-    }
-
-    .form-control.is-invalid {
-        border-color: #dc3545;
-    }
-
-    .form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-    }
-
-    .checkbox-group {
-        display: flex;
-        align-items: center;
-        margin: 1rem 0;
-    }
-
-    .checkbox-group input[type="checkbox"] {
-        margin-right: 0.5rem;
-    }
-
-    .btn-submit {
-        background-color: #d4af37;
-        color: #ffffff;
-        border: none;
-        padding: 0.7rem 2rem;
-        font-weight: 600;
-        border-radius: 25px;
-        cursor: pointer;
-        transition: all 0.3s;
-        width: 100%;
-        margin-top: 0.5rem;
-        font-size: 0.95rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .btn-submit:hover {
-        background-color: #e8c86c;
-        color: #1a1a1a;
-        transform: translateY(-2px);
-    }
-
-    .btn-submit i {
-        margin-right: 0.5rem;
-    }
-
-    .summary-item {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 0.8rem;
-        font-size: 0.95rem;
-    }
-
-    .summary-item span:first-child {
-        font-weight: 500;
-        color: #333333;
-    }
-
-    .summary-item span:last-child {
-        font-weight: 600;
-        color: #1a1a1a;
-    }
-
-    .summary-total {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 1rem;
-        padding-top: 0.8rem;
-        border-top: 1px solid #e0e0e0;
-    }
-
-    .summary-total span:first-child {
-        font-family: 'Playfair Display', serif;
-        font-size: 1.2rem;
-        color: #1a1a1a;
-    }
-
-    .summary-total span:last-child {
-        font-size: 1.3rem;
-        color: #2e8b57;
-        font-weight: 700;
-    }
-
-    .shipping-info {
-        font-size: 0.8rem;
-        color: #666666;
-        margin-top: 0.2rem;
-    }
-
-    /* Spinner de chargement */
-    #loading-spinner {
-        display: none;
-        text-align: center;
-        margin-top: 0.5rem;
-        color: #d4af37;
-        font-size: 0.9rem;
-    }
-
-    @media (max-width: 992px) {
-        .order-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-</style>
-
-<div class="order-container">
-    <h1 class="order-title">Finaliser ma commande</h1>
-    <div class="order-grid">
-        <!-- Formulaire -->
-        <div class="form-card">
-            <span class="section-title">Informations de livraison</span>
-            {{ form_start(form) }}
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="order_firstName"><i class="fas fa-user"></i> Prénom</label>
-                        
-                        {{ form_widget(form.firstName) }}
-                    </div>
-                    <div class="form-group">
-                        <label for="order_lastName"><i class="fas fa-user"></i> Nom</label>                        
-                        {{ form_widget(form.lastName) }}
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="order_email"><i class="fas fa-envelope"></i> Email</label>
-                        {{ form_widget(form.email) }}
-                    </div>
-                    <div class="form-group">
-                        <label for="order_phone"><i class="fas fa-phone"></i> Téléphone</label>
-                        {{ form_widget(form.phone) }}
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="order_adress">Adresse</label>
-                    {{ form_widget(form.adress) }}
-                </div>
-                <div class="form-group">
-                    <label for="order_city"><i class="fas fa-city"></i> Ville</label>
-                    {{ form_widget(form.city) }}
-                    <div id="loading-spinner">
-                        <i class="fas fa-spinner fa-spin"></i> Calcul des frais en cours...
-                    </div>
-                </div>
-                
-                <div class="checkbox-group">
-                    {{ form_widget(form.payOnDelivery) }}
-                    <label for="order_payOnDelivery"><i class="fas fa-money-bill-wave me-2"></i> Payez à la livraison</label>
-                </div>
-                <button type="submit" class="btn-submit">
-                    <i class="fas fa-check-circle"></i> Finaliser la commande
-                </button>
-            {{ form_end(form) }}
-        </div>
-
-        <!-- Résumé de commande -->
-        <div class="summary-card">
-            <span class="section-title">Résumé</span>
-            <div class="card-body" style="padding: 0; margin-top: 1rem;">
-                <div class="summary-item">
-                    <span>Montant des produits</span>
-                    <span><span id="card-price">{{ total }}</span> €</span>
-                </div>
-                <div class="summary-item">
-                    <span>Frais de livraison</span>
-                    <span><span id="shippingCost">0</span> €</span>
-                </div>
-                <div class="shipping-info">Calculés selon votre ville</div>
-                <div class="summary-total">
-                    <span>Total</span>
-                    <span><span class="total_Price">0</span> €</span>
-                </div>
-            </div>
-        </div>
+    {# En-tête #}
+    <div style="text-align:center; margin-bottom:3rem;">
+        <p class="sb-section-tag">✦ Finaliser votre achat ✦</p>
+        <h1 class="sb-section-title">Votre commande</h1>
+        <div class="sb-divider"></div>
     </div>
+
+    {% if total > 0 %}
+
+        <div style="display:grid; grid-template-columns:1.4fr 1fr; gap:2rem; align-items:start;">
+
+            {# ── Formulaire de livraison ── #}
+            <div style="background:var(--black-card); border:1px solid var(--black-border); padding:2rem;">
+
+                <h2 style="font-size:1.3rem; font-weight:300; margin-bottom:1.5rem; padding-bottom:1rem; border-bottom:1px solid var(--black-border);">
+                    <i class="fas fa-map-marker-alt" style="color:var(--gold); margin-right:8px; font-size:.9rem;"></i>
+                    Informations de livraison
+                </h2>
+
+                {{ form_start(form, {'attr': {'id': 'order-form'}}) }}
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+                    {# Prénom #}
+                    <div>
+                        <label class="sb-form-label">Prénom</label>
+                        {{ form_widget(form.firstName, {'attr': {'class': 'sb-form-control', 'placeholder': 'Prénom'}}) }}
+                        {{ form_errors(form.firstName) }}
+                    </div>
+                    {# Nom #}
+                    <div>
+                        <label class="sb-form-label">Nom</label>
+                        {{ form_widget(form.lastName, {'attr': {'class': 'sb-form-control', 'placeholder': 'Nom'}}) }}
+                        {{ form_errors(form.lastName) }}
+                    </div>
+                </div>
+
+                {# Téléphone #}
+                <div style="margin-bottom:1rem;">
+                    <label class="sb-form-label">Téléphone</label>
+                    {{ form_widget(form.phone, {'attr': {'class': 'sb-form-control', 'placeholder': '+33 6 00 00 00 00'}}) }}
+                    {{ form_errors(form.phone) }}
+                </div>
+
+                {# Adresse #}
+                <div style="margin-bottom:1rem;">
+                    <label class="sb-form-label">Adresse de livraison</label>
+                    {{ form_widget(form.adress, {'attr': {'class': 'sb-form-control', 'placeholder': '12 rue de la Paix'}}) }}
+                    {{ form_errors(form.adress) }}
+                </div>
+
+                {# Email #}
+                <div style="margin-bottom:1rem;">
+                    <label class="sb-form-label">Email (pour confirmation)</label>
+                    {{ form_widget(form.email, {'attr': {'class': 'sb-form-control', 'placeholder': 'votre@email.com'}}) }}
+                    {{ form_errors(form.email) }}
+                </div>
+
+                {# Ville #}
+                <div style="margin-bottom:1rem;">
+                    <label class="sb-form-label">
+                        <i class="fas fa-city" style="color:var(--gold);margin-right:6px;"></i>
+                        Ville de livraison
+                    </label>
+                    {{ form_widget(form.city, {'attr': {'class': 'sb-form-control', 'id': 'order_city'}}) }}
+                    {{ form_errors(form.city) }}
+                </div>
+
+                {# Mode de paiement #}
+                <div style="margin-bottom:1.5rem;">
+                    <label class="sb-form-label">
+                        <i class="fas fa-credit-card" style="color:var(--gold);margin-right:6px;"></i>
+                        Mode de paiement
+                    </label>
+                    <div style="display:flex; gap:1rem; margin-top:.5rem;">
+
+                        {# Option : Paiement à la livraison #}
+                        <label style="
+                            flex:1; border:1px solid var(--black-border);
+                            padding:1rem; cursor:pointer;
+                            transition:var(--transition);
+                            display:flex; align-items:center; gap:10px;
+                        " id="label-delivery" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="updateLabelStyle()">
+                            {{ form_widget(form.payOnDelivery, {'attr': {'id': 'pay_on_delivery', 'style': 'accent-color:var(--gold);'}}) }}
+                            <div>
+                                <div style="font-size:.8rem; font-weight:500; color:var(--white);">
+                                    <i class="fas fa-truck" style="color:var(--gold);margin-right:6px;"></i>
+                                    Paiement à la livraison
+                                </div>
+                                <div style="font-size:.7rem; color:var(--white-dim); margin-top:2px;">
+                                    Payez à la réception
+                                </div>
+                            </div>
+                        </label>
+
+                    </div>
+                    {{ form_errors(form.payOnDelivery) }}
+                </div>
+
+                {# Bouton soumettre #}
+                <button type="submit" class="btn-gold filled" style="width:100%;justify-content:center;padding:14px;">
+                    <i class="fas fa-check"></i> Confirmer la commande
+                </button>
+
+                {{ form_end(form) }}
+
+            </div>
+
+            {# ── Récapitulatif commande ── #}
+            <div style="position:sticky; top:80px;">
+
+                {# Produits du panier #}
+                <div style="background:var(--black-card); border:1px solid var(--black-border); padding:1.5rem; margin-bottom:1rem;">
+                    <h2 style="font-size:1.1rem; font-weight:300; margin-bottom:1rem; padding-bottom:.75rem; border-bottom:1px solid var(--black-border);">
+                        <i class="fas fa-shopping-bag" style="color:var(--gold);margin-right:8px;font-size:.9rem;"></i>
+                        Récapitulatif
+                    </h2>
+
+                    {# Total produits #}
+                    <div style="display:flex; justify-content:space-between; margin-bottom:.75rem;">
+                        <span style="color:var(--white-muted); font-size:.85rem;">Produits</span>
+                        <span style="font-family:var(--font-display); font-size:1.1rem; color:var(--white);">
+                            <span id="card-price">{{ total }}</span> €
+                        </span>
+                    </div>
+
+                    {# Frais de livraison (mis à jour par AJAX) #}
+                    <div style="display:flex; justify-content:space-between; margin-bottom:.75rem; align-items:center;">
+                        <span style="color:var(--white-muted); font-size:.85rem;">Livraison</span>
+                        <span style="font-family:var(--font-display); font-size:1.1rem; color:var(--gold);">
+                            <span id="shippingCost">—</span>
+                            <span id="shipping-unit" style="font-size:.8rem; display:none;"> €</span>
+                        </span>
+                    </div>
+
+                    <div style="height:1px; background:linear-gradient(90deg,transparent,var(--gold),transparent); margin:1rem 0;"></div>
+
+                    {# Total général #}
+                    <div style="display:flex; justify-content:space-between; align-items:baseline;">
+                        <span style="font-size:.75rem; letter-spacing:2px; text-transform:uppercase; color:var(--white-muted);">Total</span>
+                        <span style="font-family:var(--font-display); font-size:1.8rem; color:var(--gold); font-weight:300;">
+                            <span class="total_Price">{{ total }}</span> €
+                        </span>
+                    </div>
+
+                    <p id="shipping-info" style="font-size:.72rem; color:var(--white-dim); text-align:center; margin-top:.75rem; letter-spacing:.5px;">
+                        Frais calculés selon la ville choisie
+                    </p>
+                </div>
+
+                {# Info sécurité #}
+                <div style="
+                    border:1px solid var(--black-border);
+                    padding:1rem;
+                    background:var(--gold-subtle);
+                    text-align:center;
+                ">
+                    <i class="fas fa-lock" style="color:var(--gold);margin-right:6px;"></i>
+                    <span style="font-size:.75rem;color:var(--white-muted);letter-spacing:.5px;">
+                        Paiement 100% sécurisé
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+    {% else %}
+
+        {# Panier vide #}
+        <div style="text-align:center;padding:4rem;border:1px solid var(--black-border);">
+            <i class="fas fa-shopping-bag" style="font-size:3rem;color:var(--gold);display:block;margin-bottom:1rem;opacity:.5;"></i>
+            <h2 style="font-size:1.5rem;font-weight:300;margin-bottom:.75rem;">Votre panier est vide</h2>
+            <p style="color:var(--white-dim);margin-bottom:2rem;">Ajoutez des produits avant de passer commande.</p>
+            <a href="{{ path('app_home_page') }}" class="btn-gold filled">
+                <i class="fas fa-arrow-right"></i> Voir le catalogue
+            </a>
+        </div>
+
+    {% endif %}
+
 </div>
 
-<!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block javascripts %}
+{# jQuery via CDN pour l'appel AJAX du prix de livraison #}
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
 <script>
-    $(document).ready(function() {
-        const citySelector = $('#order_city');
-        const cardPrice = parseInt($("#card-price").text());
-        const loadingSpinner = $('#loading-spinner');
+$(document).ready(function() {
+    const citySelector = $('#order_city');
+    const cardPrice    = parseInt($('#card-price').text());
 
-        function updateShipping(url) {
-            loadingSpinner.show();
-            $.ajax({
-                url: url,
-                type: 'GET',
-                success: function(response) {
-                    loadingSpinner.hide();
-                    const newResponse = JSON.parse(response);
-                    if (parseInt(newResponse.status) === 200) {
-                        const shippingCost = parseInt(newResponse.content);
-                        $("#shippingCost").text(shippingCost);
-                        $('.total_Price').text(cardPrice + shippingCost);
-                    }
-                },
-                error: function() {
-                    loadingSpinner.hide();
-                    alert("Une erreur est survenue lors du calcul des frais de livraison.");
+    /**
+     * Met à jour l'affichage des frais de livraison et du total
+     * en appelant la route /city/{id}/shipping/cost via AJAX
+     */
+    function updateShipping(cityId) {
+        if (!cityId) return;
+
+        $.ajax({
+            url: `/city/${cityId}/shipping/cost`,
+            type: 'GET',
+            success: function(response) {
+                const data = JSON.parse(response);
+                if (parseInt(data.status) === 200) {
+                    const shippingCost = parseInt(data.content);
+                    // Mise à jour des éléments d'affichage
+                    $('#shippingCost').text(shippingCost);
+                    $('#shipping-unit').show();
+                    $('.total_Price').text(cardPrice + shippingCost);
+                    $('#shipping-info').hide();
                 }
-            });
-        }
-
-        // Mise à jour initiale
-        updateShipping(`http://localhost:8000/city/${citySelector.val()}/shipping/cost`);
-
-        // Mise à jour au changement de ville
-        citySelector.on('change', function() {
-            updateShipping(`http://localhost:8000/city/${$(this).val()}/shipping/cost`);
+            },
+            error: function() {
+                $('#shippingCost').text('Erreur');
+            }
         });
+    }
+
+    // Mise à jour initiale au chargement
+    updateShipping(citySelector.val());
+
+    // Mise à jour à chaque changement de ville
+    citySelector.on('change', function() {
+        updateShipping($(this).val());
     });
+
+    function updateLabelStyle() {
+        // Réinitialise la bordure si non coché
+        const label = document.getElementById('label-delivery');
+        if (label) label.style.borderColor = 'var(--black-border)';
+    }
+});
 </script>
 {% endblock %}
