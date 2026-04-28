@@ -156,7 +156,7 @@ final class OrderController extends AbstractController
         $orders = $paginator->paginate(
             $data,
             $request->query->getInt('page', 1),//met en place la pagination
-            6 //je choisi la limite de 3 commandes par page
+            3 //je choisi la limite de 3 commandes par page
         );   
         return $this->render('order/orders.html.twig', [
             'orders'=>$orders,

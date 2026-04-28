@@ -1,336 +1,166 @@
 {% extends 'base.html.twig' %}
-{% block title %} Historique des commandes {% endblock %}
+{% block title %}Historique des commandes{% endblock %}
+
 {% block body %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@400;700&display=swap');
 
-    body {
-        font-family: 'Montserrat', sans-serif;
-        background-color: #f9f9f9;
-        color: #333333;
-    }
+<div style="max-width:1200px;margin:0 auto;padding:3rem 1.5rem;">
 
-    .container {
-        max-width: 1200px;
-        margin: 2rem auto;
-        padding: 0 1rem;
-    }
+    {# En-tête #}
+    <div style="text-align:center;margin-bottom:2.5rem;">
+        <p class="sb-section-tag">— Gestion —</p>
+        <h1 class="sb-section-title">Historique des commandes</h1>
+        <div class="sb-divider"></div>
+    </div>
 
-    /* Titre centré */
-    .page-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 2.5rem;
-        color: #1a1a1a;
-        text-align: center;
-        margin-bottom: 2rem;
-        font-weight: 700;
-        width: 100%;
-    }
+    {# Filtres rapides #}
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:2rem;justify-content:center;">
+        {% set filters = [
+            {'type': 'all',                        'label': 'Toutes',              'icon': 'fa-list'},
+            {'type': 'is-completed',               'label': 'Livrées',             'icon': 'fa-check-circle'},
+            {'type': 'is-not-completed',           'label': 'Non livrées',         'icon': 'fa-times-circle'},
+            {'type': 'pay-on-stripe-is-delivered', 'label': 'Stripe livrées',      'icon': 'fa-credit-card'},
+            {'type': 'pay-on-stripe-not-delivered','label': 'Stripe non livrées',  'icon': 'fa-credit-card'},
+        ] %}
+        {% for f in filters %}
+            <a href="{{ path('app_orders_show', {'type': f.type}) }}"
+               class="btn-gold {% if type == f.type %}filled{% endif %}"
+               style="padding:8px 16px;font-size:.7rem;">
+                <i class="fas {{ f.icon }}"></i> {{ f.label }}
+            </a>
+        {% endfor %}
+    </div>
 
-    .page-title::after {
-        content: '';
-        display: block;
-        margin: 0.5rem auto 0;
-        width: 100px;
-        height: 2px;
-        background-color: #c4a447;
-    }
+    {% if orders|length > 0 %}
 
-    /* Cartes des commandes */
-    .order-card {
-        background-color: #ffffff;
-        border: 1px solid #e8d8b0;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        margin: 0 auto 2rem;
-        max-width: 900px;
-        overflow: hidden;
-        transition: all 0.3s;
-    }
+        {# Liste des commandes #}
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+            {% for order in orders %}
+                <div style="
+                    background:var(--black-card);
+                    border:1px solid var(--black-border);
+                    padding:1.5rem;
+                    transition:var(--transition);
+                " onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--black-border)'">
 
-    .order-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    }
+                    {# En-tête commande #}
+                    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--black-border);">
 
-    /* En-tête */
-    .order-header {
-        background-color: #f8f4e8;
-        color: #1a1a1a;
-        padding: 1rem 1.5rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
+                        <div>
+                            <span style="font-family:var(--font-display);font-size:1.1rem;color:var(--white);">
+                                Commande #{{ order.id }}
+                            </span>
+                            <span style="color:var(--white-dim);font-size:.8rem;margin-left:12px;">
+                                {{ order.createdAt|date('d/m/Y à H:i') }}
+                            </span>
+                        </div>
 
-    .order-header h5 {
-        font-family: 'Playfair Display', serif;
-        font-size: 1.3rem;
-        font-weight: 700;
-        margin: 0;
-    }
+                        <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;">
+                            {# Badge paiement #}
+                            {% if order.payOnDelivery %}
+                                <span class="sb-badge sb-badge-gold">
+                                    <i class="fas fa-truck"></i> Livraison
+                                </span>
+                            {% else %}
+                                {% if order.isPaymentCompleted %}
+                                    <span class="sb-badge sb-badge-success">
+                                        <i class="fas fa-credit-card"></i> Payé Stripe
+                                    </span>
+                                {% else %}
+                                    <span class="sb-badge sb-badge-danger">
+                                        <i class="fas fa-clock"></i> En attente
+                                    </span>
+                                {% endif %}
+                            {% endif %}
 
-    /* Statut */
-    .order-status {
-        font-size: 0.9rem;
-        padding: 0.3rem 0.8rem;
-        border-radius: 20px;
-        font-weight: 600;
-    }
+                            {# Badge livraison #}
+                            {% if order.isCompleted %}
+                                <span class="sb-badge sb-badge-success">
+                                    <i class="fas fa-check"></i> Livré
+                                </span>
+                            {% else %}
+                                <span class="sb-badge" style="background:rgba(192,57,43,.1);color:#e07065;border:1px solid var(--danger);">
+                                    <i class="fas fa-clock"></i> En cours
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
 
-    .order-status.delivered {
-        background-color: rgba(46, 139, 87, 0.1);
-        color: #2e8b57;
-    }
+                    {# Infos client + total #}
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1rem;">
+                        <div>
+                            <p style="font-size:.7rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;">Client</p>
+                            <p style="color:var(--white-muted);font-size:.9rem;">{{ order.firstName }} {{ order.lastName }}</p>
+                            <p style="color:var(--white-dim);font-size:.8rem;">{{ order.email }}</p>
+                        </div>
+                        <div>
+                            <p style="font-size:.7rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;">Adresse</p>
+                            <p style="color:var(--white-muted);font-size:.9rem;">{{ order.adress }}</p>
+                            <p style="color:var(--white-dim);font-size:.8rem;">{{ order.city.name }}</p>
+                        </div>
+                        <div>
+                            <p style="font-size:.7rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;">Total</p>
+                            <p style="font-family:var(--font-display);font-size:1.5rem;color:var(--gold);font-weight:300;">{{ order.totalPrice }} €</p>
+                        </div>
+                    </div>
 
-    .order-status.pending {
-        background-color: rgba(255, 193, 7, 0.1);
-        color: #ff8c00;
-    }
+                    {# Produits commandés #}
+                    <div style="margin-bottom:1rem;">
+                        <p style="font-size:.7rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem;">Produits</p>
+                        <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+                            {% for item in order.orderedProducts %}
+                                <span style="
+                                    background:var(--black-hover);
+                                    border:1px solid var(--black-border);
+                                    padding:4px 10px;
+                                    font-size:.78rem;
+                                    color:var(--white-muted);
+                                ">
+                                    {{ item.product.name }} × {{ item.quantity }}
+                                </span>
+                            {% endfor %}
+                        </div>
+                    </div>
 
-    /* Corps */
-    .order-body {
-        padding: 1.5rem;
-    }
-
-    /* Infos client */
-    .customer-info {
-        margin-bottom: 1.5rem;
-    }
-
-    .customer-info h6 {
-        font-family: 'Playfair Display', serif;
-        color: #1a1a1a;
-        margin-bottom: 0.5rem;
-        font-size: 1.1rem;
-    }
-
-    .info-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-    }
-
-    .info-list li {
-        display: flex;
-        font-size: 0.95rem;
-        background-color: #f9f9f9;
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
-        border: 1px solid #e8d8b0;
-    }
-
-    .info-list li strong {
-        min-width: 80px;
-        color: #1a1a1a;
-    }
-
-    /* Tableau des produits */
-    .products-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 1.5rem;
-        background-color: #ffffff;
-        border-radius: 8px;
-        overflow: hidden;
-        border: 1px solid #e8d8b0;
-    }
-
-    .products-table th,
-    .products-table td {
-        padding: 0.75rem;
-        text-align: center;
-        border: 1px solid #e8d8b0;
-    }
-
-    .products-table th {
-        background-color: #f8f4e8;
-        font-weight: 600;
-    }
-
-    /* Images des produits - TAILLE CORRIGÉE */
-    .products-table img {
-        max-width: 50px; /* Taille réduite */
-        max-height: 50px; /* Taille réduite */
-        width: auto;
-        height: auto;
-        object-fit: contain; /* Pour garder les proportions */
-        display: block;
-        margin: 0 auto;
-    }
-
-    /* Pied */
-    .order-footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem 1.5rem;
-        background-color: #f8f4e8;
-        border-top: 1px solid #e8d8b0;
-    }
-
-    /* Boutons */
-    .action-btn {
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
-        font-size: 0.9rem;
-        font-weight: 500;
-        transition: all 0.3s;
-        margin-right: 0.5rem;
-        border: 1px solid #c4a447;
-    }
-
-    .action-btn.primary {
-        background-color: #f8f4e8;
-        color: #1a1a1a;
-    }
-
-    .action-btn.primary:hover {
-        background-color: #e8d8b0;
-    }
-
-    .action-btn.success {
-        background-color: #2e8b57;
-        color: #ffffff;
-        border-color: #2e8b57;
-    }
-
-    .action-btn.danger {
-        background-color: #ffffff;
-        color: #dc3545;
-        border-color: #dc3545;
-    }
-
-    /* Prix total */
-    .total-price {
-        font-family: 'Playfair Display', serif;
-        font-size: 1.4rem;
-        color: #2e8b57;
-        font-weight: 700;
-    }
-
-    /* Pagination */
-    .pagination {
-        display: flex;
-        justify-content: center;
-        margin-top: 2rem;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-        .order-footer {
-            flex-direction: column;
-            gap: 1rem;
-        }
-        .action-btn {
-            width: 100%;
-            margin-bottom: 0.5rem;
-        }
-        .info-list {
-            flex-direction: column;
-        }
-        .info-list li {
-            width: 100%;
-        }
-    }
-</style>
-
-<div class="container">
-    {% if type == 'all' %}
-        <h1 class="page-title">Toutes les commandes</h1>
-    {% elseif type == 'is-completed' %}
-        <h1 class="page-title">Commandes livrées</h1>
-    {% elseif type == 'is-not-completed' %}
-        <h1 class="page-title">Commandes non livrées</h1>
-    {% elseif type == 'pay-on-stripe-not-delivered' %}
-        <h1 class="page-title">Commandes payées en ligne non livrées</h1>
-    {% elseif type == 'pay-on-stripe-is-delivered' %}
-        <h1 class="page-title">Commandes payées en ligne livrées</h1>
-    {% endif %}
-
-    {{ include('layouts/flash_message.html.twig') }}
-
-    {% for order in orders %}
-        <div class="order-card">
-            <div class="order-header">
-                <h5>Commande n° {{ order.id }}</h5>
-                <span class="order-status {% if order.isCompleted %}delivered{% else %}pending{% endif %}">
-                    {% if order.isCompleted %}
-                        <i class="fas fa-check-circle me-1"></i> Livrée
-                    {% else %}
-                        <i class="fas fa-clock me-1"></i> En attente
-                    {% endif %}
-                </span>
-                <small>{{ order.createdAt|date('d/m/Y H:i') }}</small>
-            </div>
-
-            <div class="order-body">
-                <div class="customer-info">
-                    <h6><i class="fas fa-user me-2"></i> Informations client</h6>
-                    <ul class="info-list">
-                        <li><strong>Nom :</strong> {{ order.firstName }} {{ order.lastName }}</li>
-                        <li><strong>Téléphone :</strong> {{ order.phone }}</li>
-                        <li><strong>Adresse :</strong> {{ order.adress }}, {{ order.city.name }}</li>
-                    </ul>
-                </div>
-
-                <h6 class="mb-3"><i class="fas fa-shopping-bag me-2"></i> Produits commandés</h6>
-                <table class="products-table">
-                    <thead>
-                        <tr>
-                            <th>Image</th>
-                            <th>Nom du produit</th>
-                            <th>Prix unitaire</th>
-                            <th>Quantité</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for product in order.orderedProducts %}
-                            <tr>
-                                <td>
-                                    <img src="{{ asset('uploads/images/' ~ product.product.image) }}" alt="{{ product.product.name }}">
-                                </td>
-                                <td>{{ product.product.name }}</td>
-                                <td>{{ product.product.price }} €</td>
-                                <td>{{ product.quantity }}</td>
-                                <td>{{ product.product.price * product.quantity }} €</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-
-                <div class="order-footer">
-                    <div>
-                        {% if order.isCompleted %}
-                            <a href="{{ path('app_orders_is-completed-update', {'id': order.id}) }}" class="action-btn danger">
-                                <i class="fas fa-undo me-1"></i> Marquer comme non livrée
-                            </a>
-                        {% else %}
-                            <a href="{{ path('app_orders_is-completed-update', {'id': order.id}) }}" class="action-btn primary">
-                                <i class="fas fa-check me-1"></i> Marquer comme livrée
-                            </a>
-                        {% endif %}
-                        <a href="{{ path('app_bill', {'id': order.id}) }}" class="action-btn success">
-                            <i class="fas fa-file-pdf me-1"></i> Facture
+                    {# Actions #}
+                    <div style="display:flex;gap:.75rem;flex-wrap:wrap;">
+                        <a href="{{ path('app_bill', {'id': order.id}) }}"
+                           class="btn-gold" style="padding:7px 16px;font-size:.7rem;">
+                            <i class="fas fa-file-pdf"></i> Facture PDF
+                        </a>
+                        <a href="{{ path('app_orders_is-completed-update', {'id': order.id}) }}"
+                           class="btn-gold" style="padding:7px 16px;font-size:.7rem;">
+                            {% if order.isCompleted %}
+                                <i class="fas fa-times"></i> Marquer non livré
+                            {% else %}
+                                <i class="fas fa-check"></i> Marquer livré
+                            {% endif %}
+                        </a>
+                        <a href="{{ path('app_orders_remove', {'id': order.id}) }}"
+                           class="btn-danger-sb" style="padding:7px 16px;font-size:.7rem;"
+                           onclick="return confirm('Supprimer cette commande ?')">
+                            <i class="fas fa-trash"></i> Supprimer
                         </a>
                     </div>
-                    <div class="text-end">
-                        <p class="mb-0"><strong>Frais de livraison :</strong> {{ order.city.shippingCost }} €</p>
-                        <p class="mb-0"><strong>Total :</strong> <span class="total-price">{{ order.totalPrice }} €</span></p>
-                    </div>
+
                 </div>
-            </div>
+            {% endfor %}
         </div>
-    {% endfor %}
 
-    <div class="pagination">
-        {{ knp_pagination_render(orders, 'layouts/pagination_template.html.twig') }}
-    </div>
+        {# Pagination #}
+        <div style="margin-top:2rem;">
+            {{ knp_pagination_render(orders) }}
+        </div>
+
+    {% else %}
+
+        <div style="text-align:center;padding:4rem;border:1px solid var(--black-border);">
+            <i class="fas fa-clipboard-list" style="font-size:2.5rem;color:var(--gold);display:block;margin-bottom:1rem;opacity:.4;"></i>
+            <h2 style="font-size:1.5rem;font-weight:300;">Aucune commande</h2>
+            <p style="color:var(--white-dim);margin-top:.5rem;">Aucune commande ne correspond à ce filtre.</p>
+        </div>
+
+    {% endif %}
+
 </div>
-{% endblock %}
 
+{% endblock %}
