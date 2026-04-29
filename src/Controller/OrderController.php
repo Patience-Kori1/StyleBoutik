@@ -132,23 +132,19 @@ final class OrderController extends AbstractController
         // Affiche les commandes livrées avec isCompleted dans la bdd égal à true 1
         elseif($type == 'is-completed'){
             $data = $orderRepo->findBy(['isCompleted'=>1],['id'=>'DESC']);
-        }
-          
+        }  
         // Commandes non livrées avec isCompleted dans la bdd égal à false 0
         elseif($type == 'is-not-completed'){
             $data = $orderRepo->findBy(['isCompleted'=>0],['id'=>'DESC']);
         }
-
         // Commandes payées en ligne non livrées avec isCompleted = 0, etc..
         else if($type == 'pay-on-stripe-not-delivered'){
             $data = $orderRepo->findBy(['isCompleted'=>0,'payOnDelivery'=>0,'isPaymentCompleted'=>1],['id'=>'DESC']);
         }
-        
         // Commandes payées en ligne livrées avec isCompleted = 1, etc..
         else if($type == 'pay-on-stripe-is-delivered'){
             $data = $orderRepo->findBy(['isCompleted'=>1,'payOnDelivery'=>0,'isPaymentCompleted'=>1],['id'=>'DESC']);
         }
-
         // NB; la manup de l'affichage de ces conditions se trouve dans la navbar
 
         // $orders = $orderRepo->findAll(); 
