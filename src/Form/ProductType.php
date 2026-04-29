@@ -21,21 +21,16 @@ class ProductType extends AbstractType
             ->add('price')
             ->add('stock')
             ->add('image', FileType::class, [
-                'label' => 'Image du produit ',
+                'label' => 'Image du produit',
                 'mapped' => false,
-                'required' => false, /*ce n'est pas obligatoire comme champ*/
-                'constraints'=>[
-                    new File([ /* c'est cette classe ci "Symfony\Component\Validator\Constraints\File;" */
-                        'maxSize' => '1024k',
-                        'mimeTypes' => [
-                            'image/jpeg',
-                            'image/png',
-                            'image/jpg',
-                            'image/webp',
-                        ],
-                        'maxSizeMessage'=>'Votre image ne doit pas dépasser 1024ko',
-                        'mimeTypesMessage' => 'Veuillez choisir un fichier de type image valide(jpeg, png, jpg)!!',
-                    ])
+                'required' => false,
+                'constraints' => [
+                    new File(
+                        maxSize: '1024k',
+                        mimeTypes: ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'],
+                        maxSizeMessage: 'Votre image ne doit pas dépasser 1024ko',
+                        mimeTypesMessage: 'Veuillez choisir un fichier de type image valide (jpeg, png, jpg, webp)',
+                    )
                 ]
             ])
             ->add('subcategory', EntityType::class, [

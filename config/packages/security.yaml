@@ -40,7 +40,9 @@ security:
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/cart, roles: ROLE_USER }
+        - { path: ^/order, roles: ROLE_USER }
         - { path: ^/editor/order/, roles: [ROLE_EDITOR] }
+        - { path: ^/editor/, roles: ROLE_EDITOR }
 
 when@test:
     security:
