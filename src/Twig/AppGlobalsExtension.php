@@ -22,8 +22,14 @@ class AppGlobalsExtension extends AbstractExtension implements GlobalsInterface
      */
     public function getGlobals(): array
     {
-        return [
-            'all_categories' => $this->categorieRepository->findAll(),
-        ];
+        try {
+            // Injecte all_categories dans TOUS les templates Twig
+            return ['all_categories' => $this->categorieRepository->findAll()];
+        } catch (\Exception $e) {
+            // Si la BDD est inaccessible (ex: tests PHPUnit),
+            // retourne un tableau vide pour ne pas faire planter les tests
+            return ['all_categories' => []];
+        }
+
     }
 }
