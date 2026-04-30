@@ -43,6 +43,7 @@ security:
         - { path: ^/order, roles: ROLE_USER }
         - { path: ^/editor/order/, roles: [ROLE_EDITOR] }
         - { path: ^/editor/, roles: ROLE_EDITOR }
+        - { path: ^/city, roles: ROLE_ADMIN } 
 
 when@test:
     security:
