@@ -18,7 +18,6 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
-
     #[Route('editor/product')]
     final class ProductController extends AbstractController
     {

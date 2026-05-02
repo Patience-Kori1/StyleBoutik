@@ -1,5 +1,10 @@
 {# layouts/flash_message.html.twig — StyleBoutik #}
 <style>
+    .sb-flash-wrapper {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+    }
     .sb-flash {
         padding: 14px 20px;
         font-size: .85rem;
@@ -8,23 +13,26 @@
         display: flex;
         align-items: center;
         gap: 10px;
+        margin-bottom: 4px;
     }
     .sb-flash.success { background: rgba(39,174,96,.10); border-color: var(--success); color: #6ee297; }
     .sb-flash.danger  { background: rgba(192,57,43,.10); border-color: var(--danger); color: #e07065; }
     .sb-flash.info    { background: var(--gold-subtle); border-color: var(--gold); color: var(--gold-light); }
 </style>
 
-{% for type, messages in app.flashes(['success', 'danger', 'info']) %}
-    {% for message in messages %}
-        <div class="sb-flash {{ type }}">
-            {% if type == 'success' %}
-                <i class="fas fa-check-circle"></i>
-            {% elseif type == 'danger' %}
-                <i class="fas fa-exclamation-triangle"></i>
-            {% else %}
-                <i class="fas fa-info-circle"></i>
-            {% endif %}
-            {{ message }}
-        </div>
+<div class="sb-flash-wrapper">
+    {% for type, messages in app.flashes(['success', 'danger', 'info']) %}
+        {% for message in messages %}
+            <div class="sb-flash {{ type }}">
+                {% if type == 'success' %}
+                    <i class="fas fa-check-circle"></i>
+                {% elseif type == 'danger' %}
+                    <i class="fas fa-exclamation-triangle"></i>
+                {% else %}
+                    <i class="fas fa-info-circle"></i>
+                {% endif %}
+                {{ message }}
+            </div>
+        {% endfor %}
     {% endfor %}
-{% endfor %}
+</div>
