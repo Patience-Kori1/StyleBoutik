@@ -22,174 +22,223 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 final class OrderController extends AbstractController
 {
-    public function __construct(private MailerInterface $mailer){
+    // MailerInterface injecté dans le constructeur car utilisé uniquement
+    // dans index() pour l'envoi de l'email de confirmation livraison
+    public function __construct(private MailerInterface $mailer)
+    {
     }
 
     #[Route('/order', name: 'app_order')]
-    public function index(Request $request, SessionInterface $session, ProductRepository $productRepo, EntityManagerInterface $em, Cart $cart): Response
-    {
-        // Récupère les données du panier à partir de la session using le service Cart
+    public function index(
+        Request $request,
+        SessionInterface $session,
+        ProductRepository $productRepo,
+        EntityManagerInterface $em,
+        Cart $cart
+    ): Response {
+        // On récupère le panier enrichi (objets Product + quantités + total)
+        // via le service Cart qui lit la session et interroge la BDD
         $data = $cart->getCart($session);
 
-        // Crée un nouvel objet Order
         $order = new Order();
-        
-        // Crée un formulaire pour gérer la création de la commande en utilisant le type de formulaire OrderType
-        $form= $this->createForm(OrderType::class, $order);
-        // dd($order);
-        // Gère la soumission du formulaire
+
+        // createForm() lie le formulaire HTML à l'entité Order
+        // Symfony va mapper automatiquement les champs du formulaire
+        // sur les setters de l'entité (setFirstName, setCity, etc.)
+        $form = $this->createForm(OrderType::class, $order);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) 
-        {
-            // Vérifie si le total du panier n'est pas vide pour savoir si le panier n'est pas vide
-            if(!empty($data['total'])) {
-                $totalPrice = $data['total'] + $order->getCity()->getShippingCost();//Le total du panier + prix de livraison selon ville
-                $order->setTotalPrice($totalPrice);
-                // Définit la date de création de la commande
-                $order->setCreatedAt(new \DateTimeImmutable());
-                $order->setIsPaymentCompleted(0); //on initialise a false 
-                // $order->setIsCompleted(0); //on initialise a false pour solutionner le findBy quand il est à null
-                $em->persist($order);
-                $em->flush();
-                // dd($data['cart']);
+        if ($form->isSubmitted() && $form->isValid()) {
 
-                foreach($data['cart'] as $value) {
-                    // Crée un nouvel objet OrderProducts
+            // On vérifie que le panier n'est pas vide avant de créer la commande
+            // Un panier vide aurait un total à 0
+            if (!empty($data['total'])) {
+
+                // Total final = sous-total panier + frais de livraison de la ville choisie
+                // getShippingCost() vient de l'entité City liée à l'entité Order
+                $totalPrice = $data['total'] + $order->getCity()->getShippingCost();
+                $order->setTotalPrice($totalPrice);
+                $order->setCreatedAt(new \DateTimeImmutable());
+
+                // On initialise isPaymentCompleted à 0 (false)
+                // Il passera à 1 uniquement quand le webhook Stripe confirmera le paiement
+                $order->setIsPaymentCompleted(0);
+
+                $em->persist($order);
+                $em->flush(); // flush ici pour obtenir l'id de la commande avant la boucle
+
+                // Chaque produit du panier devient une ligne dans order_products
+                // On crée un OrderProducts par article pour tracer quantités et prix
+                foreach ($data['cart'] as $value) {
                     $orderProduct = new OrderProducts();
-                    // Définit la commande pour le produit de la commande
                     $orderProduct->setOrderedProducts($order);
-                    // Définit le produit pour le produit de la commande
                     $orderProduct->setProduct($value['product']);
-                    // Définit la quantité pour le produit de la commande
                     $orderProduct->setQuantity($value['quantity']);
-                    // Enregistre le produit de la commande dans la base de données
                     $em->persist($orderProduct);
                     $em->flush();
                 }
-                
-                if($order->isPayOnDelivery()) {
-                    // Remise à zéro du contenu du panier en session après chaque soumission
-                    $session->set('cart',[]);
 
-                    // Gestion du mail de la confirmation de commande
+                // ── BIFURCATION selon le mode de paiement choisi ──
 
-                    $html = $this->renderView('email/orderConfirm.html.twig',[ //crée une vue mail
-                        'order'=>$order //on recupere le $order apres le flush donc on a toutes les infos           
+                if ($order->isPayOnDelivery()) {
+
+                    // Mode livraison : on vide le panier, on envoie un email
+                    // de confirmation et on redirige vers la page de confirmation
+                    $session->set('cart', []);
+
+                    // renderView() génère le HTML de l'email depuis un template Twig
+                    // On passe $order après le flush pour avoir toutes ses données
+                    // (id, produits, ville, total, etc.)
+                    $html = $this->renderView('email/orderConfirm.html.twig', [
+                        'order' => $order,
                     ]);
-                    $email = (new Email()) //On importe la classe depuis Symfony\Component\Mime\Email;
-                    ->from('sneakhub@gmailcom') //Adresse de l'expéditeur donc notre boutique ou vous mêmes
-                    // ->to('to@gmailcom') //Adresse du receveur
-                    ->to($order->getEmail())
-                    ->subject('Confirmation de réception de commande') //Intitulé du mail
-                    ->html($html); // Une fonction et un contructeur ont été créer en haut pour gérer l'envoi du mail
+
+                    // Symfony Messenger intercepte cet envoi et le place
+                    // en file d'attente dans la table messenger_messages
+                    // Le worker (php bin/console messenger:consume async) l'envoie réellement
+                    $email = (new Email())
+                        ->from('sneakhub@gmailcom')
+                        ->to($order->getEmail())
+                        ->subject('Confirmation de réception de commande')
+                        ->html($html);
+
                     $this->mailer->send($email);
-                    
-                    //Redirection vers la page du panier qui normalement et remise à zéro
+
                     return $this->redirectToRoute('app_order_message');
                 }
-                // quand c'est false
-                $paymentStripe = new StripePayment(); //on importe notre service avec sa classe
-                $shippingCost = $order->getCity()->getShippingCost(); // Récupération dans une variable, du pris de la livraison par ville
-                $paymentStripe->startPayment($data, $shippingCost, $order->getId()); //on importe le panier donc $data le cout de la livraison par ville et l'id de la commande, tout ça pour les envoyer dans Stripe 
+
+                // Mode Stripe : on crée une session Checkout sur les serveurs Stripe
+                // avec les articles du panier, les frais de livraison et l'id de commande
+                // Stripe nous retourne une URL vers laquelle on redirige le client
+                $paymentStripe = new StripePayment();
+                $shippingCost  = $order->getCity()->getShippingCost();
+
+                // On passe l'id de la commande en métadonnée Stripe
+                // pour pouvoir retrouver la commande dans le webhook
+                $paymentStripe->startPayment($data, $shippingCost, $order->getId());
                 $stripeRedirectUrl = $paymentStripe->getStripeRedirectUrl();
-                //dd( $stripeRedirectUrl);
+
                 return $this->redirect($stripeRedirectUrl);
             }
         }
 
         return $this->render('order/orderIndex.html.twig', [
-            'form'=>$form->createView(),
-            'total'=> $data['total'],
+            'form'  => $form->createView(),
+            'total' => $data['total'],
         ]);
     }
 
     #[Route('/city/{id}/shipping/cost', name: 'app_city_shipping_cost')]
     public function cityShippingCost(City $city): Response
     {
-        
+        // Endpoint appelé en AJAX depuis orderIndex.html.twig via jQuery
+        // quand le client change de ville dans le formulaire de commande
+        // Doctrine injecte automatiquement l'objet City grâce à l'id dans l'URL
         $cityShippingPrice = $city->getShippingCost();
-        // dd($cityShippingPrice);
-        return new Response(json_encode(['status'=>200, "message"=>'on', 'content'=> $cityShippingPrice]));
 
+        return new Response(json_encode([
+            'status'  => 200,
+            'content' => $cityShippingPrice, // ex: 15 pour Pessac, 30 pour Bordeaux
+        ]));
     }
 
-    #[Route('/order_message', name:'app_order_message')]
-    public function orderMessage() : Response 
+    #[Route('/order_message', name: 'app_order_message')]
+    public function orderMessage(): Response
     {
+        // Page de confirmation affichée après une commande en livraison
+        // Le panier a déjà été vidé dans index() avant la redirection
         return $this->render('order/order_message.html.twig');
     }
 
     #[Route('/editor/order/{type}/', name: 'app_orders_show')]
-    public function getAllOrder($type, OrderRepository $orderRepo, Request $request, PaginatorInterface $paginator) : Response
-    {
-        //En c'est la méthode findBy() qu'on manipule par ses paramètres en jouant sur les valeurs des champs de l'entity order selon le filtrage qu'on veut en faire
+    public function getAllOrder(
+        $type,
+        OrderRepository $orderRepo,
+        Request $request,
+        PaginatorInterface $paginator
+    ): Response {
+        // findBy() permet de filtrer les commandes selon les champs de l'entité Order
+        // Le deuxième paramètre ['id' => 'DESC'] trie par id décroissant (plus récent en premier)
+        // Les différents types correspondent aux liens de la navbar éditeur
 
-        // Affiche toutes les commandes
-        if($type == 'all'){
-            $data = $orderRepo->findBy([],['id'=>'DESC']);
-        }
-        // Affiche les commandes livrées avec isCompleted dans la bdd égal à true 1
-        elseif($type == 'is-completed'){
-            $data = $orderRepo->findBy(['isCompleted'=>1],['id'=>'DESC']);
-        }  
-        // Commandes non livrées avec isCompleted dans la bdd égal à false 0
-        elseif($type == 'is-not-completed'){
-            $data = $orderRepo->findBy(['isCompleted'=>0],['id'=>'DESC']);
-        }
-        // Commandes payées en ligne non livrées avec isCompleted = 0, etc..
-        else if($type == 'pay-on-stripe-not-delivered'){
-            $data = $orderRepo->findBy(['isCompleted'=>0,'payOnDelivery'=>0,'isPaymentCompleted'=>1],['id'=>'DESC']);
-        }
-        // Commandes payées en ligne livrées avec isCompleted = 1, etc..
-        else if($type == 'pay-on-stripe-is-delivered'){
-            $data = $orderRepo->findBy(['isCompleted'=>1,'payOnDelivery'=>0,'isPaymentCompleted'=>1],['id'=>'DESC']);
-        }
-        // NB; la manup de l'affichage de ces conditions se trouve dans la navbar
+        if ($type == 'all') {
+            // Toutes les commandes sans filtre
+            $data = $orderRepo->findBy([], ['id' => 'DESC']);
 
-        // $orders = $orderRepo->findAll(); 
-        // $data = $orderRepo->findBy([],['id'=>'DESC']);
+        } elseif ($type == 'is-completed') {
+            // Commandes marquées comme livrées (isCompleted = 1)
+            $data = $orderRepo->findBy(['isCompleted' => 1], ['id' => 'DESC']);
+
+        } elseif ($type == 'is-not-completed') {
+            // Commandes pas encore livrées (isCompleted = 0)
+            $data = $orderRepo->findBy(['isCompleted' => 0], ['id' => 'DESC']);
+
+        } elseif ($type == 'pay-on-stripe-not-delivered') {
+            // Paiement Stripe confirmé (isPaymentCompleted = 1)
+            // mais pas encore physiquement livrées (isCompleted = 0)
+            $data = $orderRepo->findBy(
+                ['isCompleted' => 0, 'payOnDelivery' => 0, 'isPaymentCompleted' => 1],
+                ['id' => 'DESC']
+            );
+
+        } elseif ($type == 'pay-on-stripe-is-delivered') {
+            // Paiement Stripe confirmé ET commande livrée
+            $data = $orderRepo->findBy(
+                ['isCompleted' => 1, 'payOnDelivery' => 0, 'isPaymentCompleted' => 1],
+                ['id' => 'DESC']
+            );
+        }
+
+        // KnpPaginator découpe $data en pages de 3 commandes
+        // $request->query->getInt('page', 1) lit le paramètre ?page=X dans l'URL
         $orders = $paginator->paginate(
             $data,
-            $request->query->getInt('page', 1),//met en place la pagination
-            3 //je choisi la limite de 3 commandes par page
-        );   
+            $request->query->getInt('page', 1),
+            3
+        );
+
         return $this->render('order/orders.html.twig', [
-            'orders'=>$orders,
-            'type' => $type
+            'orders' => $orders,
+            'type'   => $type, // on passe le type pour gérer l'affichage actif dans la navbar
         ]);
     }
 
     #[Route('/editor/order/{id}/is-completed/update', name: 'app_orders_is-completed-update')]
-    public function isCompletedUpdate(Request $request, $id, OrderRepository $orderRepository, EntityManagerInterface $entityManager):Response
-    {
+    public function isCompletedUpdate(
+        Request $request,
+        $id,
+        OrderRepository $orderRepository,
+        EntityManagerInterface $entityManager
+    ): Response {
         $order = $orderRepository->find($id);
 
-        if($order->isCompleted() !== true )
-        {
+        // Toggle du statut de livraison — si pas livrée on marque livrée et inversement
+        // Pas besoin de persist() ici car l'entité est déjà gérée par Doctrine (managed state)
+        if ($order->isCompleted() !== true) {
             $order->setIsCompleted(true);
             $entityManager->flush();
             $this->addFlash('success', 'Commande livrée');
-        } 
-
-        elseif ($order->isCompleted() !== false) 
-        {
+        } elseif ($order->isCompleted() !== false) {
             $order->setIsCompleted(false);
             $entityManager->flush();
             $this->addFlash('danger', 'Commande pas encore livrée');
         }
-        // 
-        // return $this->redirectToRoute('app_orders_show', ['type'=> 'all']); //On utilisera plutot celui là si on veut à cette route avec le type all
 
-        return $this->redirect($request->headers->get('referer'));//refer fait qu'on retourner a la route precedente, on utilise celui là si on veut rester à la meme route du bouton
+        // headers->get('referer') retourne l'URL de la page précédente
+        // On reste sur le même filtre de commandes au lieu de revenir sur 'all'
+        return $this->redirect($request->headers->get('referer'));
     }
 
     #[Route('/editor/order/{id}/remove', name: 'app_orders_remove')]
-    public function removeOrder(Order $order, EntityManagerInterface $em):Response 
+    public function removeOrder(Order $order, EntityManagerInterface $em): Response
     {
+        // Doctrine injecte directement l'objet Order via l'id dans l'URL (ParamConverter)
+        // remove() + flush() → DELETE FROM `order` WHERE id = $id
         $em->remove($order);
         $em->flush();
+
         $this->addFlash('danger', 'Commande supprimée');
+
         return $this->redirectToRoute('app_orders_show');
     }
 }
