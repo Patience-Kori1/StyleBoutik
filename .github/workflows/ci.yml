@@ -1,47 +1,86 @@
+# Pipeline CI/CD (Intégration Continue) de StyleBoutik
+# GitHub Actions exécute automatiquement ce fichier à chaque push
+# pour vérifier que le code ne casse rien — sans intervention manuelle
 name: StyleBoutik CI
 
 on:
+  # Le pipeline se déclenche dans deux situations :
   push:
-    branches: [ master ]
+    branches: [ master ]        # à chaque git push sur la branche principale
   pull_request:
-    branches: [ master ]
+    branches: [ master ]        # à chaque Pull Request vers master
 
 jobs:
   tests:
     name: Tests PHPUnit
+    # GitHub crée un serveur Linux Ubuntu propre pour chaque exécution
+    # C'est un environnement neutre — différent de notre machine Windows locale
+    # Cela permet de détecter les problèmes de compatibilité entre environnements
     runs-on: ubuntu-latest
 
     services:
+      # On lance un conteneur MySQL dédié aux tests
+      # Il sera détruit automatiquement à la fin du pipeline
+      # Aucun risque de polluer la base de données de développement
       mysql:
         image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: my_shop_test
+          MYSQL_DATABASE: my_shop_test   # même nom que notre BDD de test locale
         ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+          - 3306:3306                    # expose MySQL sur le port standard
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+          # GitHub attend que MySQL soit prêt avant de lancer les étapes suivantes
+          # Sans ça les migrations pourraient échouer si MySQL n'est pas encore démarré
 
     steps:
+      # Étape 1 — Télécharger le code source depuis GitHub
+      # actions/checkout clone le dépôt sur le serveur Ubuntu
       - name: Récupérer le code
         uses: actions/checkout@v3
 
+      # Étape 2 — Installer PHP 8.3 avec les extensions nécessaires à Symfony
+      # mbstring, xml → traitement de chaînes et XML
+      # pdo, pdo_mysql → connexion à MySQL via Doctrine ORM
+      # intl → internationalisation (dates, formats...)
       - name: Installer PHP 8.3
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
           extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_mysql
 
+      # Étape 3 — Installer les dépendances PHP via Composer
+      # --no-interaction → pas de questions interactives (on est sur un serveur)
+      # --prefer-dist    → télécharge les archives compressées (plus rapide que git clone)
+      # --optimize-autoloader → génère un autoloader optimisé pour la performance
       - name: Installer les dépendances Composer
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
+      # Étape 4 — Créer le fichier de configuration de la BDD de test
+      # En local ce fichier est dans .gitignore donc il n'est pas sur GitHub
+      # On le recrée ici dynamiquement avec l'URL du MySQL lancé à l'étape services
+      # root:root → identifiants du conteneur MySQL définis plus haut
       - name: Créer le fichier .env.test.local
         run: |
           echo "DATABASE_URL=mysql://root:root@127.0.0.1:3306/my_shop_test?serverVersion=8.0&charset=utf8mb4" >> .env.test.local
 
+      # Étape 5 — Créer la base de données et exécuter les migrations
+      # doctrine:database:create → crée la base my_shop_test sur le MySQL du conteneur
+      # doctrine:migrations:migrate → crée toutes les tables à partir des 18 migrations
+      # --env=test → Symfony utilise la configuration de test (BDD my_shop_test)
+      # --no-interaction → pas de confirmation manuelle requise
       - name: Créer la base de données de test
         run: |
           php bin/console doctrine:database:create --env=test --no-interaction
           php bin/console doctrine:migrations:migrate --env=test --no-interaction
 
+      # Étape 6 — Lancer les 20 tests PHPUnit
+      # --testdox affiche le résultat sous forme lisible avec le nom de chaque test
+      # Si un seul test échoue → le pipeline passe en Status : Failed
+      # et GitHub envoie une notification — le problème est détecté immédiatement
       - name: Lancer les tests PHPUnit
         run: php bin/phpunit --testdox
