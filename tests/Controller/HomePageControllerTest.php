@@ -72,6 +72,18 @@ class HomePageControllerTest extends WebTestCase
     }
 
     /**
+     * Teste que le moteur de recherche retourne une page valide avec un mot clé
+     */
+    public function testSearchEngineReturnsResults(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/search/engine', ['word' => 'test']);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseStatusCodeSame(200);
+    }
+
+    /**
      * Teste que la hero section est présente sur la page d'accueil
      */
     public function testHomePageContainsHeroSection(): void
