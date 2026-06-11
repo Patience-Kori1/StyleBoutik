@@ -1,37 +1,65 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Hello CategorieController!{% endblock %}
+{% block title %}Gestion des catégories{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-    h2 {text-align:center}
-</style>
+<div style="max-width:900px;margin:0 auto;padding:3rem 1.5rem;">
 
-<div class="example-wrapper">
-    <div class="col-md-10">
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h2 class="h4 mb-0 "> Nos différentes catégories </h2>
-            </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;">
+        <div>
+            <p class="sb-section-tag" style="text-align:left;">— Admin —</p>
+            <h1 style="font-family:var(--font-display);font-size:2rem;font-weight:300;">Catégories</h1>
         </div>
-                {% include 'layouts/flash_message.html.twig' %}
+        <a href="{{ path('app_category_new') }}" class="btn-gold filled">
+            <i class="fas fa-plus"></i> Nouvelle catégorie
+        </a>
+    </div>
 
-        {% for categorie in categories %}
-
-            <div class="card text-center">
-                <div class="card-body">
-                    <h5 class="card-title">{{categorie.name}}</h5>
-                    {# <p class="card-text">{{user.firstName}}</p> #}
-                    {# <a href="{{path('app_register')}}" class="btn btn-success">Ajouter</a>#}
-                    <a href="{{ path('app_delete_category', {'id' : categorie.id})}}" class="btn btn-info" onclick="return confirm('Voulez-vous vraiment supprimer cette categorie')">Supprimer</a>
-                    <a href="{{ path('app_update_category', {'id' : categorie.id})}}" class="btn btn-danger">Modifier</a> 
-                </div>   
-            </div>
-
-        {% endfor %}
-
+    <div style="border:1px solid var(--black-border);">
+        <table class="sb-table">
+            <thead>
+                <tr>
+                    <th>Catégorie</th>
+                    <th>Sous-catégories</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in categories %}
+                    <tr>
+                        <td style="font-family:var(--font-display);font-size:1.05rem;color:var(--white);">
+                            {{ category.name }}
+                        </td>
+                        <td>
+                            <div style="display:flex;gap:.4rem;flex-wrap:wrap;">
+                                {% for sub in category.subCategories %}
+                                    <span class="sb-badge sb-badge-gold">{{ sub.name }}</span>
+                                {% else %}
+                                    <span style="color:var(--white-dim);font-size:.8rem;">Aucune</span>
+                                {% endfor %}
+                            </div>
+                        </td>
+                        <td>
+                            <div style="display:flex;gap:.5rem;">
+                                <a href="{{ path('app_update_category', {'id': category.id}) }}" class="btn-gold" style="padding:6px 12px;font-size:.68rem;">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{{ path('app_delete_category', {'id': category.id}) }}"
+                                   class="btn-danger-sb" style="padding:6px 12px;font-size:.68rem;"
+                                   onclick="return confirm('Supprimer cette catégorie et ses sous-catégories ?')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="3" style="text-align:center;padding:3rem;color:var(--white-dim);">
+                            Aucune catégorie enregistrée.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 {% endblock %}
