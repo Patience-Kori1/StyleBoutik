@@ -1,38 +1,29 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Inscription | StyleBoutik{% endblock %}
-
+{% block title %}Modifier la catégorie{% endblock %}
 {% block body %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h2 class="h4 mb-0"> Modifier votre catégorie Catégorie</h2>
-                </div>
-                
-                <div class="card-body">
-                    {{ form_start(form) }}
-                        <div class="mb-3">
-                            {{ form_row(form.name, {
-                                'label': 'Nom Catégorie',
-                                'attr': {'class': 'form-control'},
-                                'label_attr': {'class': 'form-label fw-bold'}
-                            }) }}
-                        </div>
-
-                        
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                Modifier la catégorie
-                            </button>
-                        </div>
-                    {{ form_end(form) }}
-                </div>
+<div style="max-width:500px;margin:0 auto;padding:3rem 1.5rem;">
+    <div style="margin-bottom:2rem;">
+        <p class="sb-section-tag" style="text-align:left;">— Admin —</p>
+        <h1 style="font-family:var(--font-display);font-size:1.8rem;font-weight:300;">Modifier la catégorie</h1>
+    </div>
+    <div style="background:var(--black-card);border:1px solid var(--black-border);padding:2rem;">
+        {{ form_start(form) }}
+        <div style="display:flex;flex-direction:column;gap:1.25rem;">
+            <div>
+                <label class="sb-form-label"><i class="fas fa-folder" style="color:var(--gold);margin-right:6px;"></i>Nom de la catégorie</label>
+                {{ form_widget(form.name, {'attr': {'class': 'sb-form-control'}}) }}
+                {{ form_errors(form.name) }}
+            </div>
+            <div style="display:flex;gap:1rem;">
+                <button type="submit" class="btn-gold filled" style="flex:1;justify-content:center;padding:13px;">
+                    <i class="fas fa-save"></i> Enregistrer
+                </button>
+                <a href="{{ path('app_allCategories') }}" class="btn-gold" style="padding:13px 20px;">
+                    <i class="fas fa-times"></i>
+                </a>
             </div>
         </div>
+        {{ form_end(form) }}
     </div>
 </div>
 {% endblock %}
-
-
