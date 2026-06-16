@@ -1,42 +1,55 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}SubCategory index{% endblock %}
+{% block title %}Sous-catégories{% endblock %}
 
 {% block body %}
-<div class="container">
+<div style="max-width:900px;margin:0 auto;padding:3rem 1.5rem;">
 
-    <h1 class="mt-4 mb-5">Liste des sub catégories</h1>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;">
+        <div>
+            <p class="sb-section-tag" style="text-align:left;">— Admin —</p>
+            <h1 style="font-family:var(--font-display);font-size:2rem;font-weight:300;">Sous-catégories</h1>
+        </div>
+        <a href="{{ path('app_sub_category_new') }}" class="btn-gold filled">
+            <i class="fas fa-plus"></i> Nouvelle sous-catégorie
+        </a>
+    </div>
 
-    <table class="table">
-        <thead>    
-                <tr class="table-primary">
-                    <th scope="col">id</th>
-                    <th scope="col">Nom</th>
-                    <th scope="col">Catégorie associée</th>
-                    <th scope="col">Action</th>
+    <div style="border:1px solid var(--black-border);">
+        <table class="sb-table">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Catégorie parente</th>
+                    <th>Actions</th>
                 </tr>
-            </thead> 
-        <tbody>
-        {% for sub_category in sub_categories %}
-            <tr>
-                <th scope="row" >{{sub_category.id}}</th> 
-
-                <td>{{sub_category.name }}</td>
-                <td>{{sub_category.category.name}}</td>
-                <td>
-                    <a class="btn btn-primary"  href="{{ path('app_sub_category_show', {'id': sub_category.id}) }}">show</a>
-                    <a class="btn btn-primary"  href="{{ path('app_sub_category_edit', {'id': sub_category.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="3">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a class="btn btn-primary" href="{{ path('app_sub_category_new') }}">Create new</a>
-
+            </thead>
+            <tbody>
+                {% for subCategory in sub_categories %}
+                    <tr>
+                        <td style="color:var(--white);">{{ subCategory.name }}</td>
+                        <td>
+                            <span class="sb-badge sb-badge-gold">{{ subCategory.category.name }}</span>
+                        </td>
+                        <td>
+                            <div style="display:flex;gap:.5rem;">
+                                <a href="{{ path('app_sub_category_edit', {'id': subCategory.id}) }}" class="btn-gold" style="padding:6px 12px;font-size:.68rem;">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{{ path('app_sub_category_delete', {'id': subCategory.id}) }}"
+                                   class="btn-danger-sb" style="padding:6px 12px;font-size:.68rem;"
+                                   onclick="return confirm('Supprimer cette sous-catégorie ?')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="3" style="text-align:center;padding:2rem;color:var(--white-dim);">Aucune sous-catégorie.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}
