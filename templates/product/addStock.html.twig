@@ -1,47 +1,46 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}New Product{% endblock %}
+{% block title %}Ajouter du stock — {{ product.name }}{% endblock %}
 
 {% block body %}
-<style>
-    #a { position:absolute; top:287px; left:180px}
-</style>
+<div style="max-width:500px;margin:0 auto;padding:3rem 1.5rem;">
 
-<div class="container">
+    <div style="margin-bottom:2rem;">
+        <p class="sb-section-tag" style="text-align:left;">— Gestion du stock —</p>
+        <h1 style="font-family:var(--font-display);font-size:1.8rem;font-weight:300;">
+            Réapprovisionner
+        </h1>
+        <p style="color:var(--white-muted);margin-top:.5rem;">{{ product.name }}</p>
+    </div>
 
-    <div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h2 class="h4 mb-0"> Ajouter du stock pour {{product.name}}</h2>
-                </div>
-                  {{ include ('layouts/flash_message.html.twig') }}    
-                <div class="card-body">
-                    {{ form_start(form) }}
+    {# Stock actuel #}
+    <div style="background:var(--gold-subtle);border:1px solid var(--gold);padding:1rem 1.5rem;margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:.75rem;letter-spacing:2px;text-transform:uppercase;color:var(--white-muted);">Stock actuel</span>
+        <span style="font-family:var(--font-display);font-size:1.8rem;color:var(--gold);font-weight:300;">
+            {{ product.stock }}
+        </span>
+    </div>
 
-                        <div class="mb-3">
-                            {{ form_row(form.quantity, {
-                                'label': 'Description',
-                                'attr': {'class': 'form-control'},
-                                'label_attr': {'class': 'form-label fw-bold'}
-                            }) }}
-                        </div>
-                
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                Enregistrer
-                            </button>
-                        </div>
-
-                    {{ form_end(form) }}
-                </div>
+    <div style="background:var(--black-card);border:1px solid var(--black-border);padding:2rem;">
+        {{ form_start(form) }}
+        <div style="display:flex;flex-direction:column;gap:1.25rem;">
+            <div>
+                <label class="sb-form-label">
+                    <i class="fas fa-plus-circle" style="color:var(--gold);margin-right:6px;"></i>
+                    Quantité à ajouter
+                </label>
+                {{ form_widget(form.quantity, {'attr': {'class': 'sb-form-control', 'placeholder': '0', 'min': '1'}}) }}
+                {{ form_errors(form.quantity) }}
+            </div>
+            <div style="display:flex;gap:1rem;">
+                <button type="submit" class="btn-gold filled" style="flex:1;justify-content:center;padding:13px;">
+                    <i class="fas fa-save"></i> Valider le réapprovisionnement
+                </button>
+                <a href="{{ path('app_product_index') }}" class="btn-gold" style="padding:13px 20px;">
+                    <i class="fas fa-times"></i>
+                </a>
             </div>
         </div>
+        {{ form_end(form) }}
     </div>
-</div>
-
-    <a href="{{ path('app_product_index')}}" class="btn btn-primary" id="a">Retour à la liste des produits</a> 
-
 </div>
 {% endblock %}
