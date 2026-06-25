@@ -1,17 +1,69 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}New Product{% endblock %}
+{% block title %}Nouveau produit{% endblock %}
 
 {% block body %}
-<style>
-    #a { position:absolute; top:287px; left:180px}
-</style>
+<div style="max-width:700px;margin:0 auto;padding:3rem 1.5rem;">
 
-<div class="container">
+    <div style="margin-bottom:2rem;">
+        <p class="sb-section-tag" style="text-align:left;">— Espace éditeur —</p>
+        <h1 style="font-family:var(--font-display);font-size:2rem;font-weight:300;">Nouveau produit</h1>
+    </div>
 
-    {{ include('product/_form.html.twig', {'button_label': 'Ajouter'}) }}
+    <div style="background:var(--black-card);border:1px solid var(--black-border);padding:2rem;">
+        {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
 
-    <a href="{{ path('app_product_index')}}" class="btn btn-primary" id="a">Retour à la liste des produits</a> 
+        <div style="display:flex;flex-direction:column;gap:1.25rem;">
 
+            <div>
+                <label class="sb-form-label"><i class="fas fa-tag" style="color:var(--gold);margin-right:6px;"></i>Nom du produit</label>
+                {{ form_widget(form.name, {'attr': {'class': 'sb-form-control', 'placeholder': 'Ex: Nike Air Max 90'}}) }}
+                {{ form_errors(form.name) }}
+            </div>
+
+            <div>
+                <label class="sb-form-label"><i class="fas fa-align-left" style="color:var(--gold);margin-right:6px;"></i>Description</label>
+                {{ form_widget(form.description, {'attr': {'class': 'sb-form-control', 'rows': '4', 'placeholder': 'Description du produit...', 'style': 'resize:vertical;min-height:100px;'}}) }}
+                {{ form_errors(form.description) }}
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                <div>
+                    <label class="sb-form-label"><i class="fas fa-euro-sign" style="color:var(--gold);margin-right:6px;"></i>Prix (€)</label>
+                    {{ form_widget(form.price, {'attr': {'class': 'sb-form-control', 'placeholder': '0'}}) }}
+                    {{ form_errors(form.price) }}
+                </div>
+                <div>
+                    <label class="sb-form-label"><i class="fas fa-boxes" style="color:var(--gold);margin-right:6px;"></i>Stock initial</label>
+                    {{ form_widget(form.stock, {'attr': {'class': 'sb-form-control', 'placeholder': '0'}}) }}
+                    {{ form_errors(form.stock) }}
+                </div>
+            </div>
+
+            <div>
+                <label class="sb-form-label"><i class="fas fa-layer-group" style="color:var(--gold);margin-right:6px;"></i>Sous-catégories</label>
+                {{ form_widget(form.subcategory, {'attr': {'class': 'sb-form-control', 'style': 'height:120px;'}}) }}
+                {{ form_errors(form.subcategory) }}
+                <p style="font-size:.72rem;color:var(--white-dim);margin-top:4px;">Maintenez Ctrl pour sélectionner plusieurs catégories</p>
+            </div>
+
+            <div>
+                <label class="sb-form-label"><i class="fas fa-image" style="color:var(--gold);margin-right:6px;"></i>Image du produit</label>
+                {{ form_widget(form.image, {'attr': {'class': 'sb-form-control', 'style': 'padding:10px;cursor:pointer;'}}) }}
+                {{ form_errors(form.image) }}
+            </div>
+
+            <div style="display:flex;gap:1rem;margin-top:.5rem;">
+                <button type="submit" class="btn-gold filled" style="flex:1;justify-content:center;padding:13px;">
+                    <i class="fas fa-save"></i> Enregistrer le produit
+                </button>
+                <a href="{{ path('app_product_index') }}" class="btn-gold" style="padding:13px 20px;">
+                    <i class="fas fa-times"></i>
+                </a>
+            </div>
+
+        </div>
+
+        {{ form_end(form) }}
+    </div>
 </div>
 {% endblock %}
