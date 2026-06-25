@@ -40,7 +40,7 @@ class Product
     /**
      * @var Collection<int, AddProductHistory>
      */
-    #[ORM\OneToMany(targetEntity: AddProductHistory::class, mappedBy: 'product')]
+    #[ORM\OneToMany(targetEntity: AddProductHistory::class, mappedBy: 'product', cascade:['remove'], orphanRemoval: true)]
     private Collection $addProductHistories;
 
     /**
