@@ -1,151 +1,122 @@
-{% block title %}Facture n° {{ order.id }}{% endblock %}
+{# bill/indexBill.html.twig — Facture PDF générée via DomPDF #}
+{# Note : DomPDF a un support CSS limité — on utilise du CSS simple #}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Facture n°{{ order.id }} — StyleBoutik</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'DejaVu Sans',Arial,sans-serif; font-size:12px; color:#333; background:#fff; }
 
-{% block body %}
+        .header { padding:30px; background:#0a0a0a; color:#f5f0e8; }
+        .logo { font-size:24px; color:#c9a84c; letter-spacing:4px; margin-bottom:4px; }
+        .header-sub { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:#666; }
 
+        .invoice-info { padding:24px 30px; display:table; width:100%; border-bottom:2px solid #c9a84c; }
+        .invoice-left { display:table-cell; width:50%; vertical-align:top; }
+        .invoice-right { display:table-cell; width:50%; vertical-align:top; text-align:right; }
+        .invoice-title { font-size:20px; color:#c9a84c; margin-bottom:8px; }
+        .invoice-num { font-size:11px; color:#666; }
 
-<div class="container">
-    <h1>Facture de la commande</h1>
+        .section { padding:20px 30px; }
+        .section-label { font-size:8px; letter-spacing:3px; text-transform:uppercase; color:#c9a84c; margin-bottom:10px; border-bottom:1px solid #e0d8c8; padding-bottom:6px; }
 
-    <div class="card">
-        <div class="card-header">
-            Commande n° {{ order.id }}
-            <small>({{ order.createdAt|date('d/m/Y H:i') }})</small>
+        .client-info { font-size:11px; line-height:1.8; color:#444; }
+
+        table { width:100%; border-collapse:collapse; margin-bottom:20px; }
+        th { background:#0a0a0a; color:#c9a84c; font-size:9px; letter-spacing:2px; text-transform:uppercase; padding:10px 12px; text-align:left; }
+        td { padding:10px 12px; border-bottom:1px solid #f0ece6; font-size:11px; color:#555; }
+        tr:nth-child(even) td { background:#faf8f5; }
+
+        .total-section { padding:0 30px 30px; text-align:right; }
+        .total-line { display:table; width:100%; margin-bottom:4px; }
+        .total-label { display:table-cell; text-align:left; font-size:10px; letter-spacing:1px; text-transform:uppercase; color:#888; padding:4px 0; }
+        .total-value { display:table-cell; text-align:right; font-size:11px; color:#555; padding:4px 0; }
+        .total-grand-label { display:table-cell; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#c9a84c; padding:8px 0; }
+        .total-grand-value { display:table-cell; text-align:right; font-size:18px; color:#c9a84c; padding:8px 0; }
+
+        .footer { padding:20px 30px; border-top:1px solid #e0d8c8; text-align:center; }
+        .footer p { font-size:9px; color:#999; letter-spacing:1px; }
+        .footer .brand { color:#c9a84c; }
+    </style>
+</head>
+<body>
+
+    {# En-tête #}
+    <div class="header">
+        <div class="logo">StyleBoutik</div>
+        <div class="header-sub">Votre boutique premium en ligne</div>
+    </div>
+
+    {# Infos facture #}
+    <div class="invoice-info">
+        <div class="invoice-left">
+            <div class="invoice-title">Facture</div>
+            <div class="invoice-num">N° {{ order.id }} — {{ order.createdAt|date('d/m/Y') }}</div>
         </div>
-        <div class="card-body">
-            <!-- Infos utilisateur -->
-            <h6>Informations client</h6>
-            <ul>
-                <li><strong>Nom :</strong> {{ order.firstName }} {{ order.lastName }}</li>
-                <li><strong>Téléphone :</strong> {{ order.phone }}</li>
-                <li><strong>Adresse :</strong> {{ order.adress }}, {{ order.city.name }}</li>
-            </ul>
-
-            <!-- Infos Produits -->
-            <h6>Produits commandés</h6>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nom du Produit</th>
-                        <th>Prix unitaire</th>
-                        <th>Quantité</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for product in order.orderedProducts %}
-                        <tr>
-                            <td>{{ product.product.name }}</td>
-                            <td>{{ product.product.price }} €</td>
-                            <td>{{ product.quantity }}</td>
-                            <td>{{ product.product.price * product.quantity }} €</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-
-            <!-- Infos Prix -->
-            <div class="footer">
-                <p>Frais de livraison : <strong>{{ order.city.shippingCost }} €</strong></p>
-                <p class="total">Total : {{ order.totalPrice }} €</p>
+        <div class="invoice-right">
+            <div class="invoice-num">
+                Mode : {% if order.payOnDelivery %}Livraison{% else %}Stripe{% endif %}<br>
+                Statut : {% if order.isPaymentCompleted %}Payé{% else %}En attente{% endif %}
             </div>
         </div>
     </div>
-</div>
 
-<style>
-    {# body {
-        font-family: DejaVu Sans, sans-serif;
-        font-size: 12px;
-        margin: 20px;
-        color: #333;
-    } #}
+    {# Infos client #}
+    <div class="section">
+        <div class="section-label">Informations client</div>
+        <div class="client-info">
+            <strong>{{ order.firstName }} {{ order.lastName }}</strong><br>
+            {{ order.adress }}<br>
+            {{ order.city.name }}<br>
+            Tél : {{ order.phone }}<br>
+            Email : {{ order.email }}
+        </div>
+    </div>
 
-    .container {
-        width: 50%;
-        margin: 0 auto;
-    }
+    {# Produits #}
+    <div class="section">
+        <div class="section-label">Détail de la commande</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Produit</th>
+                    <th style="text-align:center;">Quantité</th>
+                    <th style="text-align:right;">Prix unitaire</th>
+                    <th style="text-align:right;">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order.orderedProducts %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td style="text-align:center;">{{ item.quantity }}</td>
+                        <td style="text-align:right;">{{ item.product.price }} €</td>
+                        <td style="text-align:right;">{{ item.product.price * item.quantity }} €</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-    h1 {
-        text-align: center;
-        margin: 2rem 0 2rem 0;
-    }
+    {# Totaux #}
+    <div class="total-section">
+        <div class="total-line">
+            <span class="total-label">Frais de livraison</span>
+            <span class="total-value">{{ order.city.shippingCost }} €</span>
+        </div>
+        <div class="total-line" style="border-top:2px solid #c9a84c;margin-top:8px;">
+            <span class="total-grand-label">Total TTC</span>
+            <span class="total-grand-value">{{ order.totalPrice }} €</span>
+        </div>
+    </div>
 
-    .card {
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        margin-bottom: 20px;
-    }
+    {# Footer #}
+    <div class="footer">
+        <p><span class="brand">StyleBoutik</span> — Document généré automatiquement le {{ "now"|date('d/m/Y') }}</p>
+        <p>Merci pour votre confiance.</p>
+    </div>
 
-    .card-header {
-        background-color: #0d6efd;
-        color: white;
-        padding: 10px;
-        font-size: 14px;
-        font-weight: bold;
-    }
-
-    .card-body {
-        padding: 15px;
-    }
-
-    h6 {
-        color: #0d6efd;
-        margin-bottom: 10px;
-        font-size: 13px;
-    }
-
-    ul {
-        list-style: none;
-        padding: 0;
-        margin-bottom: 20px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-    }
-
-    ul li {
-        padding: 8px 10px;
-        border-bottom: 1px solid #ddd;
-    }
-
-    ul li:last-child {
-        border-bottom: none;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 15px;
-    }
-
-    table thead {
-        background-color: #cfe2ff;
-    }
-
-    table th, table td {
-        border: 1px solid #ddd;
-        padding: 6px;
-        text-align: center;
-    }
-
-    table th {
-        font-weight: bold;
-    }
-
-    .footer {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 10px;
-        font-size: 1.2rem;
-    }
-
-    .footer strong {
-        font-weight: bold;
-    }
-
-    .footer .total {
-        font-size: 1.2rem;
-        color: #0d6efd;
-        font-weight: bold;
-    }
-</style>
-{% endblock %}
+</body>
+</html>
