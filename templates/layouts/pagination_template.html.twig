@@ -1,31 +1,39 @@
-{% if pageCount > 1 %}
-  <nav aria-label="...">
-    <ul class="pagination paginatorButton">
-    {% if previous is defined %}
-      <li class="page-item">
-        <a href="{{ path(route, query|merge({(pageParameterName):previous})) }}" class="page-link">Précédent</a>
-      </li>
-    {% endif %}
+{# layouts/pagination_template.html.twig — Template de pagination KnpPaginator #}
+<nav>
+    <ul class="pagination">
 
-    {% for page in pagesInRange %}
-      {% if page != current %}
-        <li class="page-item active" aria-current="page">
-          <a class="page-link" href="{{ path(route, query|merge({(pageParameterName):page})) }}">{{ page }} </a>
-        </li>
+        {# Bouton Précédent #}
+        {% if previous is defined %}
+            <li>
+                <a href="{{ path(route, query|merge({(pageParameterName): previous})) }}">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            </li>
         {% else %}
-        <li class="page-item active" aria-current="page">
-          <a style="background: green" class="page-link disabled" href="{{ path(route, query|merge({(pageParameterName):page})) }}">{{ page }} </a>
-        </li>
-      {% endif %}
-    {% endfor %}
-      {# <li class="page-item"><a class="page-link" href="#">1</a></li>
-      
-      <li class="page-item"><a class="page-link" href="#">3</a></li> #}
-      {% if next is defined %}
-        <li class="page-item">
-          <a href="{{ path(route, query|merge({(pageParameterName):next})) }}" class="page-link" href="#">Suivant</a>
-        </li>
-      {% endif %}
+            <li class="disabled"><span><i class="fas fa-chevron-left"></i></span></li>
+        {% endif %}
+
+        {# Pages numérotées #}
+        {% for page in pagesInRange %}
+            {% if page != current %}
+                <li>
+                    <a href="{{ path(route, query|merge({(pageParameterName): page})) }}">{{ page }}</a>
+                </li>
+            {% else %}
+                <li class="active"><span>{{ page }}</span></li>
+            {% endif %}
+        {% endfor %}
+
+        {# Bouton Suivant #}
+        {% if next is defined %}
+            <li>
+                <a href="{{ path(route, query|merge({(pageParameterName): next})) }}">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </li>
+        {% else %}
+            <li class="disabled"><span><i class="fas fa-chevron-right"></i></span></li>
+        {% endif %}
+
     </ul>
-  </nav>
-{% endif %}
+</nav>
