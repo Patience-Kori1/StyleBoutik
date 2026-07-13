@@ -1,17 +1,27 @@
 {% extends 'base.html.twig' %}
-
+{% block title %}Commande confirmée{% endblock %}
 {% block body %}
-    <div class="container">
-        <p class="text-center mt-5">
-            Votre commande à bien été prise en compte
+<div style="min-height:70vh;display:flex;align-items:center;justify-content:center;padding:3rem 1.5rem;">
+    <div style="text-align:center;max-width:520px;">
+        <div style="
+            width:80px;height:80px;border-radius:50%;
+            background:rgba(201,168,76,.1);border:2px solid var(--gold);
+            display:flex;align-items:center;justify-content:center;
+            margin:0 auto 2rem;
+        ">
+            <i class="fas fa-check" style="font-size:2rem;color:var(--gold);"></i>
+        </div>
+        <p class="sb-section-tag">✦ Merci pour votre confiance ✦</p>
+        <h1 style="font-size:2.5rem;font-weight:300;margin-bottom:1rem;">Commande confirmée</h1>
+        <div style="width:60px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:1rem auto 1.5rem;"></div>
+        <p style="color:var(--white-dim);line-height:1.8;margin-bottom:2rem;">
+            Votre commande a bien été enregistrée.<br>
+            Un e-mail de confirmation vous a été envoyé.<br>
+            Elle sera traitée dans les plus brefs délais.
         </p>
-
-        <p class="text-center mt-5">
-            <a href="{{ path('app_home_page')}}"  class="btn btn-outline-success col-2 m-lg-1">Retour à la page d'accueil</a>
-        </p>
-
-        <p class="text-center mt-5">
-            <a href="{{ path('app_order')}}"  class="btn btn-outline-primary col-2 m-lg-1">Retour à la page de commande</a>
-        </p>
+        <a href="{{ path('app_home_page') }}" class="btn-gold filled">
+            <i class="fas fa-arrow-right"></i> Continuer mes achats
+        </a>
     </div>
+</div>
 {% endblock %}
