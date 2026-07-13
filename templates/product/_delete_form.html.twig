@@ -1,4 +1,10 @@
-<form method="post" action="{{ path('app_product_delete', {'id': product.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+{# product/_delete_form.html.twig — Formulaire de suppression avec token CSRF #}
+<form method="post" action="{{ path('app_product_delete', {'id': product.id}) }}"
+      onsubmit="return confirm('Supprimer ce produit définitivement ?');"
+      style="display:inline;">
+    <input type="hidden" name="_method" value="POST">
     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
-    <button class="btn btn-danger">Supprimer l'article</button>
+    <button type="submit" class="btn-danger-sb" style="padding:6px 12px;font-size:.68rem;">
+        <i class="fas fa-trash"></i>
+    </button>
 </form>
