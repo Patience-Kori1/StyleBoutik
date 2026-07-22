@@ -1,19 +1,33 @@
 {% extends 'base.html.twig' %}
-{% block title %}Nouvelle catégorie{% endblock %}
+{% block title %}Nouvelle sous-catégorie{% endblock %}
 {% block body %}
 <div style="max-width:500px;margin:0 auto;padding:3rem 1.5rem;">
     <div style="margin-bottom:2rem;">
         <p class="sb-section-tag" style="text-align:left;">— Admin —</p>
-        <h1 style="font-family:var(--font-display);font-size:1.8rem;font-weight:300;">Nouvelle catégorie</h1>
+        <h1 style="font-family:var(--font-display);font-size:1.8rem;font-weight:300;">Nouvelle sous-catégorie</h1>
     </div>
     <div style="background:var(--black-card);border:1px solid var(--black-border);padding:2rem;">
         {{ form_start(form) }}
         <div style="display:flex;flex-direction:column;gap:1.25rem;">
+
             <div>
-                <label class="sb-form-label"><i class="fas fa-folder" style="color:var(--gold);margin-right:6px;"></i>Nom de la catégorie</label>
-                {{ form_widget(form.name, {'attr': {'class': 'sb-form-control', 'placeholder': 'Ex: Chaussures'}}) }}
+                <label class="sb-form-label">
+                    <i class="fas fa-folder-open" style="color:var(--gold);margin-right:6px;"></i>
+                    Nom de la sous-catégorie
+                </label>
+                {{ form_widget(form.name) }}
                 {{ form_errors(form.name) }}
             </div>
+
+            <div>
+                <label class="sb-form-label">
+                    <i class="fas fa-sitemap" style="color:var(--gold);margin-right:6px;"></i>
+                    Catégorie parente
+                </label>
+                {{ form_widget(form.category) }}
+                {{ form_errors(form.category) }}
+            </div>
+
             <div style="display:flex;gap:1rem;">
                 <button type="submit" class="btn-gold filled" style="flex:1;justify-content:center;padding:13px;">
                     <i class="fas fa-save"></i> Enregistrer
@@ -22,6 +36,7 @@
                     <i class="fas fa-times"></i>
                 </a>
             </div>
+
         </div>
         {{ form_end(form) }}
     </div>
