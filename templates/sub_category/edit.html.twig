@@ -1,13 +1,63 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Edit SubCategory{% endblock %}
-
+{% block title %}Modifier la sous-catégorie{% endblock %}
 {% block body %}
-    <h1>Edit SubCategory</h1>
+<div style="max-width:500px;margin:0 auto;padding:3rem 1.5rem;">
 
-    {{ include('sub_category/_form.html.twig', {'button_label': 'Update'}) }}
+    {# En-tête #}
+    <div style="margin-bottom:2rem;">
+        <p class="sb-section-tag" style="text-align:left;">— Admin —</p>
+        <h1 style="font-family:var(--font-display);font-size:1.8rem;font-weight:300;">
+            Modifier la sous-catégorie
+        </h1>
+        <p style="color:var(--text-muted);font-size:0.85rem;margin-top:0.5rem;">
+            {{ sub_category.name }}
+        </p>
+    </div>
 
-    <a href="{{ path('app_sub_category_index') }}">back to list</a>
+    {# Formulaire de modification #}
+    <div style="background:var(--black-card);border:1px solid var(--black-border);padding:2rem;margin-bottom:1.5rem;">
+        {{ form_start(form) }}
+        <div style="display:flex;flex-direction:column;gap:1.25rem;">
 
-    {{ include('sub_category/_delete_form.html.twig') }}
+            <div>
+                <label class="sb-form-label">
+                    <i class="fas fa-folder-open" style="color:var(--gold);margin-right:6px;"></i>
+                    Nom de la sous-catégorie
+                </label>
+                {{ form_widget(form.name) }}
+                {{ form_errors(form.name) }}
+            </div>
+
+            <div>
+                <label class="sb-form-label">
+                    <i class="fas fa-sitemap" style="color:var(--gold);margin-right:6px;"></i>
+                    Catégorie parente
+                </label>
+                {{ form_widget(form.category) }}
+                {{ form_errors(form.category) }}
+            </div>
+
+            <div style="display:flex;gap:1rem;">
+                <button type="submit" class="btn-gold filled" style="flex:1;justify-content:center;padding:13px;">
+                    <i class="fas fa-save"></i> Enregistrer les modifications
+                </button>
+                <a href="{{ path('app_allCategories') }}" class="btn-gold" style="padding:13px 20px;">
+                    <i class="fas fa-times"></i>
+                </a>
+            </div>
+
+        </div>
+        {{ form_end(form) }}
+    </div>
+
+    {# Zone de suppression — séparée visuellement, action destructive #}
+    <div style="background:var(--black-card);border:1px solid #3a1a1a;padding:1.5rem;">
+        <p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:1rem;">
+            <i class="fas fa-exclamation-triangle" style="color:#c0392b;margin-right:6px;"></i>
+            Supprimer cette sous-catégorie la retirera de tous les produits associés.
+        </p>
+        {{ include('sub_category/_delete_form.html.twig') }}
+    </div>
+
+</div>
 {% endblock %}
